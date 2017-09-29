@@ -6,6 +6,12 @@ exports.response = function(res, payload) {
 	}));
 };
 
+exports.raiseQueryError = function(res, query) {
+	res.send(res.json({
+		"Error": `Argument Error: No argument named ${query} supplied`
+	}));
+}
+
 exports.raiseMethodError = function(res, method) {
 	res.send(res.json({
 		"Error": `HTTP Error: ${method.toUpperCase()} is not a supported method at the given endpoint`
