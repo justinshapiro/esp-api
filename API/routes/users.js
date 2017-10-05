@@ -2,6 +2,7 @@
 
 var responder = require('./httpRouteResponder');
 
+// Route to find the correct endpoint whose signature is /users/property
 function route_property(req, res, next, args, method) {
 	const property = args['property'];
 
@@ -35,6 +36,7 @@ function route_property(req, res, next, args, method) {
 	}
 }
 
+// Route to find the correct endpoint whose signature is /users/property/key
 function route_property_key(req, res, next, args, method) {
 	const property = args['property'];
 
@@ -57,6 +59,7 @@ function route_property_key(req, res, next, args, method) {
 	}
 }
 
+// Route to find the correct endpoint whose signature is /users/property/key/detail
 function route_property_key_detail(req, res, next, args, method) {
 	const property = args['property'];
 	const detail = args['detail'];
@@ -89,6 +92,7 @@ function route_property_key_detail(req, res, next, args, method) {
 	}
 }
 
+// Below is individual methods to implement endpoints that needed to be routed 
 function put_name(args) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/name',
@@ -243,73 +247,88 @@ function put_locations_id_name(args) {
 }
 
 exports.users_get = function(req, res, next) {
-	res.send(res.json({
+	// No need to route further, continue logic here
+
+	responder.response(res, {
 		'Endpoint': 'GET /users'
-	}));
+	});
 };
 
 exports.users_post = function(req, res, next) {
-	res.send(res.json({
+	// No need to route further, continue logic here
+
+	responder.response(res, {
 		'Endpoint': 'POST /users'
-	}));
+	});
 };
 
 exports.users_id_get = function(req, res, next) {
+	// No need to route further, continue logic here
+
 	const arg = req.params.user_id;
 
-	res.send(res.json({
+	responder.response(res, {
 		'Endpoint': 'GET /users/{id}',
 		'Args': arg
-	}));
+	});
 };
 
 exports.users_id_delete = function(req, res, next) {
+	// No need to route further, continue logic here
+
 	const arg = req.params.user_id;
 
-	res.send(res.json({
+	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}',
 		'Args': arg
-	}));
+	});
 };
 
 exports.users_id_property_get = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
 	route_property(req, res, next, args, 'get');
 };
 
 exports.users_id_property_put = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
 	route_property(req, res, next, args, 'put');
 };
 
 exports.users_id_property_post = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
 	route_property(req, res, next, args, 'post');
 };
 
 exports.users_id_property_delete = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
 	route_property(req, res, next, args, 'delete');
 };
 
 exports.users_id_property_key_get = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
 	route_property_key(req, res, next, args, 'get');
 };
 
 exports.users_id_property_key_delete = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
 	route_property_key(req, res, next, args, 'delete');
 };
 
 exports.users_id_property_key_detail_put = function(req, res, next) {
 	const args = req.params;
 
+	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
 	route_property_key_detail(req, res, next, args, 'put');
 };
