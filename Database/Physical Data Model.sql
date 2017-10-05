@@ -22,7 +22,9 @@ id serial4 NOT NULL,
 
 name text,
 
-PRIMARY KEY (id) 
+PRIMARY KEY (id) ,
+
+UNIQUE (name)
 
 )
 
