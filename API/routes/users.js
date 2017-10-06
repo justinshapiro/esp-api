@@ -1,6 +1,7 @@
 'use strict';
 
 var responder = require('./httpRouteResponder');
+var knex = require('./db-connection.js');
 
 // Route to find the correct endpoint whose signature is /users/property
 function route_property(req, res, next, args, method) {
@@ -254,12 +255,31 @@ exports.users_get = function(req, res, next) {
 	});
 };
 
+function add_user(auth_type, token) {
+	return knex('user_table')
+	.insert({authentication_type: auth_type, authentication_token: token})
+	.returning('*');
+}
+
+// Query Parameters 
+// Required: authentication_type
+// Optional: authentication_token
 exports.users_post = function(req, res, next) {
 	// No need to route further, continue logic here
+  
+	const auth_type = req.query.authentication_type;
+	const token = req.query.authentication_token;
 
-	responder.response(res, {
-		'Endpoint': 'POST /users'
-	});
+	if (auth_type == null) {
+		responder.raiseQueryError(res, 'authentication_type');
+	} else {
+		add_user(auth_type, token).then((user) => {
+			responder.response(res, {
+				'Endpoint': 'POST /users',
+				'DB Result': user
+			})
+		});
+	}
 };
 
 exports.users_id_get = function(req, res, next) {
