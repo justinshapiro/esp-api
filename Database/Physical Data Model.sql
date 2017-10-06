@@ -1,6 +1,9 @@
+/* Add extension for UUID generation */
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE user_table (
 
-user_table_id serial4 NOT NULL,
+user_table_id uuid NOT NULL DEFAULT uuid_generate_v1(),
 
 authentication_type int4 NOT NULL,
 
@@ -22,7 +25,9 @@ id serial4 NOT NULL,
 
 name text,
 
-PRIMARY KEY (id) 
+PRIMARY KEY (id) ,
+
+UNIQUE (name)
 
 )
 
@@ -32,7 +37,7 @@ WITHOUT OIDS;
 
 CREATE TABLE location (
 
-id serial4 NOT NULL,
+id uuid NOT NULL DEFAULT uuid_generate_v1(),
 
 description text,
 
@@ -42,7 +47,7 @@ address text,
 
 icon bytea,
 
-user_table_id int4,
+user_table_id uuid,
 
 lat decimal,
 
@@ -58,13 +63,13 @@ WITHOUT OIDS;
 
 CREATE TABLE category (
 
-id serial4 NOT NULL,
+id uuid NOT NULL DEFAULT uuid_generate_v1(),
 
 name text NOT NULL,
 
 description text,
 
-user_table_id int4,
+user_table_id uuid,
 
 PRIMARY KEY (id) 
 
@@ -76,9 +81,9 @@ WITHOUT OIDS;
 
 CREATE TABLE location_category (
 
-location_id int4 NOT NULL,
+location_id uuid NOT NULL,
 
-category_id int4 NOT NULL,
+category_id uuid NOT NULL,
 
 PRIMARY KEY (location_id, category_id) ,
 
@@ -92,13 +97,13 @@ WITHOUT OIDS;
 
 CREATE TABLE emergency_contact (
 
-id serial4 NOT NULL,
+id uuid NOT NULL DEFAULT uuid_generate_v1(),
 
 name text NOT NULL,
 
 email text,
 
-user_table_id int4 NOT NULL,
+user_table_id uuid NOT NULL,
 
 PRIMARY KEY (id) 
 
@@ -110,11 +115,11 @@ WITHOUT OIDS;
 
 CREATE TABLE location_contact (
 
-location_id int4 NOT NULL,
+location_id uuid NOT NULL,
 
-contact_id int4 NOT NULL,
+contact_id uuid NOT NULL,
 
-user_table_id int4 NOT NULL,
+user_table_id uuid NOT NULL,
 
 PRIMARY KEY (location_id, contact_id, user_table_id) 
 
@@ -126,9 +131,9 @@ WITHOUT OIDS;
 
 CREATE TABLE category_setting (
 
-user_table_id int4 NOT NULL,
+user_table_id uuid NOT NULL,
 
-category_id int4 NOT NULL,
+category_id uuid NOT NULL,
 
 alertable bool NOT NULL,
 
@@ -142,11 +147,11 @@ WITHOUT OIDS;
 
 CREATE TABLE category_contact (
 
-user_table_id int4 NOT NULL,
+user_table_id uuid NOT NULL,
 
-category_id int4 NOT NULL,
+category_id uuid NOT NULL,
 
-contact_id int4 NOT NULL,
+contact_id uuid NOT NULL,
 
 PRIMARY KEY (user_table_id, category_id, contact_id) 
 
@@ -158,9 +163,9 @@ WITHOUT OIDS;
 
 CREATE TABLE location_setting (
 
-user_table_id int4 NOT NULL,
+user_table_id uuid NOT NULL,
 
-location_id int4 NOT NULL,
+location_id uuid NOT NULL,
 
 alertable bool NOT NULL,
 
@@ -174,9 +179,9 @@ WITHOUT OIDS;
 
 CREATE TABLE internal_authentication (
 
-user_table_id serial4 NOT NULL,
+user_table_id uuid NOT NULL,
 
-user_tablename text,
+username text,
 
 password text,
 
