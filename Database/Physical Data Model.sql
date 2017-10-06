@@ -69,7 +69,7 @@ name text NOT NULL,
 
 description text,
 
-user_table_id uuid NOT NULL,
+user_table_id uuid NOT NULL DEFAULT uuid_nil(),
 
 PRIMARY KEY (id) 
 
