@@ -229,6 +229,7 @@ ALTER TABLE location_category ADD CONSTRAINT fk_Location_Categories_Locations_1 
 
 ALTER TABLE internal_authentication ADD CONSTRAINT fk_Internal_Authentication_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
 
+ALTER TABLE public.category ADD CONSTRAINT unique_name_and_user_id UNIQUE (name, user_table_id);
 
 /* Create the geometry column */
 SELECT AddGeometryColumn('location', 'geom', 4326, 'POINT', 2);
