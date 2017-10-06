@@ -47,41 +47,26 @@ ALTER TABLE ONLY public.category_setting DROP CONSTRAINT category_setting_pkey;
 ALTER TABLE ONLY public.category DROP CONSTRAINT category_pkey;
 ALTER TABLE ONLY public.category_contact DROP CONSTRAINT category_contact_pkey;
 ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_pkey;
-ALTER TABLE public.user_table ALTER COLUMN user_table_id DROP DEFAULT;
-ALTER TABLE public.location ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE public.internal_authentication ALTER COLUMN user_table_id DROP DEFAULT;
-ALTER TABLE public.emergency_contact ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE public.category ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_name_key;
 ALTER TABLE public.authentication_type ALTER COLUMN id DROP DEFAULT;
-DROP SEQUENCE public.user_table_user_table_id_seq;
 DROP TABLE public.user_table;
 DROP TABLE public.location_setting;
-DROP SEQUENCE public.location_id_seq;
 DROP TABLE public.location_contact;
 DROP TABLE public.location_category;
 DROP TABLE public.location;
-DROP SEQUENCE public.internal_authentication_user_table_id_seq;
 DROP TABLE public.internal_authentication;
-DROP SEQUENCE public.emergency_contact_id_seq;
 DROP TABLE public.emergency_contact;
 DROP TABLE public.category_setting;
-DROP SEQUENCE public.category_id_seq;
 DROP TABLE public.category_contact;
 DROP TABLE public.category;
 DROP SEQUENCE public.authentication_type_id_seq;
 DROP TABLE public.authentication_type;
 DROP FUNCTION public.update_geom();
+DROP EXTENSION "uuid-ossp";
 DROP EXTENSION postgis;
 DROP EXTENSION adminpack;
 DROP EXTENSION plpgsql;
 DROP SCHEMA public;
---
--- Name: postgres; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE postgres IS 'default administrative connection database';
-
-
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
@@ -138,6 +123,20 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
 
 
 SET search_path = public, pg_catalog;
@@ -208,10 +207,10 @@ ALTER SEQUENCE authentication_type_id_seq OWNED BY authentication_type.id;
 --
 
 CREATE TABLE category (
-    id integer NOT NULL,
+    id uuid DEFAULT uuid_generate_v1() NOT NULL,
     name text NOT NULL,
     description text,
-    user_table_id integer
+    user_table_id uuid
 );
 
 
@@ -222,42 +221,21 @@ ALTER TABLE category OWNER TO postgres;
 --
 
 CREATE TABLE category_contact (
-    user_table_id integer NOT NULL,
-    category_id integer NOT NULL,
-    contact_id integer NOT NULL
+    user_table_id uuid NOT NULL,
+    category_id uuid NOT NULL,
+    contact_id uuid NOT NULL
 );
 
 
 ALTER TABLE category_contact OWNER TO postgres;
 
 --
--- Name: category_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE category_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE category_id_seq OWNER TO postgres;
-
---
--- Name: category_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE category_id_seq OWNED BY category.id;
-
-
---
 -- Name: category_setting; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE category_setting (
-    user_table_id integer NOT NULL,
-    category_id integer NOT NULL,
+    user_table_id uuid NOT NULL,
+    category_id uuid NOT NULL,
     alertable boolean NOT NULL
 );
 
@@ -269,43 +247,22 @@ ALTER TABLE category_setting OWNER TO postgres;
 --
 
 CREATE TABLE emergency_contact (
-    id integer NOT NULL,
+    id uuid DEFAULT uuid_generate_v1() NOT NULL,
     name text NOT NULL,
     email text,
-    user_table_id integer NOT NULL
+    user_table_id uuid NOT NULL
 );
 
 
 ALTER TABLE emergency_contact OWNER TO postgres;
 
 --
--- Name: emergency_contact_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE emergency_contact_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE emergency_contact_id_seq OWNER TO postgres;
-
---
--- Name: emergency_contact_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE emergency_contact_id_seq OWNED BY emergency_contact.id;
-
-
---
 -- Name: internal_authentication; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE internal_authentication (
-    user_table_id integer NOT NULL,
-    user_tablename text,
+    user_table_id uuid NOT NULL,
+    username text,
     password text
 );
 
@@ -313,37 +270,16 @@ CREATE TABLE internal_authentication (
 ALTER TABLE internal_authentication OWNER TO postgres;
 
 --
--- Name: internal_authentication_user_table_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE internal_authentication_user_table_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE internal_authentication_user_table_id_seq OWNER TO postgres;
-
---
--- Name: internal_authentication_user_table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE internal_authentication_user_table_id_seq OWNED BY internal_authentication.user_table_id;
-
-
---
 -- Name: location; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE location (
-    id integer NOT NULL,
+    id uuid DEFAULT uuid_generate_v1() NOT NULL,
     description text,
     phone_number text,
     address text,
     icon bytea,
-    user_table_id integer,
+    user_table_id uuid,
     lat numeric,
     long numeric,
     geom geometry(Point,4326)
@@ -357,8 +293,8 @@ ALTER TABLE location OWNER TO postgres;
 --
 
 CREATE TABLE location_category (
-    location_id integer NOT NULL,
-    category_id integer NOT NULL
+    location_id uuid NOT NULL,
+    category_id uuid NOT NULL
 );
 
 
@@ -369,42 +305,21 @@ ALTER TABLE location_category OWNER TO postgres;
 --
 
 CREATE TABLE location_contact (
-    location_id integer NOT NULL,
-    contact_id integer NOT NULL,
-    user_table_id integer NOT NULL
+    location_id uuid NOT NULL,
+    contact_id uuid NOT NULL,
+    user_table_id uuid NOT NULL
 );
 
 
 ALTER TABLE location_contact OWNER TO postgres;
 
 --
--- Name: location_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE location_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE location_id_seq OWNER TO postgres;
-
---
--- Name: location_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE location_id_seq OWNED BY location.id;
-
-
---
 -- Name: location_setting; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE location_setting (
-    user_table_id integer NOT NULL,
-    location_id integer NOT NULL,
+    user_table_id uuid NOT NULL,
+    location_id uuid NOT NULL,
     alertable boolean NOT NULL
 );
 
@@ -416,7 +331,7 @@ ALTER TABLE location_setting OWNER TO postgres;
 --
 
 CREATE TABLE user_table (
-    user_table_id integer NOT NULL,
+    user_table_id uuid DEFAULT uuid_generate_v1() NOT NULL,
     authentication_type integer NOT NULL,
     authentication_token text
 );
@@ -425,66 +340,10 @@ CREATE TABLE user_table (
 ALTER TABLE user_table OWNER TO postgres;
 
 --
--- Name: user_table_user_table_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE user_table_user_table_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE user_table_user_table_id_seq OWNER TO postgres;
-
---
--- Name: user_table_user_table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE user_table_user_table_id_seq OWNED BY user_table.user_table_id;
-
-
---
 -- Name: authentication_type id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY authentication_type ALTER COLUMN id SET DEFAULT nextval('authentication_type_id_seq'::regclass);
-
-
---
--- Name: category id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY category ALTER COLUMN id SET DEFAULT nextval('category_id_seq'::regclass);
-
-
---
--- Name: emergency_contact id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY emergency_contact ALTER COLUMN id SET DEFAULT nextval('emergency_contact_id_seq'::regclass);
-
-
---
--- Name: internal_authentication user_table_id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY internal_authentication ALTER COLUMN user_table_id SET DEFAULT nextval('internal_authentication_user_table_id_seq'::regclass);
-
-
---
--- Name: location id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY location ALTER COLUMN id SET DEFAULT nextval('location_id_seq'::regclass);
-
-
---
--- Name: user_table user_table_id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY user_table ALTER COLUMN user_table_id SET DEFAULT nextval('user_table_user_table_id_seq'::regclass);
 
 
 --
@@ -519,13 +378,6 @@ COPY category_contact (user_table_id, category_id, contact_id) FROM stdin;
 
 
 --
--- Name: category_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('category_id_seq', 1, false);
-
-
---
 -- Data for Name: category_setting; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -542,25 +394,11 @@ COPY emergency_contact (id, name, email, user_table_id) FROM stdin;
 
 
 --
--- Name: emergency_contact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('emergency_contact_id_seq', 1, false);
-
-
---
 -- Data for Name: internal_authentication; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY internal_authentication (user_table_id, user_tablename, password) FROM stdin;
+COPY internal_authentication (user_table_id, username, password) FROM stdin;
 \.
-
-
---
--- Name: internal_authentication_user_table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('internal_authentication_user_table_id_seq', 1, false);
 
 
 --
@@ -588,13 +426,6 @@ COPY location_contact (location_id, contact_id, user_table_id) FROM stdin;
 
 
 --
--- Name: location_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('location_id_seq', 1, false);
-
-
---
 -- Data for Name: location_setting; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -619,10 +450,11 @@ COPY user_table (user_table_id, authentication_type, authentication_token) FROM 
 
 
 --
--- Name: user_table_user_table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: authentication_type authentication_type_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('user_table_user_table_id_seq', 1, false);
+ALTER TABLE ONLY authentication_type
+    ADD CONSTRAINT authentication_type_name_key UNIQUE (name);
 
 
 --

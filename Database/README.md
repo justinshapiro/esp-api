@@ -17,11 +17,12 @@ C:\Program Files\PostgreSQL\9.6\bin
 C:\Program Files\PostgreSQL\9.6\lib
 ```
 
+Note: for both commands below, the user is postgres and the database name is esp_db. You will need to create a database named esp_db on your machine for these commands to work (or modify the commands to use the built in db named postgres).
 ## Loading your local database with current state
 1. Open a command prompt from the folder containing this readme
-2. Type ```psql -U postgres postgres < current_state.sql```
+2. Type ```psql -U postgres esp_db < current_state.sql```
 
 ## Saving your changes
 1. Open a command prompt from the folder containing this readme
-2. Type ```pg_dump -U postgres --clean postgres > current_state.sql```
+2. Type ```pg_dump -U postgres --clean esp_db > current_state.sql```
 3. Commit and push the updated current_state.sql file
