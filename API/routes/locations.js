@@ -4,11 +4,12 @@ var responder = require('./httpRouteResponder');
 var mapsAPI = require('../maps-api/maps');
 
 // Route: /locations
-// Usage: /api/v1/locations?latitude={...}&longitude={...}&radius{...}
+// Usage: /api/v1/locations?latitude={...}&longitude={...}&radius{...}&category{...}
 exports.locations = function(req, res, next) {
 	const latitude = req.query.latitude;
 	const longitude = req.query.longitude;
 	const radius = req.query.radius;
+	const category = req.query.category;
 
 	if (latitude == null) {
 		responder.raiseQueryError(res, 'latitude');
@@ -16,8 +17,10 @@ exports.locations = function(req, res, next) {
 		responder.raiseQueryError(res, 'longitude');
 	} else if (radius == null) {
 		responder.raiseQueryError(res, 'radius');
+	} else if (category == null) {
+		responder.raiseQueryError(res, 'category');
 	} else {
-		mapsAPI.places(latitude, longitude, parseInt(radius), function(locations) {
+		mapsAPI.places(latitude, longitude, parseInt(radius), category, function(locations) {
 			responder.response(res, locations);
 		});
 	}
