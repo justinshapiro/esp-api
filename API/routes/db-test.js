@@ -1,15 +1,5 @@
-// Setup connection to database
-var knex = require('knex')({
-    client: 'pg',
-    debug:  true,
-    connection: {
-      host : '127.0.0.1',
-      user : 'postgres',
-      password : 'seniordesign',
-      database : 'postgres'
-    },
-  });
-
+// Import database connection
+var knex = require('./db-connection.js');
 
 // Add test data to authentication_type table and then output entire table
 knex('authentication_type')
@@ -22,4 +12,12 @@ knex('authentication_type')
   })
   .then((authentication_types) => {
       console.log(authentication_types);
+  });
+
+// Add a user and then output the added user
+knex('user_table')
+  .insert({authentication_type: 1, authentication_token: 'testauthtoken'})
+  .returning('*')
+  .then((user) => {
+      console.log(user);
   });
