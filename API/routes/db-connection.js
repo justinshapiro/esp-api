@@ -8,6 +8,6 @@ module.exports = require('knex')({
           host : '127.0.0.1',
           user : 'postgres',
           password : 'seniordesign',
-          database : 'postgres'
+          database : 'esp_db'
         },
       });
