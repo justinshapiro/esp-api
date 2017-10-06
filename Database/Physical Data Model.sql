@@ -47,7 +47,7 @@ address text,
 
 icon bytea,
 
-user_table_id uuid,
+user_table_id uuid NOT NULL,
 
 lat decimal,
 
@@ -69,7 +69,7 @@ name text NOT NULL,
 
 description text,
 
-user_table_id uuid,
+user_table_id uuid NOT NULL,
 
 PRIMARY KEY (id) 
 
