@@ -17,7 +17,7 @@ C:\Program Files\PostgreSQL\9.6\bin
 C:\Program Files\PostgreSQL\9.6\lib
 ```
 
-Note: in order for database connection to work for everyone using the same files, you must have a user named postgres with password seniordesign, and a database named esp_db.
+Note: in order for database connection to work for everyone, we all must have a user named postgres with password seniordesign, and a database named esp_db.
 ## Loading your local database with current state
 1. Open a command prompt from the folder containing this readme
 2. Type ```psql -U postgres esp_db < current_state.sql```
