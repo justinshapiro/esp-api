@@ -6,7 +6,7 @@ var googleMapsClient = require('@google/maps').createClient({
  	Promise: Promise
 });
 
-exports.places = function(lat, lon, rad, completion) {
+exports.places = function(lat, lon, rad, category, completion) {
 	var result;
 
 	googleMapsClient.placesNearby({
@@ -14,7 +14,7 @@ exports.places = function(lat, lon, rad, completion) {
 		location: [lat, lon],
 		radius: rad,
 		opennow: true,
-		type: 'hospital'
+		type: category
 	})
 	.asPromise()
 	.then((response) => {
