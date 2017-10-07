@@ -5,6 +5,7 @@ var knex = require('./db-connection.js');
 function add_authentication_type() {
     return knex('authentication_type')
     .insert({id: 1, name: 'Internal'})
+    .catch(friendly_error_print)
 }
 
 // Add a 'default' user with nil uuid
@@ -14,6 +15,7 @@ function add_default_user() {
     .insert({user_table_id: knex.raw('uuid_nil()'),
             authentication_type: 1,
             authentication_token: "default"})
+    .catch(friendly_error_print)
 }
 
 // Add categories so that locations can be created
@@ -26,6 +28,11 @@ function add_categories() {
     description: "Where people go when there’s trouble"},
     {name: "Fire Dept",
     description: "Where all the fire trucks are"}])
+    .catch(friendly_error_print)
+}
+
+function friendly_error_print(error) {
+    console.error("PostgreSQL Error: " + error.detail);
 }
 
 // Run the functions in the necessary order to fit constraints
