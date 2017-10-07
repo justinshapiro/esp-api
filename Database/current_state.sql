@@ -37,6 +37,7 @@ DROP TRIGGER location_update ON public.location;
 DROP TRIGGER location_insert ON public.location;
 DROP INDEX public.idx_location_geom;
 ALTER TABLE ONLY public.user_table DROP CONSTRAINT user_table_pkey;
+ALTER TABLE ONLY public.category DROP CONSTRAINT unique_name_and_user_id;
 ALTER TABLE ONLY public.location_setting DROP CONSTRAINT location_setting_pkey;
 ALTER TABLE ONLY public.location DROP CONSTRAINT location_pkey;
 ALTER TABLE ONLY public.location_contact DROP CONSTRAINT location_contact_pkey;
@@ -210,7 +211,7 @@ CREATE TABLE category (
     id uuid DEFAULT uuid_generate_v1() NOT NULL,
     name text NOT NULL,
     description text,
-    user_table_id uuid
+    user_table_id uuid DEFAULT uuid_nil() NOT NULL
 );
 
 
@@ -333,7 +334,8 @@ ALTER TABLE location_setting OWNER TO postgres;
 CREATE TABLE user_table (
     user_table_id uuid DEFAULT uuid_generate_v1() NOT NULL,
     authentication_type integer NOT NULL,
-    authentication_token text
+    authentication_token text,
+    name text
 );
 
 
@@ -351,6 +353,7 @@ ALTER TABLE ONLY authentication_type ALTER COLUMN id SET DEFAULT nextval('authen
 --
 
 COPY authentication_type (id, name) FROM stdin;
+1	Internal
 \.
 
 
@@ -358,7 +361,7 @@ COPY authentication_type (id, name) FROM stdin;
 -- Name: authentication_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('authentication_type_id_seq', 1, false);
+SELECT pg_catalog.setval('authentication_type_id_seq', 10, true);
 
 
 --
@@ -366,6 +369,9 @@ SELECT pg_catalog.setval('authentication_type_id_seq', 1, false);
 --
 
 COPY category (id, name, description, user_table_id) FROM stdin;
+819aaea0-ab8c-11e7-8254-974a4e9a50d4	Hospital	Where people go to get healed	00000000-0000-0000-0000-000000000000
+819b242a-ab8c-11e7-8255-5fc07584b915	Police Dept	Where people go when there’s trouble	00000000-0000-0000-0000-000000000000
+819b242b-ab8c-11e7-8256-9751457bf773	Fire Dept	Where all the fire trucks are	00000000-0000-0000-0000-000000000000
 \.
 
 
@@ -445,7 +451,8 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 -- Data for Name: user_table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY user_table (user_table_id, authentication_type, authentication_token) FROM stdin;
+COPY user_table (user_table_id, authentication_type, authentication_token, name) FROM stdin;
+00000000-0000-0000-0000-000000000000	1	default	default
 \.
 
 
@@ -535,6 +542,14 @@ ALTER TABLE ONLY location
 
 ALTER TABLE ONLY location_setting
     ADD CONSTRAINT location_setting_pkey PRIMARY KEY (user_table_id, location_id);
+
+
+--
+-- Name: category unique_name_and_user_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY category
+    ADD CONSTRAINT unique_name_and_user_id UNIQUE (name, user_table_id);
 
 
 --
