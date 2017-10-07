@@ -5,6 +5,8 @@ CREATE TABLE user_table (
 
 user_table_id uuid NOT NULL DEFAULT uuid_generate_v1(),
 
+name text,
+
 authentication_type int4 NOT NULL,
 
 authentication_token text,
