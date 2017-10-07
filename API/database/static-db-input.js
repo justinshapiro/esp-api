@@ -14,7 +14,8 @@ function add_default_user() {
     return knex('user_table')
     .insert({user_table_id: knex.raw('uuid_nil()'),
             authentication_type: 1,
-            authentication_token: "default"})
+            authentication_token: "default",
+            name: "default"})
     .catch(friendly_error_print)
 }
 
