@@ -1,7 +1,7 @@
 'use strict';
 
-var responder = require('./httpRouteResponder');
-var knex = require('../database/db-connection.js');
+const responder = require('./httpRouteResponder');
+const knex = require('../database/db-connection.js');
 
 // Route to find the correct endpoint whose signature is /users/property
 function route_property(req, res, next, args, method) {
