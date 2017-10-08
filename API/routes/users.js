@@ -66,7 +66,7 @@ function route_property_key(req, res, next, args, method) {
 function route_property_key_detail(req, res, next, args, method) {
 	const property = args['property'];
 	const detail = args['detail'];
-    const query = req.query;
+	const query = req.query;
 
 	switch (property) {
 		case 'contacts': {
