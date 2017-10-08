@@ -16,7 +16,10 @@ knex('authentication_type')
 
 // Add a user and then output the added user
 knex('user_table')
-  .insert({authentication_type: 1, authentication_token: 'testauthtoken'})
+  .insert({authentication_type: function () {
+    this.select('id').from('authentication_type').where('name', 'Internal')
+  },
+        auhentication_token: 'testauthtoken'})
   .returning('*')
   .then((user) => {
       console.log(user);

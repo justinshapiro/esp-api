@@ -247,12 +247,24 @@ function put_locations_id_name(args) {
 	return data;
 }
 
+function get_users() {
+	return knex('user_table')
+	.select('user_table.user_table_id', 'user_table.authentication_token', 
+			'user_table.name', 'authentication_type.name as auth_type',
+			'internal_authentication.username', 'internal_authentication.password')
+	.join('authentication_type', 'user_table.authentication_type', 'authentication_type.id')
+	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id');
+}
+
 exports.users_get = function(req, res, next) {
 	// No need to route further, continue logic here
 
-	responder.response(res, {
-		'Endpoint': 'GET /users'
-	});
+	get_users().then((users) => {
+		responder.response(res, {
+			'Endpoint': 'GET /users',
+			'Users': users
+		});
+	})
 };
 
 function add_user(auth_type, token, name) {
