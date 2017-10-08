@@ -1,6 +1,6 @@
 'use strict';
 
-var responder = require('./httpRouteResponder');
+const responder = require('./httpRouteResponder');
 
 exports.authorize = function(req, res, next) {
 	responder.response(res, {

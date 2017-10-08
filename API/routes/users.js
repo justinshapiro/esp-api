@@ -1,35 +1,36 @@
 'use strict';
 
-var responder = require('./httpRouteResponder');
-var knex = require('../database/db-connection.js');
+const responder = require('./httpRouteResponder');
+const knex = require('../database/db-connection.js');
 
 // Route to find the correct endpoint whose signature is /users/property
 function route_property(req, res, next, args, method) {
 	const property = args['property'];
+	const query = req.query;
 
 	switch (property) {
-		case 'name':  responder.response(res, put_name(args));  break;
-		case 'email': responder.response(res, put_email(args)); break;
-		case 'phone': responder.response(res, put_phone(args)); break;
+		case 'name':  responder.response(res, put_name(args, query));  break;
+		case 'email': responder.response(res, put_email(args, query)); break;
+		case 'phone': responder.response(res, put_phone(args, query)); break;
 		case 'contacts': {
 			switch (method) {
-				case 'get':  responder.response(res, get_contacts(args));  break;
-				case 'post': responder.response(res, post_contacts(args)); break;
+				case 'get':  responder.response(res, get_contacts(args, query));  break;
+				case 'post': responder.response(res, post_contacts(args, query)); break;
 				default:     responder.raiseMethodError(res, method);
 			}
 		} break;
 		case 'locations': {
 			switch (method) {
-				case 'get':  responder.response(res, get_locations(args)); break;
-				case 'post': responder.response(res, post_locations(args));     break;
+				case 'get':  responder.response(res, get_locations(args, query));  break;
+				case 'post': responder.response(res, post_locations(args, query)); break;
 				default:     responder.raiseMethodError(res, method);
 			}
 		} break;
 		case 'alert': {
 			switch (method) {
-				case 'get':    responder.response(res, get_alert(args));    break;
-				case 'post':   responder.response(res, post_alert(args));   break;
-				case 'delete': responder.response(res, delete_alert(args)); break;
+				case 'get':    responder.response(res, get_alert(args, query));    break;
+				case 'post':   responder.response(res, post_alert(args, query));   break;
+				case 'delete': responder.response(res, delete_alert(args, query)); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -40,19 +41,20 @@ function route_property(req, res, next, args, method) {
 // Route to find the correct endpoint whose signature is /users/property/key
 function route_property_key(req, res, next, args, method) {
 	const property = args['property'];
+    const query = req.query;
 
 	switch (property) {
 		case 'contacts': {
 			switch (method) {
-				case 'get':    responder.response(res, get_contacts_id(args));    break;
-				case 'delete': responder.response(res, delete_contacts_id(args)); break;
+				case 'get':    responder.response(res, get_contacts_id(args, query));    break;
+				case 'delete': responder.response(res, delete_contacts_id(args, query)); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
 		case 'locations': {
 			switch (method) {
-				case 'get':    responder.response(res, get_locations_id(args));    break;
-				case 'delete': responder.response(res, delete_locations_id(args)); break;
+				case 'get':    responder.response(res, get_locations_id(args, query));    break;
+				case 'delete': responder.response(res, delete_locations_id(args, query)); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -64,14 +66,15 @@ function route_property_key(req, res, next, args, method) {
 function route_property_key_detail(req, res, next, args, method) {
 	const property = args['property'];
 	const detail = args['detail'];
+    const query = req.query;
 
 	switch (property) {
 		case 'contacts': {
 			switch (method) {
 				case 'put': {
 					switch (detail) {
-						case 'phone': responder.response(res, put_contacts_id_phone(args)); break;
-						case 'email': responder.response(res, put_contacts_id_email(args)); break;
+						case 'phone': responder.response(res, put_contacts_id_phone(args, query)); break;
+						case 'email': responder.response(res, put_contacts_id_email(args, query)); break;
 						default:      responder.raiseDetailError(res, detail);
 					}
 				} break;
@@ -82,7 +85,7 @@ function route_property_key_detail(req, res, next, args, method) {
 			switch (method) {
 				case 'put': {
 					switch (detail) {
-						case 'name': responder.response(res, put_locations_id_name(args)); break
+						case 'name': responder.response(res, put_locations_id_name(args, query)); break;
 						default:     responder.raiseDetailError(res, detail);
 					}
 				} break;
@@ -94,154 +97,171 @@ function route_property_key_detail(req, res, next, args, method) {
 }
 
 // Below is individual methods to implement endpoints that needed to be routed 
-function put_name(args) {
+function put_name(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/name',
-		'Args': args
+		'Args': args,
+		'Query Parameters': query
 	};
 
 	return data;
 }
 
-function put_email(args) {
+function put_email(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/email',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function put_phone(args) {
+function put_phone(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/phone',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function get_contacts(args) {
+function get_contacts(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/contacts',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function post_contacts(args) {
+function post_contacts(args, query) {
 	const data = {
 		'Endpoint': 'POST /users/{id}/contacts',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function get_locations(args) {
+function get_locations(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/locations',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function post_locations(args) {
+function post_locations(args, query) {
 	const data = {
 		'Endpoint': 'POST /users/{id}/locations',
-		'Args': args
+		'Args': args,
+		'Query Parameters': query
 	};
 
 	return data;
 }
 
-function get_alert(args) {
+function get_alert(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/alert',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function post_alert(args) {
+function post_alert(args, query) {
 	const data = {
 		'Endpoint': 'POST /users/{id}/alert',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function delete_alert(args) {
+function delete_alert(args, query) {
 	const data = {
 		'Endpoint': 'DELETE /users/{id}/alert',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function get_contacts_id(args) {
+function get_contacts_id(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/contacts/{id}',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function delete_contacts_id(args) {
+function delete_contacts_id(args, query) {
 	const data = {
 		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function get_locations_id(args) {
+function get_locations_id(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/locations/{id}',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function delete_locations_id(args) {
+function delete_locations_id(args, query) {
 	const data = {
 		'Endpoint': 'DELETE /users/{id}/locations/{id}',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function put_contacts_id_phone(args) {
+function put_contacts_id_phone(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function put_contacts_id_email(args) {
+function put_contacts_id_email(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
 }
 
-function put_locations_id_name(args) {
+function put_locations_id_name(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
-		'Args': args
+		'Args': args,
+        'Query Parameters': query
 	};
 
 	return data;
@@ -285,7 +305,7 @@ exports.users_post = function(req, res, next) {
 	const auth_type = req.query.authentication_type;
 	const token = req.query.authentication_token;
 
-	if (auth_type == null) {
+	if (auth_type === null) {
 		responder.raiseQueryError(res, 'authentication_type');
 	} else {
 		add_user(auth_type, token, name).then((user) => {

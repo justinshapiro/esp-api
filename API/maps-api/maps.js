@@ -1,15 +1,13 @@
-var Promise = require('q').Promise;
+const Promise = require('q').Promise;
 
 // Authorize Client
-var googleMapsClient = require('@google/maps').createClient({
- 	key: 'AIzaSyDhSibfX0DdBHsUFc1OdvARvsLiuEfQ7Jc',
- 	Promise: Promise
+const googleMapsClient = require('@google/maps').createClient({
+    key: 'AIzaSyDhSibfX0DdBHsUFc1OdvARvsLiuEfQ7Jc',
+    Promise: Promise
 });
 
 exports.places = function(lat, lon, rad, category, completion) {
-	var result;
-
-	googleMapsClient.placesNearby({
+    googleMapsClient.placesNearby({
 		language: 'en',
 		location: [lat, lon],
 		radius: rad,
@@ -18,7 +16,7 @@ exports.places = function(lat, lon, rad, category, completion) {
 	})
 	.asPromise()
 	.then((response) => {
-		completion(response.json.results);
+		completion(response);
 	})
 	.catch((err) => {
 		completion(err);
