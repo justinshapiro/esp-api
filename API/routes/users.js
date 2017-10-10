@@ -148,7 +148,6 @@ function post_contacts(args, query) {
 }
 
 function get_locations(args, query) {
-<<<<<<< HEAD
 	knex('output_locations')
 	.select('*')
 	.where('user_table_id', args.user_id)
@@ -163,15 +162,6 @@ function get_locations(args, query) {
 	
 		return data;
 	})
-=======
-	const data = {
-		'Endpoint': 'GET /users/{id}/locations',
-		'Args': args,
-		'Query Parameters': query
-	};
-
-	return data;
->>>>>>> 4fd5d2a60e847860066eccfdd475fe8d7201fbe3
 }
 
 // Query Parameters 
