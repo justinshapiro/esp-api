@@ -41,7 +41,7 @@ function route_property(req, res, next, args, method) {
 // Route to find the correct endpoint whose signature is /users/property/key
 function route_property_key(req, res, next, args, method) {
 	const property = args['property'];
-    const query = req.query;
+	const query = req.query;
 
 	switch (property) {
 		case 'contacts': {
@@ -66,7 +66,7 @@ function route_property_key(req, res, next, args, method) {
 function route_property_key_detail(req, res, next, args, method) {
 	const property = args['property'];
 	const detail = args['detail'];
-    const query = req.query;
+	const query = req.query;
 
 	switch (property) {
 		case 'contacts': {
@@ -111,7 +111,7 @@ function put_email(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/email',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -121,7 +121,7 @@ function put_phone(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/phone',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -131,7 +131,7 @@ function get_contacts(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/contacts',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -141,13 +141,14 @@ function post_contacts(args, query) {
 	const data = {
 		'Endpoint': 'POST /users/{id}/contacts',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
 }
 
 function get_locations(args, query) {
+<<<<<<< HEAD
 	knex('output_locations')
 	.select('*')
 	.where('user_table_id', args.user_id)
@@ -162,6 +163,15 @@ function get_locations(args, query) {
 	
 		return data;
 	})
+=======
+	const data = {
+		'Endpoint': 'GET /users/{id}/locations',
+		'Args': args,
+		'Query Parameters': query
+	};
+
+	return data;
+>>>>>>> 4fd5d2a60e847860066eccfdd475fe8d7201fbe3
 }
 
 // Query Parameters 
@@ -207,7 +217,7 @@ function get_alert(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/alert',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -217,7 +227,7 @@ function post_alert(args, query) {
 	const data = {
 		'Endpoint': 'POST /users/{id}/alert',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -227,7 +237,7 @@ function delete_alert(args, query) {
 	const data = {
 		'Endpoint': 'DELETE /users/{id}/alert',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -237,7 +247,7 @@ function get_contacts_id(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/contacts/{id}',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -247,7 +257,7 @@ function delete_contacts_id(args, query) {
 	const data = {
 		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -257,7 +267,7 @@ function get_locations_id(args, query) {
 	const data = {
 		'Endpoint': 'GET /users/{id}/locations/{id}',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -267,7 +277,7 @@ function delete_locations_id(args, query) {
 	const data = {
 		'Endpoint': 'DELETE /users/{id}/locations/{id}',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -277,7 +287,7 @@ function put_contacts_id_phone(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -287,7 +297,7 @@ function put_contacts_id_email(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
@@ -297,7 +307,7 @@ function put_locations_id_name(args, query) {
 	const data = {
 		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
 		'Args': args,
-        'Query Parameters': query
+		'Query Parameters': query
 	};
 
 	return data;
