@@ -21,8 +21,8 @@ function route_property(req, res, next, args, method) {
 		} break;
 		case 'locations': {
 			switch (method) {
-				case 'get':  responder.response(res, get_locations(args, query));  break;
-				case 'post': responder.response(res, post_locations(args, query)); break;
+				case 'get':  get_locations(args, query, res);  break;
+				case 'post': post_locations(args, query, res); break;
 				default:     responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -147,27 +147,25 @@ function post_contacts(args, query) {
 	return data;
 }
 
-function get_locations(args, query) {
+function get_locations(args, query, res) {
 	knex('output_locations')
 	.select('*')
 	.where('user_table_id', args.user_id)
 	.then((locations) => {
-		console.log(locations);
-		const data = {
+		responder.response(res,
+			{
 			'Endpoint': 'GET /users/{id}/locations',
 			'Args': args,
 			'Query Parameters': query,
 			'DB Result': locations
-		};
-	
-		return data;
+			});
 	})
 }
 
 // Query Parameters 
 // Required: category_name
 // Optional: description, phone_number, address, lat, long
-function post_locations(args, query) {
+function post_locations(args, query, res) {
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
 	if (query.description == null)
@@ -193,14 +191,14 @@ function post_locations(args, query) {
 	}})
 	.returning('*')
 	.then((location) => {
-		const data = {
+		responder.response(res, 
+			{
 			'Endpoint': 'POST /users/{id}/locations',
 			'Args': args,
 			'Query Parameters': query,
 			'DB Result': location
-		}
+			});
 	})
-	return data;
 }
 
 function get_alert(args, query) {
