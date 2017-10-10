@@ -266,3 +266,26 @@ CREATE TRIGGER location_update
     WHEN (OLD.lat IS DISTINCT FROM NEW.lat AND OLD.long IS DISTINCT FROM
     NEW.long)
     EXECUTE PROCEDURE public.update_geom();
+
+/* Add views to simplify getting data */
+CREATE OR REPLACE VIEW public.output_locations AS
+ SELECT location.id,
+    location.description,
+    location.phone_number,
+    location.address,
+    location.icon,
+    location.user_table_id,
+    st_asgeojson(location.geom) AS geojson,
+    json_agg(category.*) AS categories,
+    location_setting.alertable,
+    json_agg(emergency_contact.*) AS contacts
+   FROM location
+     JOIN location_category lcat ON lcat.location_id = location.id
+     JOIN category ON lcat.category_id = category.id
+     LEFT JOIN location_setting ON location.id = location_setting.location_id AND location.user_table_id = location_setting.user_table_id
+     LEFT JOIN location_contact lcon ON lcon.location_id = location.id AND lcon.user_table_id = location.user_table_id
+     LEFT JOIN emergency_contact ON lcon.contact_id = emergency_contact.id
+  GROUP BY location.id, location_setting.alertable;
+
+ALTER TABLE public.output_locations
+    OWNER TO postgres;
