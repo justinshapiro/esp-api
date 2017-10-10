@@ -168,37 +168,43 @@ function get_locations(args, query, res) {
 function post_locations(args, query, res) {
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
-	if (query.description == null)
+	if (query.description == null) {
 		query.description = null
-	if (query.phone_number == null)
+	}
+	if (query.phone_number == null) {
 		query.phone_number = null
-	if (query.address == null)
-		query.address = null
-	if (query.lat == null)
-		query.lat = null
-	if (query.long == null)
-		query.long = null
-	knex('location_category')
-	.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
-										 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-										[query.description, query.phone_number, query.address, 
-											query.lat, query.long, args.user_id]))
-	.insert({location_id: function() {
-		this.select('loc_id').from('location_insert')
-	},
-		category_id: function() {
-		this.select('category.id').from('category').where('name', query.category_name)
-	}})
-	.returning('*')
-	.then((location) => {
-		responder.response(res, 
-			{
-			'Endpoint': 'POST /users/{id}/locations',
-			'Args': args,
-			'Query Parameters': query,
-			'DB Result': location
-			});
-	})
+	}
+	if (query.address == null) {
+		responser.raiseQueryError(res, 'address')
+	}
+	else if (query.lat == null) {
+		responser.raiseQueryError(res, 'lat')
+	}
+	else if (query.long == null) {
+		responser.raiseQueryError(res, 'long')
+	} else {
+		knex('location_category')
+		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
+											 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
+											[query.description, query.phone_number, query.address, 
+												query.lat, query.long, args.user_id]))
+		.insert({location_id: function() {
+			this.select('loc_id').from('location_insert')
+		},
+			category_id: function() {
+			this.select('category.id').from('category').where('name', query.category_name)
+		}})
+		.returning('*')
+		.then((location) => {
+			responder.response(res, 
+				{
+				'Endpoint': 'POST /users/{id}/locations',
+				'Args': args,
+				'Query Parameters': query,
+				'DB Result': location
+				});
+		})
+	}
 }
 
 function get_alert(args, query) {

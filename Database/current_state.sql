@@ -35,6 +35,7 @@ ALTER TABLE ONLY public.category_contact DROP CONSTRAINT fk_category_contacts_em
 ALTER TABLE ONLY public.category_contact DROP CONSTRAINT fk_category_contacts_categories_1;
 DROP TRIGGER location_update ON public.location;
 DROP TRIGGER location_insert ON public.location;
+DROP RULE "_RETURN" ON public.output_locations;
 DROP INDEX public.idx_location_geom;
 ALTER TABLE ONLY public.user_table DROP CONSTRAINT user_table_pkey;
 ALTER TABLE ONLY public.category DROP CONSTRAINT unique_name_and_user_id;
@@ -51,6 +52,7 @@ ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_
 ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_name_key;
 ALTER TABLE public.authentication_type ALTER COLUMN id DROP DEFAULT;
 DROP TABLE public.user_table;
+DROP TABLE public.output_locations;
 DROP TABLE public.location_setting;
 DROP TABLE public.location_contact;
 DROP TABLE public.location_category;
@@ -328,6 +330,28 @@ CREATE TABLE location_setting (
 ALTER TABLE location_setting OWNER TO postgres;
 
 --
+-- Name: output_locations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE output_locations (
+    id uuid,
+    description text,
+    phone_number text,
+    address text,
+    icon bytea,
+    user_table_id uuid,
+    geojson text,
+    categories json,
+    alertable boolean,
+    contacts json
+);
+
+ALTER TABLE ONLY output_locations REPLICA IDENTITY NOTHING;
+
+
+ALTER TABLE output_locations OWNER TO postgres;
+
+--
 -- Name: user_table; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -361,7 +385,7 @@ COPY authentication_type (id, name) FROM stdin;
 -- Name: authentication_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('authentication_type_id_seq', 10, true);
+SELECT pg_catalog.setval('authentication_type_id_seq', 11, true);
 
 
 --
@@ -412,6 +436,28 @@ COPY internal_authentication (user_table_id, username, password) FROM stdin;
 --
 
 COPY location (id, description, phone_number, address, icon, user_table_id, lat, long, geom) FROM stdin;
+4e002b04-ae0e-11e7-bc63-539357cc0fec	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
+107c080c-ae13-11e7-a6ad-4f96db8fabde	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
+96dfd416-adf8-11e7-8f78-27aa67ba9d05	\N	\N	\N	\N	\N	\N	\N	\N
+15ebbd4e-adf7-11e7-8a57-47dbee394b88	\N	\N	\N	\N	\N	\N	\N	\N
+b602e58a-ac55-11e7-82a1-e742ada5df7d	Test	\N	\N	\N	\N	\N	\N	\N
+43a96e0a-adef-11e7-b511-237f5608ebbd	test	\N	\N	\N	\N	\N	\N	\N
+850b451c-adef-11e7-b512-d736fd12fcb3	test	\N	\N	\N	\N	\N	\N	\N
+3fc0bd26-adf3-11e7-b513-7fb0965e5b4f	test	\N	\N	\N	\N	\N	\N	\N
+a27f16e6-adf4-11e7-a54f-cbd2d36b3376	test	test	test	\N	\N	\N	\N	\N
+8629db56-adf5-11e7-b903-af1a4be161a8	test	test	test	\N	\N	\N	\N	\N
+98d8eb98-adf5-11e7-ab61-3b4fd457d11b	test	test	test	\N	\N	\N	\N	\N
+a1fce746-adf6-11e7-bc9a-733b1f7790e9	\N	\N	\N	\N	\N	\N	\N	\N
+aa74cede-adf6-11e7-883e-6be98c0283ed	\N	\N	\N	\N	\N	\N	\N	\N
+f93db918-adf6-11e7-84b3-ffba12623491	\N	\N	\N	\N	\N	\N	\N	\N
+3457537e-adf7-11e7-ab79-5f1686660ba3	\N	\N	\N	\N	\N	\N	\N	\N
+4dd78832-adf7-11e7-96c0-33e7fa9cc392	\N	\N	\N	\N	\N	\N	\N	\N
+18e64874-adf8-11e7-87ab-339a8fcee011	\N	\N	\N	\N	\N	\N	\N	\N
+8d09113c-adf8-11e7-9c98-8f4bc72eee2c	\N	\N	\N	\N	\N	\N	\N	\N
+01635164-adf9-11e7-807d-4f8c27969027	\N	\N	\N	\N	\N	\N	\N	\N
+685a97f6-adf9-11e7-bef1-a3f7d74bdf5c	\N	\N	\N	\N	\N	\N	\N	\N
+471cc7d4-ae13-11e7-804d-075b518ea09a	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
+ad7d8b5e-adf9-11e7-bff8-bb89dc6893cd	\N	\N	\N	\N	\N	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
 \.
 
 
@@ -420,6 +466,28 @@ COPY location (id, description, phone_number, address, icon, user_table_id, lat,
 --
 
 COPY location_category (location_id, category_id) FROM stdin;
+b602e58a-ac55-11e7-82a1-e742ada5df7d	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+43a96e0a-adef-11e7-b511-237f5608ebbd	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+850b451c-adef-11e7-b512-d736fd12fcb3	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+3fc0bd26-adf3-11e7-b513-7fb0965e5b4f	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+a27f16e6-adf4-11e7-a54f-cbd2d36b3376	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+8629db56-adf5-11e7-b903-af1a4be161a8	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+98d8eb98-adf5-11e7-ab61-3b4fd457d11b	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+a1fce746-adf6-11e7-bc9a-733b1f7790e9	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+aa74cede-adf6-11e7-883e-6be98c0283ed	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+f93db918-adf6-11e7-84b3-ffba12623491	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+15ebbd4e-adf7-11e7-8a57-47dbee394b88	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+3457537e-adf7-11e7-ab79-5f1686660ba3	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+4dd78832-adf7-11e7-96c0-33e7fa9cc392	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+18e64874-adf8-11e7-87ab-339a8fcee011	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+8d09113c-adf8-11e7-9c98-8f4bc72eee2c	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+96dfd416-adf8-11e7-8f78-27aa67ba9d05	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+01635164-adf9-11e7-807d-4f8c27969027	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+685a97f6-adf9-11e7-bef1-a3f7d74bdf5c	819b242a-ab8c-11e7-8255-5fc07584b915
+ad7d8b5e-adf9-11e7-bff8-bb89dc6893cd	819b242a-ab8c-11e7-8255-5fc07584b915
+4e002b04-ae0e-11e7-bc63-539357cc0fec	819b242a-ab8c-11e7-8255-5fc07584b915
+107c080c-ae13-11e7-a6ad-4f96db8fabde	819b242a-ab8c-11e7-8255-5fc07584b915
+471cc7d4-ae13-11e7-804d-075b518ea09a	819b242a-ab8c-11e7-8255-5fc07584b915
 \.
 
 
@@ -453,6 +521,8 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 
 COPY user_table (user_table_id, authentication_type, authentication_token, name) FROM stdin;
 00000000-0000-0000-0000-000000000000	1	default	default
+c8552394-ac4e-11e7-a6e5-638439a8b77b	1	\N	\N
+bafffff6-ac4f-11e7-bdce-ffae76dc2a2c	1	testauthtoken	\N
 \.
 
 
@@ -565,6 +635,30 @@ ALTER TABLE ONLY user_table
 --
 
 CREATE INDEX idx_location_geom ON location USING gist (geom);
+
+
+--
+-- Name: output_locations _RETURN; Type: RULE; Schema: public; Owner: postgres
+--
+
+CREATE RULE "_RETURN" AS
+    ON SELECT TO output_locations DO INSTEAD  SELECT location.id,
+    location.description,
+    location.phone_number,
+    location.address,
+    location.icon,
+    location.user_table_id,
+    st_asgeojson(location.geom) AS geojson,
+    json_agg(category.*) AS categories,
+    location_setting.alertable,
+    json_agg(emergency_contact.*) AS contacts
+   FROM (((((location
+     JOIN location_category lcat ON ((lcat.location_id = location.id)))
+     JOIN category ON ((lcat.category_id = category.id)))
+     LEFT JOIN location_setting ON (((location.id = location_setting.location_id) AND (location.user_table_id = location_setting.user_table_id))))
+     LEFT JOIN location_contact lcon ON (((lcon.location_id = location.id) AND (lcon.user_table_id = location.user_table_id))))
+     LEFT JOIN emergency_contact ON ((lcon.contact_id = emergency_contact.id)))
+  GROUP BY location.id, location_setting.alertable;
 
 
 --
