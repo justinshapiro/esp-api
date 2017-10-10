@@ -174,9 +174,10 @@ function post_locations(args, query) {
 	if (query.long == null)
 		query.long = null
 	knex('location_category')
-	.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long)\
-										 VALUES(?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-										[query.description, query.phone_number, query.address, query.lat, query.long]))
+	.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
+										 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
+										[query.description, query.phone_number, query.address, 
+											query.lat, query.long, args.user_id]))
 	.insert({location_id: function() {
 		this.select('loc_id').from('location_insert')
 	},
