@@ -340,7 +340,7 @@ CREATE TABLE output_locations (
     address text,
     icon bytea,
     user_table_id uuid,
-    geojson text,
+    geometry text,
     categories json,
     alertable boolean,
     contacts json
@@ -648,7 +648,7 @@ CREATE RULE "_RETURN" AS
     location.address,
     location.icon,
     location.user_table_id,
-    st_asgeojson(location.geom) AS geojson,
+    st_asgeojson(location.geom) AS geometry,
     json_agg(category.*) AS categories,
     location_setting.alertable,
     json_agg(emergency_contact.*) AS contacts
