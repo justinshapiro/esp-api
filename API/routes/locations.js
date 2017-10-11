@@ -33,44 +33,51 @@ exports.locations = function(req, res, next) {
 // Route: GET /locations/{id}
 // Usage: GET /api/v1/locations/{id}
 exports.locations_id = function(req, res, next) {
-	const arg = req.params.location_id;
+	const location_id = req.params['location_id'];
 
-	responder.response(res, {
-		'Endpoint': 'GET /locations/{id}',
-		'Args': arg
+	mapsAPI.getPlace(location_id, function(placeDetails) {
+		responder.response(res, geoJsonify(placeDetails));
 	});
 };
 
+// Helper functions
 function geoJsonify(mapsResponse) {
-    const results = mapsResponse.json['results'];
+	if (mapsResponse.json['results'] === undefined) {
+		return getFeature(mapsResponse.json['result'])
+	}
+
+	const results = mapsResponse.json['results'];
 
     let features = [];
     for (let i = 0; i < results.length; i++) {
-        const lat = results[i]['geometry']['location']['lat'];
-        const lng = results[i]['geometry']['location']['lng'];
-        const name = results[i]['name'];
-        const address = results[i]['vicinity'];
-
-        const feature = {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [lat, lng]
-            },
-            "properties": {
-                "name": name,
-                "address": address
-            }
-        };
-        features.push(feature);
+        features.push(getFeature(results[i]));
     }
 
-    const geoJson = {
+    return {
         "GeoJson": {
         	"type": "FeatureCollection",
         	"features": features
     	}
     };
+}
 
-    return geoJson;
+function getFeature(json) {
+	const lat = json['geometry']['location']['lat'];
+	const lng = json['geometry']['location']['lng'];
+	const name = json['name'];
+	const address = json['vicinity'];
+	const location_id = json['place_id'];
+
+	return {
+		"type": "Feature",
+		"geometry": {
+			"type": "Point",
+			"coordinates": [lat, lng]
+		},
+		"properties": {
+			"name": name,
+			"address": address,
+			"location_id": location_id
+		}
+	};
 }
