@@ -238,8 +238,13 @@ function post_locations(args, query, res) {
 			this.select('category.id').from('category').where('name', category_type)
 		}})
 		.returning('*')
-		.then((location) => {
-			responder.response(res, location);
+		.then((location_cat) => {
+			knex('output_locations')
+			.select('*')
+			.where('id', location_cat[0].location_id)
+			.then((location) => {
+				responder.response(res, location);
+			})
 		})
 	}
 }
