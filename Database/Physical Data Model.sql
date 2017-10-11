@@ -199,37 +199,37 @@ WITHOUT OIDS;
 
 ALTER TABLE user_table ADD CONSTRAINT fk_user_tables_Authentication_Types_1 FOREIGN KEY (authentication_type) REFERENCES authentication_type (id);
 
-ALTER TABLE location_category ADD CONSTRAINT fk_Location_Categories_Categories_1 FOREIGN KEY (category_id) REFERENCES category (id);
+ALTER TABLE location_category ADD CONSTRAINT fk_Location_Categories_Categories_1 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE;
 
-ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_Emergency_Contacts_1 FOREIGN KEY (contact_id) REFERENCES emergency_contact (id);
+ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_Emergency_Contacts_1 FOREIGN KEY (contact_id) REFERENCES emergency_contact (id) ON DELETE CASCADE;
 
-ALTER TABLE emergency_contact ADD CONSTRAINT fk_Emergency_Contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE emergency_contact ADD CONSTRAINT fk_Emergency_Contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE location ADD CONSTRAINT fk_Locations_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE location ADD CONSTRAINT fk_Locations_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE category ADD CONSTRAINT fk_Default_Categories_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE category ADD CONSTRAINT fk_Default_Categories_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id);
+ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE;
 
-ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id);
+ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE;
 
-ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_Emergency_Contacts_1 FOREIGN KEY (contact_id) REFERENCES emergency_contact (id);
+ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_Emergency_Contacts_1 FOREIGN KEY (contact_id) REFERENCES emergency_contact (id) ON DELETE CASCADE;
 
-ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_Categories_1 FOREIGN KEY (category_id) REFERENCES category (id);
+ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_Categories_1 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE;
 
-ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE category_setting ADD CONSTRAINT fk_Category_Settings_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE category_setting ADD CONSTRAINT fk_Category_Settings_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE category_setting ADD CONSTRAINT fk_Category_Settings_Categories_1 FOREIGN KEY (category_id) REFERENCES category (id);
+ALTER TABLE category_setting ADD CONSTRAINT fk_Category_Settings_Categories_1 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE;
 
-ALTER TABLE location_category ADD CONSTRAINT fk_Location_Categories_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id);
+ALTER TABLE location_category ADD CONSTRAINT fk_Location_Categories_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE;
 
-ALTER TABLE internal_authentication ADD CONSTRAINT fk_Internal_Authentication_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id);
+ALTER TABLE internal_authentication ADD CONSTRAINT fk_Internal_Authentication_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
 ALTER TABLE public.category ADD CONSTRAINT unique_name_and_user_id UNIQUE (name, user_table_id);
 

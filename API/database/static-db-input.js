@@ -23,11 +23,11 @@ function add_default_user() {
 function add_categories() {
     return knex('category')
     .insert([
-    {name: "Hospital",
+    {name: "hospital",
     description: "Where people go to get healed"},
-    {name: "Police Dept",
+    {name: "police",
     description: "Where people go when there’s trouble"},
-    {name: "Fire Dept",
+    {name: "fire_station",
     description: "Where all the fire trucks are"}])
     .catch(friendly_error_print)
 }

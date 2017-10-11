@@ -356,10 +356,12 @@ exports.users_id_delete = function(req, res, next) {
 
 	const arg = req.params.user_id;
 
-	responder.response(res, {
-		'Endpoint': 'DELETE /users/{id}',
-		'Args': arg
-	});
+	knex('user_table')
+	.where('user_table_id', arg)
+	.del()
+	.then((result) => {
+		responder.response(res, result);
+	})
 };
 
 exports.users_id_property_get = function(req, res, next) {
