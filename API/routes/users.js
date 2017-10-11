@@ -189,6 +189,19 @@ function get_locations(args, query, res) {
 	})
 }
 
+function no_op_query() {
+	return knex.raw("SELECT 'NOTHING'");
+}
+
+function insert_alertable(user_id, alertable) {
+	if (alertable === null) {
+		return no_op_query();
+	} else {
+		return knex.raw('INSERT INTO location_setting VALUES(?, (SELECT loc_id FROM location_insert), ?) ',
+		[user_id, alertable]);
+	}
+}
+
 // Route: POST /users/{id}/locations
 // Usage: POST /api/v1/users/{id}/locations?
 // 		  	   latitude={...}&
@@ -205,6 +218,7 @@ function post_locations(args, query, res) {
 	let category_type = query['category_type'];
 	let description =   query['description'];
 	let phone_number =  query['phone_number'];
+	let alertable = query['alertable'];
 
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
@@ -213,6 +227,9 @@ function post_locations(args, query, res) {
 	}
 	if (phone_number === undefined) {
 		phone_number = null
+	}
+	if (alertable === undefined) {
+		alertable = null
 	}
 	if (address === undefined) {
 		responder.raiseQueryError(res, 'address')
@@ -231,6 +248,7 @@ function post_locations(args, query, res) {
 		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
 											 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
 											[description, phone_number, address, lat, lng, user_id]))
+		.with('location_alert', insert_alertable(user_id, alertable))
 		.insert({location_id: function() {
 			this.select('loc_id').from('location_insert')
 		},
