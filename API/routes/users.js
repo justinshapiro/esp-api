@@ -152,13 +152,7 @@ function get_locations(args, query, res) {
 	.select('*')
 	.where('user_table_id', args.user_id)
 	.then((locations) => {
-		responder.response(res,
-			{
-			'Endpoint': 'GET /users/{id}/locations',
-			'Args': args,
-			'Query Parameters': query,
-			'DB Result': locations
-			});
+		responder.response(res, locations);
 	})
 }
 
@@ -196,13 +190,7 @@ function post_locations(args, query, res) {
 		}})
 		.returning('*')
 		.then((location) => {
-			responder.response(res, 
-				{
-				'Endpoint': 'POST /users/{id}/locations',
-				'Args': args,
-				'Query Parameters': query,
-				'DB Result': location
-				});
+			responder.response(res, location);
 		})
 	}
 }
@@ -320,10 +308,7 @@ exports.users_get = function(req, res, next) {
 	// No need to route further, continue logic here
 
 	get_users().then((users) => {
-		responder.response(res, {
-			'Endpoint': 'GET /users',
-			'Users': users
-		});
+		responder.response(res, users);
 	})
 };
 
@@ -349,10 +334,7 @@ exports.users_post = function(req, res, next) {
 		responder.raiseQueryError(res, 'authentication_type');
 	} else {
 		add_user(auth_type, token, name).then((user) => {
-			responder.response(res, {
-				'Endpoint': 'POST /users',
-				'DB Result': user
-			})
+			responder.response(res, user)
 		});
 	}
 };
@@ -362,10 +344,11 @@ exports.users_id_get = function(req, res, next) {
 
 	const arg = req.params.user_id;
 
-	responder.response(res, {
-		'Endpoint': 'GET /users/{id}',
-		'Args': arg
-	});
+	get_users()
+	.where('user_table.user_table_id', arg)
+	.then((user) => {
+		responder.response(res, user);
+	})
 };
 
 exports.users_id_delete = function(req, res, next) {
