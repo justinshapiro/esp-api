@@ -210,19 +210,24 @@ function get_locations(args, query, res) {
 	let lat =     query['latitude'];
 	let lng =     query['longitude'];
 	let rad =     query['radius'];
+	let cat =     query['category'];
 
 	if (lat !== undefined && lng !== undefined && rad !== undefined) {
 		var db_query =
 		knex('output_locations')
 		.select('*')
 		.where('user_table_id', user_id)
-		.andWhere(knex.raw('ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?);',
+		.andWhere(knex.raw('ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?)',
 							[lat, lng, rad]))
 	} else {
 		var db_query = 	
 		knex('output_locations')
 		.select('*')
 		.where('user_table_id', user_id)
+	}
+
+	if (cat !== undefined) {
+		db_query = db_query.andWhere(knex.raw("(categories -> 0) ->> 'name' = ?", [cat]))
 	}
 
 	db_query.then((locations) => {
