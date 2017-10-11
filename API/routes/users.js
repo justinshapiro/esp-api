@@ -4,7 +4,7 @@ const responder = require('./httpRouteResponder');
 const knex = require('../database/db-connection.js');
 
 // Route to find the correct endpoint whose signature is /users/property
-function route_property(req, res, next, args, method) {
+function route_property(req, res, args, method) {
 	const property = args['property'];
 	const query = req.query;
 
@@ -39,7 +39,7 @@ function route_property(req, res, next, args, method) {
 }
 
 // Route to find the correct endpoint whose signature is /users/property/key
-function route_property_key(req, res, next, args, method) {
+function route_property_key(req, res, args, method) {
 	const property = args['property'];
 	const query = req.query;
 
@@ -63,7 +63,7 @@ function route_property_key(req, res, next, args, method) {
 }
 
 // Route to find the correct endpoint whose signature is /users/property/key/detail
-function route_property_key_detail(req, res, next, args, method) {
+function route_property_key_detail(req, res, args, method) {
 	const property = args['property'];
 	const detail = args['detail'];
 	const query = req.query;
@@ -96,97 +96,146 @@ function route_property_key_detail(req, res, next, args, method) {
 	}
 }
 
+// Helper method
+function geoJsonify(dbResponse) {
+	let features = [];
+
+	for (let i = 0; i < dbResponse.length; i++) {
+		let rawGeoJson = JSON.parse(dbResponse[i]['geojson']);
+		let lat = rawGeoJson['coordinates'][0];
+		let lng = rawGeoJson['coordinates'][1];
+
+		let description = dbResponse[i]['description'];
+		let phone_number = dbResponse[i]['phone_number'];
+		let address = dbResponse[i]['address'];
+		let alertable = dbResponse[i]['address'];
+
+		const feature = {
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [lat, lng]
+			},
+			"properties": {
+				"address": address,
+				"description": description,
+				"phone_number": phone_number,
+				"alertable": alertable
+			}
+		};
+
+		features.push(feature);
+	}
+
+	return {
+		"GeoJson": {
+			"type": "FeatureCollection",
+			"features": features
+		}
+	};
+}
+
 // Below is individual methods to implement endpoints that needed to be routed 
 function put_name(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/name',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_email(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/email',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_phone(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/phone',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_contacts(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/contacts',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function post_contacts(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'POST /users/{id}/contacts',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
+// Route: GET /users/{id}/locations
+// Usage: GET /api/v1/users/{id}/locations
 function get_locations(args, query, res) {
+	let user_id = args['user_id'];
+
 	knex('output_locations')
 	.select('*')
-	.where('user_table_id', args.user_id)
+	.where('user_table_id', user_id)
 	.then((locations) => {
-		responder.response(res, locations);
+		responder.response(res, geoJsonify(locations));
 	})
 }
 
-// Query Parameters
-// Required: category_name, address, lat, long
-// Optional: description, phone_number
+// Route: POST /users/{id}/locations
+// Usage: POST /api/v1/users/{id}/locations?
+// 		  	   latitude={...}&
+// 			   longitude={...}&
+//             address={...}&
+//             category_name={...}&
+//             [description={...}&]
+//             [phone_number={...}&]
 function post_locations(args, query, res) {
+	let user_id =       args['user_id'];
+	let lat =           query['latitude'];
+	let lng =           query['longitude'];
+	let address =       query['address'];
+	let category_type = query['category_type'];
+	let description =   query['description'];
+	let phone_number =  query['phone_number'];
+
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
-	if (query.description == null) {
-		query.description = null
+	if (description === undefined) {
+		description = null
 	}
-	if (query.phone_number == null) {
-		query.phone_number = null
+	if (phone_number === undefined) {
+		phone_number = null
 	}
-	if (query.address == null) {
+	if (address === undefined) {
 		responder.raiseQueryError(res, 'address')
 	}
-	else if (query.lat == null) {
-		responder.raiseQueryError(res, 'lat')
+	else if (lat === undefined) {
+		responder.raiseQueryError(res, 'latitude')
 	}
-	else if (query.long == null) {
-		responder.raiseQueryError(res, 'long')
-	} else {
+	else if (lng === undefined) {
+		responder.raiseQueryError(res, 'longitude')
+	}
+	else if (category_type === undefined) {
+		responder.raiseQueryError(res, 'category_type')
+	}
+	else {
 		knex('location_category')
 		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
 											 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-											[query.description, query.phone_number, query.address,
-												query.lat, query.long, args.user_id]))
+											[description, phone_number, address, lat, lng, user_id]))
 		.insert({location_id: function() {
 			this.select('loc_id').from('location_insert')
 		},
 			category_id: function() {
-			this.select('category.id').from('category').where('name', query.category_name)
+			this.select('category.id').from('category').where('name', category_type)
 		}})
 		.returning('*')
 		.then((location) => {
@@ -196,103 +245,83 @@ function post_locations(args, query, res) {
 }
 
 function get_alert(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function post_alert(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'POST /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function delete_alert(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'DELETE /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_contacts_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function delete_contacts_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_locations_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/locations/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function delete_locations_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'DELETE /users/{id}/locations/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_contacts_id_phone(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_contacts_id_email(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_locations_id_name(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_users() {
@@ -304,7 +333,7 @@ function get_users() {
 	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id');
 }
 
-exports.users_get = function(req, res, next) {
+exports.users_get = function(req, res) {
 	// No need to route further, continue logic here
 
 	get_users().then((users) => {
@@ -320,15 +349,17 @@ function add_user(auth_type, token, name) {
 	.returning('*');
 }
 
-// Query Parameters 
-// Required: authentication_type
-// Optional: authentication_token, name
+// Route: POST /users
+// Usage: POST /api/v1/users?
+//             authentication_type={...}&
+//			   [authentication_token={...}&]
+//             [name={...}]
 exports.users_post = function(req, res, next) {
 	// No need to route further, continue logic here
   
-	const name = req.query.name;
-	const auth_type = req.query.authentication_type;
-	const token = req.query.authentication_token;
+	const name =      req.query['name'];
+	const auth_type = req.query['authentication_type'];
+	const token =     req.query['authentication_token'];
 
 	if (auth_type === null) {
 		responder.raiseQueryError(res, 'authentication_type');
@@ -339,10 +370,10 @@ exports.users_post = function(req, res, next) {
 	}
 };
 
-exports.users_id_get = function(req, res, next) {
+exports.users_id_get = function(req, res) {
 	// No need to route further, continue logic here
 
-	const arg = req.params.user_id;
+	const arg = req.params['user_id'];
 
 	get_users()
 	.where('user_table.user_table_id', arg)
@@ -351,10 +382,10 @@ exports.users_id_get = function(req, res, next) {
 	})
 };
 
-exports.users_id_delete = function(req, res, next) {
+exports.users_id_delete = function(req, res) {
 	// No need to route further, continue logic here
 
-	const arg = req.params.user_id;
+	const arg = req.params['user_id'];
 
 	knex('user_table')
 	.where('user_table_id', arg)
@@ -364,51 +395,51 @@ exports.users_id_delete = function(req, res, next) {
 	})
 };
 
-exports.users_id_property_get = function(req, res, next) {
+exports.users_id_property_get = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
-	route_property(req, res, next, args, 'get');
+	route_property(req, res, args, 'get');
 };
 
-exports.users_id_property_put = function(req, res, next) {
+exports.users_id_property_put = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
-	route_property(req, res, next, args, 'put');
+	route_property(req, res, args, 'put');
 };
 
-exports.users_id_property_post = function(req, res, next) {
+exports.users_id_property_post = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
-	route_property(req, res, next, args, 'post');
+	route_property(req, res, args, 'post');
 };
 
-exports.users_id_property_delete = function(req, res, next) {
+exports.users_id_property_delete = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
-	route_property(req, res, next, args, 'delete');
+	route_property(req, res, args, 'delete');
 };
 
-exports.users_id_property_key_get = function(req, res, next) {
+exports.users_id_property_key_get = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
-	route_property_key(req, res, next, args, 'get');
+	route_property_key(req, res, args, 'get');
 };
 
-exports.users_id_property_key_delete = function(req, res, next) {
+exports.users_id_property_key_delete = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
-	route_property_key(req, res, next, args, 'delete');
+	route_property_key(req, res, args, 'delete');
 };
 
-exports.users_id_property_key_detail_put = function(req, res, next) {
+exports.users_id_property_key_detail_put = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
-	route_property_key_detail(req, res, next, args, 'put');
+	route_property_key_detail(req, res, args, 'put');
 };

@@ -22,3 +22,16 @@ exports.places = function(lat, lon, rad, category, completion) {
 		completion(err);
 	});
 };
+
+exports.getPlace = function(id, completion) {
+	googleMapsClient.place({
+		placeid: id
+	})
+	.asPromise()
+	.then((response) => {
+		completion(response);
+	})
+	.catch((err) => {
+		completion(err);
+	});
+};

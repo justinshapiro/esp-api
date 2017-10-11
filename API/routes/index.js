@@ -1,16 +1,16 @@
 // Initialize routes
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 // Get API methods
-var authorizeEndpoint =    require('./authorize');
-var tokenEndpoint =        require('./token');
-var locationsEndpoint =    require('./locations');
-var notificationEndpoint = require('./notification');
-var usersEndpoint =        require('./users');
+const authorizeEndpoint =    require('./authorize');
+const tokenEndpoint =        require('./token');
+const locationsEndpoint =    require('./locations');
+const notificationEndpoint = require('./notification');
+const usersEndpoint =        require('./users');
 
 // API Homepage
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
 	res.render('index', { title: 'ESP Mobile API' });
 });
 

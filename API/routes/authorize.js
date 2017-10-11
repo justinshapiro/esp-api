@@ -2,7 +2,7 @@
 
 const responder = require('./httpRouteResponder');
 
-exports.authorize = function(req, res, next) {
+exports.authorize = function(req, res) {
 	responder.response(res, {
 		'Endpoint': 'GET /authorize'
 	});
