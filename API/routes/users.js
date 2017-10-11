@@ -14,8 +14,8 @@ function route_property(req, res, args, method) {
 		case 'phone': responder.response(res, put_phone(args, query)); break;
 		case 'contacts': {
 			switch (method) {
-				case 'get':  responder.response(res, get_contacts(args, query));  break;
-				case 'post': responder.response(res, post_contacts(args, query)); break;
+				case 'get':  get_contacts(args, query, res);  break;
+				case 'post': post_contacts(args, query, res); break;
 				default:     responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -161,20 +161,42 @@ function put_phone(args, query) {
 	};
 }
 
-function get_contacts(args, query) {
-	return {
-		'Endpoint': 'GET /users/{id}/contacts',
-		'Args': args,
-		'Query Parameters': query
-	};
+// Route: GET /users/{id}/contacts
+// Usage: GET /api/v1/users/{id}/contacts
+function get_contacts(args, query, res) {
+	let user_id =       args['user_id'];
+	
+	knex('emergency_contact')
+	.select('*')
+	.where('user_table_id', user_id)
+	.then((contacts) => {
+		responder.response(res, contacts);
+	})
 }
 
-function post_contacts(args, query) {
-	return {
-		'Endpoint': 'POST /users/{id}/contacts',
-		'Args': args,
-		'Query Parameters': query
-	};
+// Route: POST /users/{id}/contacts
+// Usage: POST /api/v1/users/{id}/contacts?
+// 		  	   name={...}&
+// 			   [email={...}&]
+function post_contacts(args, query, res) {
+	let user_id =       args['user_id'];
+	let name =          query['name'];
+	let email =         query['email'];
+
+	if (name === undefined) {
+		responder.raiseQueryError(res, 'name')
+	} else {
+		knex('emergency_contact')
+		.insert({
+			name: name,
+			email: email,
+			user_table_id: user_id
+		})
+		.returning('*')
+		.then((contact) => {
+			responder.response(res, contact);
+		})
+	}
 }
 
 // Route: GET /users/{id}/locations
