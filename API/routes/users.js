@@ -156,7 +156,7 @@ function get_locations(args, query, res) {
 	})
 }
 
-// Query Parameters 
+// Query Parameters
 // Required: category_name, address, lat, long
 // Optional: description, phone_number
 function post_locations(args, query, res) {
@@ -180,7 +180,7 @@ function post_locations(args, query, res) {
 		knex('location_category')
 		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
 											 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-											[query.description, query.phone_number, query.address, 
+											[query.description, query.phone_number, query.address,
 												query.lat, query.long, args.user_id]))
 		.insert({location_id: function() {
 			this.select('loc_id').from('location_insert')

@@ -393,9 +393,9 @@ SELECT pg_catalog.setval('authentication_type_id_seq', 11, true);
 --
 
 COPY category (id, name, description, user_table_id) FROM stdin;
-819aaea0-ab8c-11e7-8254-974a4e9a50d4	Hospital	Where people go to get healed	00000000-0000-0000-0000-000000000000
-819b242a-ab8c-11e7-8255-5fc07584b915	Police Dept	Where people go when there’s trouble	00000000-0000-0000-0000-000000000000
-819b242b-ab8c-11e7-8256-9751457bf773	Fire Dept	Where all the fire trucks are	00000000-0000-0000-0000-000000000000
+819aaea0-ab8c-11e7-8254-974a4e9a50d4	hospital	Where people go to get healed	00000000-0000-0000-0000-000000000000
+819b242a-ab8c-11e7-8255-5fc07584b915	police	Where people go when there’s trouble	00000000-0000-0000-0000-000000000000
+819b242b-ab8c-11e7-8256-9751457bf773	fire_station	Where all the fire trucks are	00000000-0000-0000-0000-000000000000
 \.
 
 
