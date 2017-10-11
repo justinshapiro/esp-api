@@ -289,3 +289,16 @@ CREATE OR REPLACE VIEW public.output_locations AS
 
 ALTER TABLE public.output_locations
     OWNER TO postgres;
+
+CREATE OR REPLACE VIEW public.output_users AS
+SELECT user_table.user_table_id, user_table.authentication_token, user_table.name,
+	authentication_type.name as auth_type, internal_authentication.username,
+    internal_authentication.password, json_agg(output_locations.*) as locations
+FROM user_table
+JOIN authentication_type ON user_table.authentication_type = authentication_type.id
+LEFT JOIN internal_authentication ON user_table.user_table_id = internal_authentication.user_table_id
+LEFT JOIN output_locations ON user_table.user_table_id = output_locations.user_table_id
+GROUP BY user_table.user_table_id, authentication_type.name, internal_authentication.username, internal_authentication.password;
+
+ALTER TABLE public.output_users
+    OWNER TO postgres;
