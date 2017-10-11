@@ -3,21 +3,25 @@
 const responder = require('./httpRouteResponder');
 const mapsAPI = require('../maps-api/maps');
 
-// Route: /locations
-// Usage: /api/v1/locations?latitude={...}&longitude={...}&radius{...}&category{...}
+// Route: GET /locations
+// Usage: GET /api/v1/locations?
+//            latitude={...}&
+//            longitude={...}&
+//            radius{...}&
+//            category{...}
 exports.locations = function(req, res, next) {
 	const latitude = req.query.latitude;
 	const longitude = req.query.longitude;
 	const radius = req.query.radius;
 	const category = req.query.category;
 
-	if (latitude === null) {
+	if (latitude === undefined) {
 		responder.raiseQueryError(res, 'latitude');
-	} else if (longitude === null) {
+	} else if (longitude === undefined) {
 		responder.raiseQueryError(res, 'longitude');
-	} else if (radius === null) {
+	} else if (radius === undefined) {
 		responder.raiseQueryError(res, 'radius');
-	} else if (category === null) {
+	} else if (category === undefined) {
 		responder.raiseQueryError(res, 'category');
 	} else {
 		mapsAPI.places(latitude, longitude, parseInt(radius), category, function(locations) {
@@ -26,7 +30,8 @@ exports.locations = function(req, res, next) {
 	}
 };
 
-// Route: /locations/{id}
+// Route: GET /locations/{id}
+// Usage: GET /api/v1/locations/{id}
 exports.locations_id = function(req, res, next) {
 	const arg = req.params.location_id;
 

@@ -147,46 +147,66 @@ function post_contacts(args, query) {
 	return data;
 }
 
+// Route: GET /users/{id}/locations
+// Usage: GET /api/v1/users/{id}/locations
 function get_locations(args, query, res) {
+	let user_id = args['user_id'];
+
 	knex('output_locations')
 	.select('*')
-	.where('user_table_id', args.user_id)
+	.where('user_table_id', user_id)
 	.then((locations) => {
 		responder.response(res, locations);
 	})
 }
 
-// Query Parameters
-// Required: category_name, address, lat, long
-// Optional: description, phone_number
+// Route: POST /users/{id}/locations
+// Usage: POST /api/v1/users/{id}/locations?
+// 		  	   latitude={...}&
+// 			   longitude={...}&
+//             address={...}&
+//             category_name={...}&
+//             [description={...}&]
+//             [phone_number={...}&]
 function post_locations(args, query, res) {
+	let user_id =       args['user_id'];
+	let lat =           query['latitude'];
+	let lng =           query['longitude'];
+	let address =       query['address'];
+	let category_type = query['category_type'];
+	let description =   query['description'];
+	let phone_number =  query['phone_number'];
+
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
-	if (query.description == null) {
-		query.description = null
+	if (description === undefined) {
+		description = null
 	}
-	if (query.phone_number == null) {
-		query.phone_number = null
+	if (phone_number === undefined) {
+		phone_number = null
 	}
-	if (query.address == null) {
+	if (address === undefined) {
 		responder.raiseQueryError(res, 'address')
 	}
-	else if (query.lat == null) {
-		responder.raiseQueryError(res, 'lat')
+	else if (lat === undefined) {
+		responder.raiseQueryError(res, 'latitude')
 	}
-	else if (query.long == null) {
-		responder.raiseQueryError(res, 'long')
-	} else {
+	else if (lng === undefined) {
+		responder.raiseQueryError(res, 'longitude')
+	}
+	else if (category_type === undefined) {
+		responder.raiseQueryError(res, 'category_type')
+	}
+	else {
 		knex('location_category')
 		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
 											 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-											[query.description, query.phone_number, query.address,
-												query.lat, query.long, args.user_id]))
+											[description, phone_number, address, lat, lng, user_id]))
 		.insert({location_id: function() {
 			this.select('loc_id').from('location_insert')
 		},
 			category_id: function() {
-			this.select('category.id').from('category').where('name', query.category_name)
+			this.select('category.id').from('category').where('name', category_type)
 		}})
 		.returning('*')
 		.then((location) => {
@@ -320,9 +340,11 @@ function add_user(auth_type, token, name) {
 	.returning('*');
 }
 
-// Query Parameters 
-// Required: authentication_type
-// Optional: authentication_token, name
+// Route: POST /users
+// Usage: POST /api/v1/users?
+//             authentication_type={...}&
+//			   [authentication_token={...}&]
+//             [name={...}]
 exports.users_post = function(req, res, next) {
 	// No need to route further, continue logic here
   
