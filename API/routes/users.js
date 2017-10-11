@@ -96,6 +96,47 @@ function route_property_key_detail(req, res, next, args, method) {
 	}
 }
 
+// Helper method
+function geoJsonify(dbResponse) {
+	let features = [];
+
+	for (let i = 0; i < dbResponse.length; i++) {
+		let rawGeoJson = JSON.parse(dbResponse[i]['geojson']);
+		let lat = rawGeoJson['coordinates'][0];
+		let lng = rawGeoJson['coordinates'][1];
+
+		let description = dbResponse[i]['description'];
+		let phone_number = dbResponse[i]['phone_number'];
+		let address = dbResponse[i]['address'];
+		let alertable = dbResponse[i]['address'];
+
+		const feature = {
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [lat, lng]
+			},
+			"properties": {
+				"address": address,
+				"description": description,
+				"phone_number": phone_number,
+				"alertable": alertable
+			}
+		};
+
+		features.push(feature);
+	}
+
+	const geoJson = {
+		"GeoJson": {
+			"type": "FeatureCollection",
+			"features": features
+		}
+	};
+
+	return geoJson;
+}
+
 // Below is individual methods to implement endpoints that needed to be routed 
 function put_name(args, query) {
 	const data = {
@@ -156,7 +197,7 @@ function get_locations(args, query, res) {
 	.select('*')
 	.where('user_table_id', user_id)
 	.then((locations) => {
-		responder.response(res, locations);
+		responder.response(res, geoJsonify(locations));
 	})
 }
 
