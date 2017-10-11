@@ -98,17 +98,18 @@ function route_property_key_detail(req, res, args, method) {
 
 // Helper method
 function geoJsonify(dbResponse) {
+	console.log(dbResponse);
 	let features = [];
 
 	for (let i = 0; i < dbResponse.length; i++) {
-		let rawGeoJson = JSON.parse(dbResponse[i]['geojson']);
+		let rawGeoJson = JSON.parse(dbResponse[i]['geometry']);
 		let lat = rawGeoJson['coordinates'][0];
 		let lng = rawGeoJson['coordinates'][1];
 
 		let description = dbResponse[i]['description'];
 		let phone_number = dbResponse[i]['phone_number'];
 		let address = dbResponse[i]['address'];
-		let alertable = dbResponse[i]['address'];
+		let alertable = dbResponse[i]['alertable'];
 
 		const feature = {
 			"type": "Feature",
@@ -261,7 +262,7 @@ function post_locations(args, query, res) {
 			.select('*')
 			.where('id', location_cat[0].location_id)
 			.then((location) => {
-				responder.response(res, location);
+				responder.response(res, geoJsonify(location));
 			})
 		})
 	}
