@@ -200,14 +200,32 @@ function post_contacts(args, query, res) {
 }
 
 // Route: GET /users/{id}/locations
-// Usage: GET /api/v1/users/{id}/locations
+// Usage: GET /api/v1/users/{id}/locations?
+// 		  	   [latitude={...}&
+// 			    longitude={...}&
+//			    radius={...}&]
+//			   [category={...}]
 function get_locations(args, query, res) {
 	let user_id = args['user_id'];
+	let lat =     query['latitude'];
+	let lng =     query['longitude'];
+	let rad =     query['radius'];
 
-	knex('output_locations')
-	.select('*')
-	.where('user_table_id', user_id)
-	.then((locations) => {
+	if (lat !== undefined && lng !== undefined && rad !== undefined) {
+		var db_query =
+		knex('output_locations')
+		.select('*')
+		.where('user_table_id', user_id)
+		.andWhere(knex.raw('ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?);',
+							[lat, lng, rad]))
+	} else {
+		var db_query = 	
+		knex('output_locations')
+		.select('*')
+		.where('user_table_id', user_id)
+	}
+
+	db_query.then((locations) => {
 		responder.response(res, geoJsonify(locations));
 	})
 }
