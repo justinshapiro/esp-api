@@ -275,7 +275,7 @@ CREATE OR REPLACE VIEW public.output_locations AS
     location.address,
     location.icon,
     location.user_table_id,
-    st_asgeojson(location.geom) AS geojson,
+    st_asgeojson(location.geom) AS geometry,
     json_agg(category.*) AS categories,
     location_setting.alertable,
     json_agg(emergency_contact.*) AS contacts

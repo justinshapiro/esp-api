@@ -163,8 +163,8 @@ function get_locations(args, query, res) {
 }
 
 // Query Parameters 
-// Required: category_name
-// Optional: description, phone_number, address, lat, long
+// Required: category_name, address, lat, long
+// Optional: description, phone_number
 function post_locations(args, query, res) {
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
@@ -175,13 +175,13 @@ function post_locations(args, query, res) {
 		query.phone_number = null
 	}
 	if (query.address == null) {
-		responser.raiseQueryError(res, 'address')
+		responder.raiseQueryError(res, 'address')
 	}
 	else if (query.lat == null) {
-		responser.raiseQueryError(res, 'lat')
+		responder.raiseQueryError(res, 'lat')
 	}
 	else if (query.long == null) {
-		responser.raiseQueryError(res, 'long')
+		responder.raiseQueryError(res, 'long')
 	} else {
 		knex('location_category')
 		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
