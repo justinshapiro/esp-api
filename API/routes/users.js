@@ -4,7 +4,7 @@ const responder = require('./httpRouteResponder');
 const knex = require('../database/db-connection.js');
 
 // Route to find the correct endpoint whose signature is /users/property
-function route_property(req, res, next, args, method) {
+function route_property(req, res, args, method) {
 	const property = args['property'];
 	const query = req.query;
 
@@ -39,7 +39,7 @@ function route_property(req, res, next, args, method) {
 }
 
 // Route to find the correct endpoint whose signature is /users/property/key
-function route_property_key(req, res, next, args, method) {
+function route_property_key(req, res, args, method) {
 	const property = args['property'];
 	const query = req.query;
 
@@ -63,7 +63,7 @@ function route_property_key(req, res, next, args, method) {
 }
 
 // Route to find the correct endpoint whose signature is /users/property/key/detail
-function route_property_key_detail(req, res, next, args, method) {
+function route_property_key_detail(req, res, args, method) {
 	const property = args['property'];
 	const detail = args['detail'];
 	const query = req.query;
@@ -127,65 +127,53 @@ function geoJsonify(dbResponse) {
 		features.push(feature);
 	}
 
-	const geoJson = {
+	return {
 		"GeoJson": {
 			"type": "FeatureCollection",
 			"features": features
 		}
 	};
-
-	return geoJson;
 }
 
 // Below is individual methods to implement endpoints that needed to be routed 
 function put_name(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/name',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_email(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/email',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_phone(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/phone',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_contacts(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/contacts',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function post_contacts(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'POST /users/{id}/contacts',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 // Route: GET /users/{id}/locations
@@ -257,103 +245,83 @@ function post_locations(args, query, res) {
 }
 
 function get_alert(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function post_alert(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'POST /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function delete_alert(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'DELETE /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_contacts_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function delete_contacts_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_locations_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'GET /users/{id}/locations/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function delete_locations_id(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'DELETE /users/{id}/locations/{id}',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_contacts_id_phone(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_contacts_id_email(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function put_locations_id_name(args, query) {
-	const data = {
+	return {
 		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
 		'Args': args,
 		'Query Parameters': query
 	};
-
-	return data;
 }
 
 function get_users() {
@@ -365,7 +333,7 @@ function get_users() {
 	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id');
 }
 
-exports.users_get = function(req, res, next) {
+exports.users_get = function(req, res) {
 	// No need to route further, continue logic here
 
 	get_users().then((users) => {
@@ -389,9 +357,9 @@ function add_user(auth_type, token, name) {
 exports.users_post = function(req, res, next) {
 	// No need to route further, continue logic here
   
-	const name = req.query.name;
-	const auth_type = req.query.authentication_type;
-	const token = req.query.authentication_token;
+	const name =      req.query['name'];
+	const auth_type = req.query['authentication_type'];
+	const token =     req.query['authentication_token'];
 
 	if (auth_type === null) {
 		responder.raiseQueryError(res, 'authentication_type');
@@ -402,10 +370,10 @@ exports.users_post = function(req, res, next) {
 	}
 };
 
-exports.users_id_get = function(req, res, next) {
+exports.users_id_get = function(req, res) {
 	// No need to route further, continue logic here
 
-	const arg = req.params.user_id;
+	const arg = req.params['user_id'];
 
 	get_users()
 	.where('user_table.user_table_id', arg)
@@ -414,10 +382,10 @@ exports.users_id_get = function(req, res, next) {
 	})
 };
 
-exports.users_id_delete = function(req, res, next) {
+exports.users_id_delete = function(req, res) {
 	// No need to route further, continue logic here
 
-	const arg = req.params.user_id;
+	const arg = req.params['user_id'];
 
 	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}',
@@ -425,51 +393,51 @@ exports.users_id_delete = function(req, res, next) {
 	});
 };
 
-exports.users_id_property_get = function(req, res, next) {
+exports.users_id_property_get = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
-	route_property(req, res, next, args, 'get');
+	route_property(req, res, args, 'get');
 };
 
-exports.users_id_property_put = function(req, res, next) {
+exports.users_id_property_put = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
-	route_property(req, res, next, args, 'put');
+	route_property(req, res, args, 'put');
 };
 
-exports.users_id_property_post = function(req, res, next) {
+exports.users_id_property_post = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
-	route_property(req, res, next, args, 'post');
+	route_property(req, res, args, 'post');
 };
 
-exports.users_id_property_delete = function(req, res, next) {
+exports.users_id_property_delete = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
-	route_property(req, res, next, args, 'delete');
+	route_property(req, res, args, 'delete');
 };
 
-exports.users_id_property_key_get = function(req, res, next) {
+exports.users_id_property_key_get = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
-	route_property_key(req, res, next, args, 'get');
+	route_property_key(req, res, args, 'get');
 };
 
-exports.users_id_property_key_delete = function(req, res, next) {
+exports.users_id_property_key_delete = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
-	route_property_key(req, res, next, args, 'delete');
+	route_property_key(req, res, args, 'delete');
 };
 
-exports.users_id_property_key_detail_put = function(req, res, next) {
+exports.users_id_property_key_detail_put = function(req, res) {
 	const args = req.params;
 
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
-	route_property_key_detail(req, res, next, args, 'put');
+	route_property_key_detail(req, res, args, 'put');
 };

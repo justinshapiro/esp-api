@@ -1,7 +1,9 @@
 'use strict';
 
-exports.notification = function(req, res, next) {
-	res.send(res.json({
+const responder = require('./httpRouteResponder');
+
+exports.notification = function(req, res) {
+	responder.response(res, {
 		'Endpoint': 'POST /notification'
-	}));
+	});
 };

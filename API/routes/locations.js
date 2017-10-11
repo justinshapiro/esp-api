@@ -9,11 +9,11 @@ const mapsAPI = require('../maps-api/maps');
 //            longitude={...}&
 //            radius{...}&
 //            category{...}
-exports.locations = function(req, res, next) {
-	const latitude = req.query.latitude;
-	const longitude = req.query.longitude;
-	const radius = req.query.radius;
-	const category = req.query.category;
+exports.locations = function(req, res) {
+	const latitude =  req.query['latitude'];
+	const longitude = req.query['longitude'];
+	const radius =    req.query['radius'];
+	const category =  req.query['category'];
 
 	if (latitude === undefined) {
 		responder.raiseQueryError(res, 'latitude');
@@ -32,7 +32,7 @@ exports.locations = function(req, res, next) {
 
 // Route: GET /locations/{id}
 // Usage: GET /api/v1/locations/{id}
-exports.locations_id = function(req, res, next) {
+exports.locations_id = function(req, res) {
 	const location_id = req.params['location_id'];
 
 	mapsAPI.getPlace(location_id, function(placeDetails) {
