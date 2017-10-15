@@ -1,5 +1,5 @@
 // Import database connection
-var knex = require('./db-connection.js');
+const knex = require('./db-connection.js');
 
 // Add a row to authentication_type table so that users can be created
 function add_authentication_type() {

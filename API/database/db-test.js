@@ -1,5 +1,5 @@
 // Import database connection
-var knex = require('./db-connection.js');
+const knex = require('./db-connection.js');
 
 // Add test data to authentication_type table and then output entire table
 knex('authentication_type')
