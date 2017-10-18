@@ -15,9 +15,11 @@ router.get('/', function(req, res) {
 });
 
 // Route: /authorize...
+// Deprecation warning: May not need this
 router.get('/api/v1/authorize', authorizeEndpoint.authorize);
 
 // Route: /token...
+// Deprecation warning: May not need this
 router.post('/api/v1/token', tokenEndpoint.token);
 
 // Route: /locations...
