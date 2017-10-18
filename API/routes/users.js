@@ -11,7 +11,6 @@ function route_property(req, res, args, method) {
 	switch (property) {
 		case 'name':  responder.response(res, put_name(args, query));  break;
 		case 'email': responder.response(res, put_email(args, query)); break;
-		case 'phone': responder.response(res, put_phone(args, query)); break;
 		case 'contacts': {
 			switch (method) {
 				case 'get':  get_contacts(args, query, res);  break;
