@@ -153,18 +153,10 @@ function put_email(args, query) {
 	};
 }
 
-function put_phone(args, query) {
-	return {
-		'Endpoint': 'PUT /users/{id}/phone',
-		'Args': args,
-		'Query Parameters': query
-	};
-}
-
 // Route: GET /users/{id}/contacts
 // Usage: GET /api/v1/users/{id}/contacts
 function get_contacts(args, query, res) {
-	let user_id =       args['user_id'];
+	let user_id = args['user_id'];
 	
 	knex('emergency_contact')
 	.select('*')
@@ -179,9 +171,9 @@ function get_contacts(args, query, res) {
 // 		  	   name={...}&
 // 			   [email={...}&]
 function post_contacts(args, query, res) {
-	let user_id =       args['user_id'];
-	let name =          query['name'];
-	let email =         query['email'];
+	let user_id =  args['user_id'];
+	let name =    query['name'];
+	let email =   query['email'];
 
 	if (name === undefined) {
 		responder.raiseQueryError(res, 'name')
@@ -206,21 +198,23 @@ function post_contacts(args, query, res) {
 //			    radius={...}&]
 //			   [category={...}]
 function get_locations(args, query, res) {
-	let user_id = args['user_id'];
+	let user_id =  args['user_id'];
 	let lat =     query['latitude'];
 	let lng =     query['longitude'];
 	let rad =     query['radius'];
 	let cat =     query['category'];
 
+	let db_query;
+
 	if (lat !== undefined && lng !== undefined && rad !== undefined) {
-		var db_query =
+		db_query =
 		knex('output_locations')
 		.select('*')
 		.where('user_table_id', user_id)
 		.andWhere(knex.raw('ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?)',
 							[lat, lng, rad]))
 	} else {
-		var db_query = 	
+		db_query =
 		knex('output_locations')
 		.select('*')
 		.where('user_table_id', user_id)
@@ -257,14 +251,14 @@ function insert_alertable(user_id, alertable) {
 //             [description={...}&]
 //             [phone_number={...}&]
 function post_locations(args, query, res) {
-	let user_id =       args['user_id'];
+	let user_id =        args['user_id'];
 	let lat =           query['latitude'];
 	let lng =           query['longitude'];
 	let address =       query['address'];
 	let category_type = query['category_type'];
 	let description =   query['description'];
 	let phone_number =  query['phone_number'];
-	let alertable = query['alertable'];
+	let alertable =     query['alertable'];
 
 	// These ifs that set null look like they don't matter, but they are necessary
 	// Without them knex gives an error that the bindings aren't defined in null cases
@@ -411,11 +405,11 @@ exports.users_get = function(req, res) {
 };
 
 function add_user(auth_type, token, name) {
-	return knex('user_table')
-	.insert({authentication_type: auth_type, 
-			authentication_token: token,
-			name: name})
-	.returning('*');
+	return knex('user_table').insert({
+		authentication_type: auth_type,
+		authentication_token: token,
+		name: name
+	}).returning('*');
 }
 
 // Route: POST /users
@@ -430,7 +424,7 @@ exports.users_post = function(req, res, next) {
 	const auth_type = req.query['authentication_type'];
 	const token =     req.query['authentication_token'];
 
-	if (auth_type === null) {
+	if (auth_type === undefined) {
 		responder.raiseQueryError(res, 'authentication_type');
 	} else {
 		add_user(auth_type, token, name).then((user) => {
