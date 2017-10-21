@@ -53,8 +53,11 @@ exports.notification = function(req, res) {
 							});
 						});
 					} else if (location_type === "custom") {
-						usersEndpoint.extern_get_user_location_id(user_id, location_id, function(location) {
-							completion(null, location);
+						usersEndpoint.extern_get_user_location_id(user_id, location_id, function(geoJson) {
+							completion(null, {
+								'location_name': geoJson['properties']['name'],
+								'location_phone_number': geoJson['properties']['phone_number']
+							});
 						});
 					}
 				}, 200);

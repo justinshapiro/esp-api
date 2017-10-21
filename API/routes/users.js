@@ -3,16 +3,14 @@
 const responder = require('./httpRouteResponder');
 const knex = require('../database/db-connection.js');
 
-// TODO: Take out responder.response is route functions and designate that responsibility to the children
-
 // Route to find the correct endpoint whose signature is /users/property
 function route_property(req, res, args, method) {
 	const property = args['property'];
 	const query = req.query;
 
 	switch (property) {
-		case 'name':  responder.response(res, put_name(args, query));  break;
-		case 'email': responder.response(res, put_email(args, query)); break;
+		case 'name':  put_name(args, query, res);  break;
+		case 'email': put_email(args, query, res); break;
 		case 'contacts': {
 			switch (method) {
 				case 'get':  get_contacts(args, query, res);  break;
@@ -29,9 +27,9 @@ function route_property(req, res, args, method) {
 		} break;
 		case 'alert': {
 			switch (method) {
-				case 'get':    responder.response(res, get_alert(args, query));    break;
-				case 'post':   responder.response(res, post_alert(args, query));   break;
-				case 'delete': responder.response(res, delete_alert(args, query)); break;
+				case 'get':    get_alert(args, query, res);    break;
+				case 'post':   post_alert(args, query, res);   break;
+				case 'delete': delete_alert(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -47,15 +45,15 @@ function route_property_key(req, res, args, method) {
 	switch (property) {
 		case 'contacts': {
 			switch (method) {
-				case 'get':    responder.response(res, get_contacts_id(args, query));    break;
-				case 'delete': responder.response(res, delete_contacts_id(args, query)); break;
+				case 'get':    get_contacts_id(args, query, res);    break;
+				case 'delete': delete_contacts_id(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
 		case 'locations': {
 			switch (method) {
-				case 'get':    responder.response(res, get_locations_id(args, query, res));    break;
-				case 'delete': responder.response(res, delete_locations_id(args, query)); break;
+				case 'get':    get_locations_id(args, query, res);    break;
+				case 'delete': delete_locations_id(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -74,8 +72,8 @@ function route_property_key_detail(req, res, args, method) {
 			switch (method) {
 				case 'put': {
 					switch (detail) {
-						case 'phone': responder.response(res, put_contacts_id_phone(args, query)); break;
-						case 'email': responder.response(res, put_contacts_id_email(args, query)); break;
+						case 'phone': put_contacts_id_phone(args, query, res); break;
+						case 'email': put_contacts_id_email(args, query, res); break;
 						default:      responder.raiseDetailError(res, detail);
 					}
 				} break;
@@ -86,7 +84,7 @@ function route_property_key_detail(req, res, args, method) {
 			switch (method) {
 				case 'put': {
 					switch (detail) {
-						case 'name': responder.response(res, put_locations_id_name(args, query)); break;
+						case 'name': put_locations_id_name(args, query, res); break;
 						default:     responder.raiseDetailError(res, detail);
 					}
 				} break;
@@ -138,20 +136,20 @@ function geoJsonify(dbResponse) {
 }
 
 // Below is individual methods to implement endpoints that needed to be routed 
-function put_name(args, query) {
-	return {
+function put_name(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/name',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function put_email(args, query) {
-	return {
+function put_email(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/email',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
@@ -285,20 +283,20 @@ function get_locations_id(args, query, res) {
 	}
 }
 
-function delete_locations_id(args, query) {
-	return {
+function delete_locations_id(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}/locations/{id}',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
 function put_locations_id_name(args, query, res) {
-	return {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
 function no_op_query() {
@@ -383,60 +381,60 @@ function post_locations(args, query, res) {
 	}
 }
 
-function get_alert(args, query) {
-	return {
+function get_alert(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'GET /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function post_alert(args, query) {
-	return {
+function post_alert(args, query, res) {
+	response.responder(res, {
 		'Endpoint': 'POST /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function delete_alert(args, query) {
-	return {
+function delete_alert(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function get_contacts_id(args, query) {
-	return {
+function get_contacts_id(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'GET /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function delete_contacts_id(args, query) {
-	return {
+function delete_contacts_id(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function put_contacts_id_phone(args, query) {
-	return {
+function put_contacts_id_phone(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function put_contacts_id_email(args, query) {
-	return {
+function put_contacts_id_email(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
 function get_users() {
