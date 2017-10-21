@@ -21,3 +21,15 @@ exports.raisePropertyError = function(res, property) {
 exports.raiseDetailError = function(res, detail) {
 	res.json({"ESP-Error": `HTTP Error: ${detail.toUpperCase()} is not a supported detail at the given endpoint`});
 };
+
+exports.raiseSMSError = function(res, smsError) {
+	res.json({"ESP-Error": `Twilio failed to send SMS message and gave the error: ${smsError}`});
+};
+
+exports.raiseInternalError = function(res, err) {
+	if (err === null) {
+		res.json({"ESP-Error": `A database query or API call did not complete successfully`});
+	} else {
+		res.json({"ESP-Error": `A database query or API call did not complete successfully. The error message given is ${err}`});
+	}
+};

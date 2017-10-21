@@ -7,7 +7,7 @@ Repo for the Emergency Location and Emergency Notification APIs, along with the 
 2. Run `npm install`
 3. Run `npm start`
 4. `http://localhost:3000` shows API homepage
-5. All endpoints are queried at `http://localhost:3000/api/v1/`
+5. All endpoints are queried at `http://localhost:3000/api/v1/` or `http://www.espmobile.org/api/v1`
 
 ## Implementing Endpoints (dev)
 Endpoint roots are defined as follows:
@@ -35,4 +35,12 @@ Nested arguments are routing using the following enumeration of names:
 - `root/root_argument/key/detail`
 
 For `/users`, the `root_argument` is always `user_id`.
+
+## Deployment
+
+The API and database are hosted on Google Cloud Platform's App Engine. Deployment is simple and follows the following steps:
+0. Install Google Cloud SDK
+1. Stop any running instances of the API in the Google Cloud Platform Console
+1. `cd` to API directory
+2. Execute `gcloud app deploy`
 
