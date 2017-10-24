@@ -9,8 +9,8 @@ function route_property(req, res, args, method) {
 	const query = req.query;
 
 	switch (property) {
-		case 'name':  responder.response(res, put_name(args, query));  break;
-		case 'email': responder.response(res, put_email(args, query)); break;
+		case 'name':  put_name(args, query, res);  break;
+		case 'email': put_email(args, query, res); break;
 		case 'contacts': {
 			switch (method) {
 				case 'get':  get_contacts(args, query, res);  break;
@@ -27,9 +27,9 @@ function route_property(req, res, args, method) {
 		} break;
 		case 'alert': {
 			switch (method) {
-				case 'get':    responder.response(res, get_alert(args, query));    break;
-				case 'post':   responder.response(res, post_alert(args, query));   break;
-				case 'delete': responder.response(res, delete_alert(args, query)); break;
+				case 'get':    get_alert(args, query, res);    break;
+				case 'post':   post_alert(args, query, res);   break;
+				case 'delete': delete_alert(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -45,15 +45,15 @@ function route_property_key(req, res, args, method) {
 	switch (property) {
 		case 'contacts': {
 			switch (method) {
-				case 'get':    responder.response(res, get_contacts_id(args, query));    break;
-				case 'delete': responder.response(res, delete_contacts_id(args, query)); break;
+				case 'get':    get_contacts_id(args, query, res);    break;
+				case 'delete': delete_contacts_id(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
 		case 'locations': {
 			switch (method) {
-				case 'get':    responder.response(res, get_locations_id(args, query));    break;
-				case 'delete': responder.response(res, delete_locations_id(args, query)); break;
+				case 'get':    get_locations_id(args, query, res);    break;
+				case 'delete': delete_locations_id(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -72,8 +72,8 @@ function route_property_key_detail(req, res, args, method) {
 			switch (method) {
 				case 'put': {
 					switch (detail) {
-						case 'phone': responder.response(res, put_contacts_id_phone(args, query)); break;
-						case 'email': responder.response(res, put_contacts_id_email(args, query)); break;
+						case 'phone': put_contacts_id_phone(args, query, res); break;
+						case 'email': put_contacts_id_email(args, query, res); break;
 						default:      responder.raiseDetailError(res, detail);
 					}
 				} break;
@@ -84,7 +84,7 @@ function route_property_key_detail(req, res, args, method) {
 			switch (method) {
 				case 'put': {
 					switch (detail) {
-						case 'name': responder.response(res, put_locations_id_name(args, query)); break;
+						case 'name': put_locations_id_name(args, query, res); break;
 						default:     responder.raiseDetailError(res, detail);
 					}
 				} break;
@@ -101,7 +101,7 @@ function geoJsonify(dbResponse) {
 	let features = [];
 
 	for (let i = 0; i < dbResponse.length; i++) {
-		let rawGeoJson = JSON.parse(dbResponse[i]['geometry']);
+		let rawGeoJson = JSON.parse(dbResponse[i]['geojson']); // this needs to stay 'geojson'
 		let lat = rawGeoJson['coordinates'][0];
 		let lng = rawGeoJson['coordinates'][1];
 
@@ -136,33 +136,39 @@ function geoJsonify(dbResponse) {
 }
 
 // Below is individual methods to implement endpoints that needed to be routed 
-function put_name(args, query) {
-	return {
+function put_name(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/name',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function put_email(args, query) {
-	return {
+function put_email(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/email',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
+}
+
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_contacts_db_query(user_id, completion) {
+	knex('emergency_contact')
+		.select('*')
+		.where('user_table_id', user_id)
+		.then((contacts) => {
+			completion(contacts);
+		})
 }
 
 // Route: GET /users/{id}/contacts
 // Usage: GET /api/v1/users/{id}/contacts
 function get_contacts(args, query, res) {
-	let user_id = args['user_id'];
-	
-	knex('emergency_contact')
-	.select('*')
-	.where('user_table_id', user_id)
-	.then((contacts) => {
+	const user_id = args['user_id'];
+	get_contacts_db_query(user_id, function (contacts) {
 		responder.response(res, contacts);
-	})
+	});
 }
 
 // Route: POST /users/{id}/contacts
@@ -190,11 +196,31 @@ function post_contacts(args, query, res) {
 	}
 }
 
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_user_locations_db_query(user_id, category, completion) {
+	if (category === null || category === undefined) {
+		knex('output_locations')
+			.select('*')
+			.where('user_table_id', user_id)
+			.then((locations) => {
+				completion(geoJsonify(locations));
+			})
+	} else {
+		knex('output_locations')
+			.select('*')
+			.where('user_table_id', user_id)
+			.andWhere(knex.raw("(categories -> 0) ->> 'name' = ?", [category]))
+			.then((locations) => {
+				completion(geoJsonify(locations));
+			})
+	}
+}
+
 // Route: GET /users/{id}/locations
 // Usage: GET /api/v1/users/{id}/locations?
-// 		  	   [latitude={...}&
-// 			    longitude={...}&
-//			    radius={...}&]
+// 		  	   [latitude={...}&]
+// 			   [longitude={...}&]
+//			   [radius={...}&]
 //			   [category={...}]
 function get_locations(args, query, res) {
 	let user_id =  args['user_id'];
@@ -213,10 +239,11 @@ function get_locations(args, query, res) {
 		.andWhere(knex.raw('ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?)',
 							[lat, lng, rad]))
 	} else {
-		db_query =
-		knex('output_locations')
-		.select('*')
-		.where('user_table_id', user_id)
+		get_user_locations_db_query(user_id, cat, function(locations) {
+			responder.response(res, locations)
+		});
+
+		return;
 	}
 
 	if (cat !== undefined) {
@@ -226,6 +253,50 @@ function get_locations(args, query, res) {
 	db_query.then((locations) => {
 		responder.response(res, geoJsonify(locations));
 	})
+}
+
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_user_location_id_db_query(user_id, location_id, completion) {
+	knex('output_locations')
+		.select('*')
+		.where('user_table_id', user_id)
+		.andWhere('id', location_id)
+		.then((location) => {
+			completion(geoJsonify(location))
+		});
+}
+
+// Route: GET /users/{id}/locations/{id}
+// Usage: GET /users/{id}/locations/{id}
+function get_locations_id(args, query, res) {
+	const user_id = args['user_id'];
+	const location_id = args['key'];
+
+	if (user_id === undefined) {
+		responder.raiseMethodError(res, 'user_id');
+	} else if (location_id === undefined) {
+		responder.raiseMethodError(res, 'location_id');
+	} else {
+		get_user_location_id_db_query(user_id, location_id, function(location) {
+			responder.response(res, location);
+		});
+	}
+}
+
+function delete_locations_id(args, query, res) {
+	responder.response(res, {
+		'Endpoint': 'DELETE /users/{id}/locations/{id}',
+		'Args': args,
+		'Query Parameters': query
+	});
+}
+
+function put_locations_id_name(args, query, res) {
+	responder.response(res, {
+		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
+		'Args': args,
+		'Query Parameters': query
+	});
 }
 
 function no_op_query() {
@@ -264,15 +335,19 @@ function post_locations(args, query, res) {
 	if (description === undefined) {
 		description = null
 	}
+
 	if (phone_number === undefined) {
 		phone_number = null
 	}
+
 	if (alertable === undefined) {
 		alertable = null
 	}
+
 	if (address === undefined) {
 		responder.raiseQueryError(res, 'address')
 	}
+
 	else if (lat === undefined) {
 		responder.raiseQueryError(res, 'latitude')
 	}
@@ -306,95 +381,73 @@ function post_locations(args, query, res) {
 	}
 }
 
-function get_alert(args, query) {
-	return {
+function get_alert(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'GET /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function post_alert(args, query) {
-	return {
+function post_alert(args, query, res) {
+	response.responder(res, {
 		'Endpoint': 'POST /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function delete_alert(args, query) {
-	return {
+function delete_alert(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}/alert',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function get_contacts_id(args, query) {
-	return {
+function get_contacts_id(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'GET /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function delete_contacts_id(args, query) {
-	return {
+function delete_contacts_id(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function get_locations_id(args, query) {
-	return {
-		'Endpoint': 'GET /users/{id}/locations/{id}',
-		'Args': args,
-		'Query Parameters': query
-	};
-}
-
-function delete_locations_id(args, query) {
-	return {
-		'Endpoint': 'DELETE /users/{id}/locations/{id}',
-		'Args': args,
-		'Query Parameters': query
-	};
-}
-
-function put_contacts_id_phone(args, query) {
-	return {
+function put_contacts_id_phone(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
 		'Args': args,
 		'Query Parameters': query
-	};
+	});
 }
 
-function put_contacts_id_email(args, query) {
-	return {
+function put_contacts_id_email(args, query, res) {
+	responder.response(res, {
 		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
 		'Args': args,
 		'Query Parameters': query
-	};
-}
-
-function put_locations_id_name(args, query) {
-	return {
-		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
-		'Args': args,
-		'Query Parameters': query
-	};
+	});
 }
 
 function get_users() {
 	return knex('user_table')
-	.select('user_table.user_table_id', 'user_table.authentication_token', 
+	.select('user_table.user_table_id', 'user_table.authentication_token',
 			'user_table.name', 'authentication_type.name as auth_type',
 			'internal_authentication.username', 'internal_authentication.password')
 	.join('authentication_type', 'user_table.authentication_type', 'authentication_type.id')
 	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id');
 }
 
+// Route: GET /users
+// Usage: GET /api/v1/users
 exports.users_get = function(req, res) {
 	// No need to route further, continue logic here
 
@@ -432,25 +485,32 @@ exports.users_post = function(req, res, next) {
 	}
 };
 
-exports.users_id_get = function(req, res) {
-	// No need to route further, continue logic here
-
-	const arg = req.params['user_id'];
-
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_user_db_query(user_id, completion) {
 	get_users()
-	.where('user_table.user_table_id', arg)
-	.then((user) => {
+		.where('user_table.user_table_id', user_id)
+		.then((user) => {
+			completion(user);
+		})
+}
+
+// Route: GET /users/{id}
+// Usage: GET  /api/v1/users/{id}
+exports.users_id_get = function(req, res) {
+	const user_id = req.params['user_id'];
+
+	get_user_db_query(user_id, function(user) {
 		responder.response(res, user);
-	})
+	});
 };
 
+// Route: DELETE  /users/{id}
+// Usage: DELETE  /api/v1/users/{id}
 exports.users_id_delete = function(req, res) {
-	// No need to route further, continue logic here
-
-	const arg = req.params['user_id'];
+	const user_id = req.params['user_id'];
 
 	knex('user_table')
-	.where('user_table_id', arg)
+	.where('user_table_id', user_id)
 	.del()
 	.then((result) => {
 		responder.response(res, result);
@@ -505,3 +565,9 @@ exports.users_id_property_key_detail_put = function(req, res) {
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
 	route_property_key_detail(req, res, args, 'put');
 };
+
+// Here we export functions that other parts of the API will need
+exports.extern_get_contacts = get_contacts_db_query;
+exports.extern_get_user = get_user_db_query;
+exports.extern_get_user_locations = get_user_locations_db_query;
+exports.extern_get_user_location_id = get_user_location_id_db_query;
