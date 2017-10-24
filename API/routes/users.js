@@ -382,11 +382,13 @@ function post_locations(args, query, res) {
 }
 
 function get_alert(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'GET /users/{id}/alert',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id = args['user_id'];
+	knex('location_setting')
+	.select('*')
+	.where('user_table_id', user_id)
+	.then((alerts) => {
+		responder.response(res, alerts)
+	})
 }
 
 function post_alert(args, query, res) {
