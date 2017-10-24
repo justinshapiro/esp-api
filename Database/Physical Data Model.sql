@@ -42,7 +42,7 @@ WITHOUT OIDS;
 
 CREATE TABLE location (
 
-id uuid NOT NULL DEFAULT uuid_generate_v1(),
+id TEXT NOT NULL DEFAULT CAST (uuid_generate_v1() AS TEXT),
 
 description text,
 
@@ -86,7 +86,7 @@ WITHOUT OIDS;
 
 CREATE TABLE location_category (
 
-location_id uuid NOT NULL,
+location_id TEXT NOT NULL,
 
 category_id uuid NOT NULL,
 
@@ -120,7 +120,7 @@ WITHOUT OIDS;
 
 CREATE TABLE location_contact (
 
-location_id uuid NOT NULL,
+location_id TEXT NOT NULL,
 
 contact_id uuid NOT NULL,
 
@@ -170,7 +170,7 @@ CREATE TABLE location_setting (
 
 user_table_id uuid NOT NULL,
 
-location_id uuid NOT NULL,
+location_id TEXT NOT NULL,
 
 alertable bool NOT NULL,
 
@@ -216,9 +216,9 @@ ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_user_tables_1 F
 
 ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table (user_table_id) ON DELETE CASCADE;
 
-ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE;
+/*ALTER TABLE location_setting ADD CONSTRAINT fk_Location_Settings_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE;
 
-ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE;
+ALTER TABLE location_contact ADD CONSTRAINT fk_Location_Contacts_Locations_1 FOREIGN KEY (location_id) REFERENCES location (id) ON DELETE CASCADE; */
 
 ALTER TABLE category_contact ADD CONSTRAINT fk_Category_Contacts_Emergency_Contacts_1 FOREIGN KEY (contact_id) REFERENCES emergency_contact (id) ON DELETE CASCADE;
 
