@@ -386,8 +386,13 @@ function get_alert(args, query, res) {
 	knex('location_setting')
 	.select('*')
 	.where('user_table_id', user_id)
-	.then((alerts) => {
-		responder.response(res, alerts)
+	.then((loc_alerts) => {
+		knex('category_setting')
+		.select('*')
+		.where('user_table_id', user_id)
+		.then((cat_alerts) => {
+			responder.response(res, {"location_alerts" : loc_alerts, "category_alerts" : cat_alerts})
+		})
 	})
 }
 
