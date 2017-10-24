@@ -1,6 +1,9 @@
 /* Add extension for UUID generation */
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+/* Add extension for gis functions */
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 CREATE TABLE user_table (
 
 user_table_id uuid NOT NULL DEFAULT uuid_generate_v1(),
