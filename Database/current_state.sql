@@ -19,11 +19,8 @@ SET search_path = public, pg_catalog;
 ALTER TABLE ONLY public.user_table DROP CONSTRAINT fk_user_tables_authentication_types_1;
 ALTER TABLE ONLY public.location DROP CONSTRAINT fk_locations_user_tables_1;
 ALTER TABLE ONLY public.location_setting DROP CONSTRAINT fk_location_settings_user_tables_1;
-ALTER TABLE ONLY public.location_setting DROP CONSTRAINT fk_location_settings_locations_1;
 ALTER TABLE ONLY public.location_contact DROP CONSTRAINT fk_location_contacts_user_tables_1;
-ALTER TABLE ONLY public.location_contact DROP CONSTRAINT fk_location_contacts_locations_1;
 ALTER TABLE ONLY public.location_contact DROP CONSTRAINT fk_location_contacts_emergency_contacts_1;
-ALTER TABLE ONLY public.location_category DROP CONSTRAINT fk_location_categories_locations_1;
 ALTER TABLE ONLY public.location_category DROP CONSTRAINT fk_location_categories_categories_1;
 ALTER TABLE ONLY public.internal_authentication DROP CONSTRAINT fk_internal_authentication_user_tables_1;
 ALTER TABLE ONLY public.emergency_contact DROP CONSTRAINT fk_emergency_contacts_user_tables_1;
@@ -35,8 +32,6 @@ ALTER TABLE ONLY public.category_contact DROP CONSTRAINT fk_category_contacts_em
 ALTER TABLE ONLY public.category_contact DROP CONSTRAINT fk_category_contacts_categories_1;
 DROP TRIGGER location_update ON public.location;
 DROP TRIGGER location_insert ON public.location;
-DROP RULE "_RETURN" ON public.output_users;
-DROP RULE "_RETURN" ON public.output_locations;
 DROP INDEX public.idx_location_geom;
 ALTER TABLE ONLY public.user_table DROP CONSTRAINT user_table_pkey;
 ALTER TABLE ONLY public.category DROP CONSTRAINT unique_name_and_user_id;
@@ -53,8 +48,6 @@ ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_
 ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_name_key;
 ALTER TABLE public.authentication_type ALTER COLUMN id DROP DEFAULT;
 DROP TABLE public.user_table;
-DROP TABLE public.output_users;
-DROP TABLE public.output_locations;
 DROP TABLE public.location_setting;
 DROP TABLE public.location_contact;
 DROP TABLE public.location_category;
@@ -279,7 +272,7 @@ ALTER TABLE internal_authentication OWNER TO postgres;
 --
 
 CREATE TABLE location (
-    id uuid DEFAULT uuid_generate_v1() NOT NULL,
+    id text DEFAULT uuid_generate_v1() NOT NULL,
     description text,
     phone_number text,
     address text,
@@ -298,7 +291,7 @@ ALTER TABLE location OWNER TO postgres;
 --
 
 CREATE TABLE location_category (
-    location_id uuid NOT NULL,
+    location_id text NOT NULL,
     category_id uuid NOT NULL
 );
 
@@ -310,7 +303,7 @@ ALTER TABLE location_category OWNER TO postgres;
 --
 
 CREATE TABLE location_contact (
-    location_id uuid NOT NULL,
+    location_id text NOT NULL,
     contact_id uuid NOT NULL,
     user_table_id uuid NOT NULL
 );
@@ -324,54 +317,12 @@ ALTER TABLE location_contact OWNER TO postgres;
 
 CREATE TABLE location_setting (
     user_table_id uuid NOT NULL,
-    location_id uuid NOT NULL,
+    location_id text NOT NULL,
     alertable boolean NOT NULL
 );
 
 
 ALTER TABLE location_setting OWNER TO postgres;
-
---
--- Name: output_locations; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE output_locations (
-    id uuid,
-    description text,
-    phone_number text,
-    address text,
-    icon bytea,
-    user_table_id uuid,
-    geometry text,
-    categories json,
-    alertable boolean,
-    contacts json,
-    indexed_location geometry(Point,4326)
-);
-
-ALTER TABLE ONLY output_locations REPLICA IDENTITY NOTHING;
-
-
-ALTER TABLE output_locations OWNER TO postgres;
-
---
--- Name: output_users; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE output_users (
-    user_table_id uuid,
-    authentication_token text,
-    name text,
-    auth_type text,
-    username text,
-    password text,
-    locations json
-);
-
-ALTER TABLE ONLY output_users REPLICA IDENTITY NOTHING;
-
-
-ALTER TABLE output_users OWNER TO postgres;
 
 --
 -- Name: user_table; Type: TABLE; Schema: public; Owner: postgres
@@ -690,50 +641,6 @@ CREATE INDEX idx_location_geom ON location USING gist (geom);
 
 
 --
--- Name: output_locations _RETURN; Type: RULE; Schema: public; Owner: postgres
---
-
-CREATE RULE "_RETURN" AS
-    ON SELECT TO output_locations DO INSTEAD  SELECT location.id,
-    location.description,
-    location.phone_number,
-    location.address,
-    location.icon,
-    location.user_table_id,
-    st_asgeojson(location.geom) AS geometry,
-    json_agg(category.*) AS categories,
-    location_setting.alertable,
-    json_agg(emergency_contact.*) AS contacts,
-    location.geom AS indexed_location
-   FROM (((((location
-     JOIN location_category lcat ON ((lcat.location_id = location.id)))
-     JOIN category ON ((lcat.category_id = category.id)))
-     LEFT JOIN location_setting ON (((location.id = location_setting.location_id) AND (location.user_table_id = location_setting.user_table_id))))
-     LEFT JOIN location_contact lcon ON (((lcon.location_id = location.id) AND (lcon.user_table_id = location.user_table_id))))
-     LEFT JOIN emergency_contact ON ((lcon.contact_id = emergency_contact.id)))
-  GROUP BY location.id, location_setting.alertable;
-
-
---
--- Name: output_users _RETURN; Type: RULE; Schema: public; Owner: postgres
---
-
-CREATE RULE "_RETURN" AS
-    ON SELECT TO output_users DO INSTEAD  SELECT user_table.user_table_id,
-    user_table.authentication_token,
-    user_table.name,
-    authentication_type.name AS auth_type,
-    internal_authentication.username,
-    internal_authentication.password,
-    json_agg(output_locations.*) AS locations
-   FROM (((user_table
-     JOIN authentication_type ON ((user_table.authentication_type = authentication_type.id)))
-     LEFT JOIN internal_authentication ON ((user_table.user_table_id = internal_authentication.user_table_id)))
-     LEFT JOIN output_locations ON ((user_table.user_table_id = output_locations.user_table_id)))
-  GROUP BY user_table.user_table_id, authentication_type.name, internal_authentication.username, internal_authentication.password;
-
-
---
 -- Name: location location_insert; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -820,14 +727,6 @@ ALTER TABLE ONLY location_category
 
 
 --
--- Name: location_category fk_location_categories_locations_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY location_category
-    ADD CONSTRAINT fk_location_categories_locations_1 FOREIGN KEY (location_id) REFERENCES location(id);
-
-
---
 -- Name: location_contact fk_location_contacts_emergency_contacts_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -836,27 +735,11 @@ ALTER TABLE ONLY location_contact
 
 
 --
--- Name: location_contact fk_location_contacts_locations_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY location_contact
-    ADD CONSTRAINT fk_location_contacts_locations_1 FOREIGN KEY (location_id) REFERENCES location(id);
-
-
---
 -- Name: location_contact fk_location_contacts_user_tables_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY location_contact
     ADD CONSTRAINT fk_location_contacts_user_tables_1 FOREIGN KEY (user_table_id) REFERENCES user_table(user_table_id);
-
-
---
--- Name: location_setting fk_location_settings_locations_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY location_setting
-    ADD CONSTRAINT fk_location_settings_locations_1 FOREIGN KEY (location_id) REFERENCES location(id);
 
 
 --
