@@ -383,16 +383,11 @@ function post_locations(args, query, res) {
 
 function get_alert(args, query, res) {
 	let user_id = args['user_id'];
-	knex('location_setting')
+	knex('output_user_alerts')
 	.select('*')
 	.where('user_table_id', user_id)
-	.then((loc_alerts) => {
-		knex('category_setting')
-		.select('*')
-		.where('user_table_id', user_id)
-		.then((cat_alerts) => {
-			responder.response(res, {"location_alerts" : loc_alerts, "category_alerts" : cat_alerts})
-		})
+	.then((alerts) => {
+		responder.response(res, alerts);
 	})
 }
 

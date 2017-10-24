@@ -306,3 +306,17 @@ GROUP BY user_table.user_table_id, authentication_type.name, internal_authentica
 
 ALTER TABLE public.output_users
     OWNER TO postgres;
+
+CREATE OR REPLACE VIEW public.output_user_alerts AS
+WITH location_alerts AS (
+    SELECT user_table.user_table_id, jsonb_agg(location_setting.*) as locations
+    FROM user_table
+    LEFT JOIN location_setting ON user_table.user_table_id = location_setting.user_table_id
+    GROUP BY user_table.user_table_id)
+SELECT location_alerts.*, json_agg(category_setting.*) as categories
+FROM location_alerts
+LEFT JOIN category_setting ON location_alerts.user_table_id = category_setting.user_table_id
+GROUP BY location_alerts.user_table_id, location_alerts.locations;
+
+ALTER TABLE public.output_user_alerts
+    OWNER TO postgres;
