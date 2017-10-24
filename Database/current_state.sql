@@ -32,6 +32,8 @@ ALTER TABLE ONLY public.category_contact DROP CONSTRAINT fk_category_contacts_em
 ALTER TABLE ONLY public.category_contact DROP CONSTRAINT fk_category_contacts_categories_1;
 DROP TRIGGER location_update ON public.location;
 DROP TRIGGER location_insert ON public.location;
+DROP RULE "_RETURN" ON public.output_users;
+DROP RULE "_RETURN" ON public.output_locations;
 DROP INDEX public.idx_location_geom;
 ALTER TABLE ONLY public.user_table DROP CONSTRAINT user_table_pkey;
 ALTER TABLE ONLY public.category DROP CONSTRAINT unique_name_and_user_id;
@@ -47,7 +49,10 @@ ALTER TABLE ONLY public.category_contact DROP CONSTRAINT category_contact_pkey;
 ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_pkey;
 ALTER TABLE ONLY public.authentication_type DROP CONSTRAINT authentication_type_name_key;
 ALTER TABLE public.authentication_type ALTER COLUMN id DROP DEFAULT;
+DROP TABLE public.output_users;
+DROP VIEW public.output_user_alerts;
 DROP TABLE public.user_table;
+DROP TABLE public.output_locations;
 DROP TABLE public.location_setting;
 DROP TABLE public.location_contact;
 DROP TABLE public.location_category;
@@ -280,7 +285,8 @@ CREATE TABLE location (
     user_table_id uuid,
     lat numeric,
     long numeric,
-    geom geometry(Point,4326)
+    geom geometry(Point,4326),
+    name text
 );
 
 
@@ -325,6 +331,29 @@ CREATE TABLE location_setting (
 ALTER TABLE location_setting OWNER TO postgres;
 
 --
+-- Name: output_locations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE output_locations (
+    id text,
+    description text,
+    phone_number text,
+    address text,
+    icon bytea,
+    user_table_id uuid,
+    geometry text,
+    categories json,
+    alertable boolean,
+    contacts json,
+    indexed_location geometry(Point,4326)
+);
+
+ALTER TABLE ONLY output_locations REPLICA IDENTITY NOTHING;
+
+
+ALTER TABLE output_locations OWNER TO postgres;
+
+--
 -- Name: user_table; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -337,6 +366,47 @@ CREATE TABLE user_table (
 
 
 ALTER TABLE user_table OWNER TO postgres;
+
+--
+-- Name: output_user_alerts; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW output_user_alerts AS
+ WITH location_alerts AS (
+         SELECT user_table.user_table_id,
+            jsonb_agg(location_setting.*) AS locations
+           FROM (user_table
+             LEFT JOIN location_setting ON ((user_table.user_table_id = location_setting.user_table_id)))
+          GROUP BY user_table.user_table_id
+        )
+ SELECT location_alerts.user_table_id,
+    location_alerts.locations,
+    json_agg(category_setting.*) AS categories
+   FROM (location_alerts
+     LEFT JOIN category_setting ON ((location_alerts.user_table_id = category_setting.user_table_id)))
+  GROUP BY location_alerts.user_table_id, location_alerts.locations;
+
+
+ALTER TABLE output_user_alerts OWNER TO postgres;
+
+--
+-- Name: output_users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE output_users (
+    user_table_id uuid,
+    authentication_token text,
+    name text,
+    auth_type text,
+    username text,
+    password text,
+    locations json
+);
+
+ALTER TABLE ONLY output_users REPLICA IDENTITY NOTHING;
+
+
+ALTER TABLE output_users OWNER TO postgres;
 
 --
 -- Name: authentication_type id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -385,6 +455,8 @@ COPY category_contact (user_table_id, category_id, contact_id) FROM stdin;
 --
 
 COPY category_setting (user_table_id, category_id, alertable) FROM stdin;
+00000000-0000-0000-0000-000000000000	819aaea0-ab8c-11e7-8254-974a4e9a50d4	t
+00000000-0000-0000-0000-000000000000	819b242a-ab8c-11e7-8255-5fc07584b915	t
 \.
 
 
@@ -410,41 +482,41 @@ COPY internal_authentication (user_table_id, username, password) FROM stdin;
 -- Data for Name: location; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY location (id, description, phone_number, address, icon, user_table_id, lat, long, geom) FROM stdin;
-4e002b04-ae0e-11e7-bc63-539357cc0fec	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-107c080c-ae13-11e7-a6ad-4f96db8fabde	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-471cc7d4-ae13-11e7-804d-075b518ea09a	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-ad7d8b5e-adf9-11e7-bff8-bb89dc6893cd	\N	\N	\N	\N	\N	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-87ef4dae-aeb3-11e7-a41b-a3f3f93daf9f	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-9e134daa-aeb4-11e7-ad49-43f49e663b93	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-771a5868-aeb6-11e7-8e53-f75c0530d8f9	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-3896947e-aeb3-11e7-9793-77fddd4e0331	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-43063c02-aeb3-11e7-b020-6f7073ac4705	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-9b3fee9a-aeb3-11e7-9f06-a3ad4906a847	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-d138339c-aeb6-11e7-8cf8-9f3619678813	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-51083d20-aeb6-11e7-81d0-87aa2031de3c	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-56979e5a-aeb3-11e7-a48c-2b1e0788dfae	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-96dfd416-adf8-11e7-8f78-27aa67ba9d05	\N	\N	\N	\N	\N	\N	\N	\N
-15ebbd4e-adf7-11e7-8a57-47dbee394b88	\N	\N	\N	\N	\N	\N	\N	\N
-b602e58a-ac55-11e7-82a1-e742ada5df7d	Test	\N	\N	\N	\N	\N	\N	\N
-43a96e0a-adef-11e7-b511-237f5608ebbd	test	\N	\N	\N	\N	\N	\N	\N
-850b451c-adef-11e7-b512-d736fd12fcb3	test	\N	\N	\N	\N	\N	\N	\N
-3fc0bd26-adf3-11e7-b513-7fb0965e5b4f	test	\N	\N	\N	\N	\N	\N	\N
-a27f16e6-adf4-11e7-a54f-cbd2d36b3376	test	test	test	\N	\N	\N	\N	\N
-8629db56-adf5-11e7-b903-af1a4be161a8	test	test	test	\N	\N	\N	\N	\N
-98d8eb98-adf5-11e7-ab61-3b4fd457d11b	test	test	test	\N	\N	\N	\N	\N
-a1fce746-adf6-11e7-bc9a-733b1f7790e9	\N	\N	\N	\N	\N	\N	\N	\N
-aa74cede-adf6-11e7-883e-6be98c0283ed	\N	\N	\N	\N	\N	\N	\N	\N
-f93db918-adf6-11e7-84b3-ffba12623491	\N	\N	\N	\N	\N	\N	\N	\N
-3457537e-adf7-11e7-ab79-5f1686660ba3	\N	\N	\N	\N	\N	\N	\N	\N
-4dd78832-adf7-11e7-96c0-33e7fa9cc392	\N	\N	\N	\N	\N	\N	\N	\N
-18e64874-adf8-11e7-87ab-339a8fcee011	\N	\N	\N	\N	\N	\N	\N	\N
-8d09113c-adf8-11e7-9c98-8f4bc72eee2c	\N	\N	\N	\N	\N	\N	\N	\N
-01635164-adf9-11e7-807d-4f8c27969027	\N	\N	\N	\N	\N	\N	\N	\N
-685a97f6-adf9-11e7-bef1-a3f7d74bdf5c	\N	\N	\N	\N	\N	\N	\N	\N
-b6dea02e-aeb3-11e7-a72d-e7dcdd040dc4	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-63660f74-aeb6-11e7-99b7-ab0b342d81a6	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
-74a39ad0-aeb7-11e7-8635-5f6be6901407	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0
+COPY location (id, description, phone_number, address, icon, user_table_id, lat, long, geom, name) FROM stdin;
+4e002b04-ae0e-11e7-bc63-539357cc0fec	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+107c080c-ae13-11e7-a6ad-4f96db8fabde	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+471cc7d4-ae13-11e7-804d-075b518ea09a	\N	\N	\N	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+ad7d8b5e-adf9-11e7-bff8-bb89dc6893cd	\N	\N	\N	\N	\N	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+87ef4dae-aeb3-11e7-a41b-a3f3f93daf9f	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+9e134daa-aeb4-11e7-ad49-43f49e663b93	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+771a5868-aeb6-11e7-8e53-f75c0530d8f9	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+3896947e-aeb3-11e7-9793-77fddd4e0331	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+43063c02-aeb3-11e7-b020-6f7073ac4705	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+9b3fee9a-aeb3-11e7-9f06-a3ad4906a847	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+d138339c-aeb6-11e7-8cf8-9f3619678813	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+51083d20-aeb6-11e7-81d0-87aa2031de3c	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+56979e5a-aeb3-11e7-a48c-2b1e0788dfae	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+96dfd416-adf8-11e7-8f78-27aa67ba9d05	\N	\N	\N	\N	\N	\N	\N	\N	\N
+15ebbd4e-adf7-11e7-8a57-47dbee394b88	\N	\N	\N	\N	\N	\N	\N	\N	\N
+b602e58a-ac55-11e7-82a1-e742ada5df7d	Test	\N	\N	\N	\N	\N	\N	\N	\N
+43a96e0a-adef-11e7-b511-237f5608ebbd	test	\N	\N	\N	\N	\N	\N	\N	\N
+850b451c-adef-11e7-b512-d736fd12fcb3	test	\N	\N	\N	\N	\N	\N	\N	\N
+3fc0bd26-adf3-11e7-b513-7fb0965e5b4f	test	\N	\N	\N	\N	\N	\N	\N	\N
+a27f16e6-adf4-11e7-a54f-cbd2d36b3376	test	test	test	\N	\N	\N	\N	\N	\N
+8629db56-adf5-11e7-b903-af1a4be161a8	test	test	test	\N	\N	\N	\N	\N	\N
+98d8eb98-adf5-11e7-ab61-3b4fd457d11b	test	test	test	\N	\N	\N	\N	\N	\N
+a1fce746-adf6-11e7-bc9a-733b1f7790e9	\N	\N	\N	\N	\N	\N	\N	\N	\N
+aa74cede-adf6-11e7-883e-6be98c0283ed	\N	\N	\N	\N	\N	\N	\N	\N	\N
+f93db918-adf6-11e7-84b3-ffba12623491	\N	\N	\N	\N	\N	\N	\N	\N	\N
+3457537e-adf7-11e7-ab79-5f1686660ba3	\N	\N	\N	\N	\N	\N	\N	\N	\N
+4dd78832-adf7-11e7-96c0-33e7fa9cc392	\N	\N	\N	\N	\N	\N	\N	\N	\N
+18e64874-adf8-11e7-87ab-339a8fcee011	\N	\N	\N	\N	\N	\N	\N	\N	\N
+8d09113c-adf8-11e7-9c98-8f4bc72eee2c	\N	\N	\N	\N	\N	\N	\N	\N	\N
+01635164-adf9-11e7-807d-4f8c27969027	\N	\N	\N	\N	\N	\N	\N	\N	\N
+685a97f6-adf9-11e7-bef1-a3f7d74bdf5c	\N	\N	\N	\N	\N	\N	\N	\N	\N
+b6dea02e-aeb3-11e7-a72d-e7dcdd040dc4	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+63660f74-aeb6-11e7-99b7-ab0b342d81a6	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+74a39ad0-aeb7-11e7-8635-5f6be6901407	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
 \.
 
 
@@ -503,10 +575,6 @@ COPY location_contact (location_id, contact_id, user_table_id) FROM stdin;
 --
 
 COPY location_setting (user_table_id, location_id, alertable) FROM stdin;
-00000000-0000-0000-0000-000000000000	9e134daa-aeb4-11e7-ad49-43f49e663b93	t
-00000000-0000-0000-0000-000000000000	771a5868-aeb6-11e7-8e53-f75c0530d8f9	f
-00000000-0000-0000-0000-000000000000	d138339c-aeb6-11e7-8cf8-9f3619678813	f
-00000000-0000-0000-0000-000000000000	74a39ad0-aeb7-11e7-8635-5f6be6901407	f
 \.
 
 
@@ -638,6 +706,50 @@ ALTER TABLE ONLY user_table
 --
 
 CREATE INDEX idx_location_geom ON location USING gist (geom);
+
+
+--
+-- Name: output_locations _RETURN; Type: RULE; Schema: public; Owner: postgres
+--
+
+CREATE RULE "_RETURN" AS
+    ON SELECT TO output_locations DO INSTEAD  SELECT location.id,
+    location.description,
+    location.phone_number,
+    location.address,
+    location.icon,
+    location.user_table_id,
+    st_asgeojson(location.geom) AS geometry,
+    json_agg(category.*) AS categories,
+    location_setting.alertable,
+    json_agg(emergency_contact.*) AS contacts,
+    location.geom AS indexed_location
+   FROM (((((location
+     JOIN location_category lcat ON ((lcat.location_id = location.id)))
+     JOIN category ON ((lcat.category_id = category.id)))
+     LEFT JOIN location_setting ON (((location.id = location_setting.location_id) AND (location.user_table_id = location_setting.user_table_id))))
+     LEFT JOIN location_contact lcon ON (((lcon.location_id = location.id) AND (lcon.user_table_id = location.user_table_id))))
+     LEFT JOIN emergency_contact ON ((lcon.contact_id = emergency_contact.id)))
+  GROUP BY location.id, location_setting.alertable;
+
+
+--
+-- Name: output_users _RETURN; Type: RULE; Schema: public; Owner: postgres
+--
+
+CREATE RULE "_RETURN" AS
+    ON SELECT TO output_users DO INSTEAD  SELECT user_table.user_table_id,
+    user_table.authentication_token,
+    user_table.name,
+    authentication_type.name AS auth_type,
+    internal_authentication.username,
+    internal_authentication.password,
+    json_agg(output_locations.*) AS locations
+   FROM (((user_table
+     JOIN authentication_type ON ((user_table.authentication_type = authentication_type.id)))
+     LEFT JOIN internal_authentication ON ((user_table.user_table_id = internal_authentication.user_table_id)))
+     LEFT JOIN output_locations ON ((user_table.user_table_id = output_locations.user_table_id)))
+  GROUP BY user_table.user_table_id, authentication_type.name, internal_authentication.username, internal_authentication.password;
 
 
 --
