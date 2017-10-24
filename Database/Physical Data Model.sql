@@ -44,6 +44,8 @@ CREATE TABLE location (
 
 id TEXT NOT NULL DEFAULT CAST (uuid_generate_v1() AS TEXT),
 
+name text,
+
 description text,
 
 phone_number text,

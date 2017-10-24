@@ -391,20 +391,53 @@ function get_alert(args, query, res) {
 	})
 }
 
+// Route: POST /users/{id}/alert
+// Usage: POST /api/v1/users/{id}/alert?
+// 		  	   location_id={...}&
+// 			   alertable={...}&
 function post_alert(args, query, res) {
-	response.responder(res, {
-		'Endpoint': 'POST /users/{id}/alert',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id =       args['user_id'];
+	let location_id =   query['location_id'];
+	let alertable =     query['alertable'];
+
+	if (location_id === undefined) {
+		responder.raiseQueryError(res, 'location_id')
+	}
+	else if (alertable === undefined) {
+		responder.raiseQueryError(res, 'alertable')
+	}
+	else {
+		knex('location_setting')
+		.insert({
+			"user_table_id": user_id,
+			"location_id": location_id,
+			"alertable": alertable
+		})
+		.returning('*')
+		.then((result) => {
+			responder.response(res, result);
+		})
+	}
 }
 
+// Route: POST /users/{id}/alert
+// Usage: POST /api/v1/users/{id}/alert?
+// 		  	   location_id={...}
 function delete_alert(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'DELETE /users/{id}/alert',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id =       args['user_id'];
+	let location_id =   query['location_id'];
+
+	if (location_id === undefined) {
+		responder.raiseQueryError(res, 'location_id')
+	}
+	else {
+		knex('location_setting')
+		.where('user_table_id', user_id).andWhere('location_id', location_id)
+		.del()
+		.then((result) => {
+			responder.response(res, {"Rows Deleted": result});
+		})
+	}
 }
 
 function get_contacts_id(args, query, res) {
