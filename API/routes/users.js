@@ -135,21 +135,50 @@ function geoJsonify(dbResponse) {
 	};
 }
 
-// Below is individual methods to implement endpoints that needed to be routed 
-function put_name(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'PUT /users/{id}/name',
-		'Args': args,
-		'Query Parameters': query
-	});
+function handle_delete_result(result) {
+	return {"Rows Deleted": result};
 }
 
+// Below is individual methods to implement endpoints that needed to be routed 
+
+// Route: PUT /users/{id}/name
+// Usage: PUT /api/v1/users/{id}/name?
+// 		  	   name={...}
+function put_name(args, query, res) {
+	let user_id =  args['user_id'];
+	let name =    query['name'];
+
+	if (name === undefined) {
+		responder.raiseQueryError(res, 'name')
+	} else {
+		knex('user_table')
+		.where('user_table_id', user_id)
+		.update({name: name})
+		.returning('*')
+		.then((user) => {
+			responder.response(res, user);
+		})
+	}
+}
+
+// Route: POST /users/{id}/email
+// Usage: POST /api/v1/users/{id}/email?
+// 		  	   email={...}
 function put_email(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'PUT /users/{id}/email',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id =  args['user_id'];
+	let email =    query['email'];
+
+	if (email === undefined) {
+		responder.raiseQueryError(res, 'email')
+	} else {
+		knex('user_table')
+		.where('user_table_id', user_id)
+		.update({email: email})
+		.returning('*')
+		.then((user) => {
+			responder.response(res, user);
+		})
+	}
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
@@ -283,20 +312,39 @@ function get_locations_id(args, query, res) {
 	}
 }
 
+// Route: DELETE /users/{id}/locations/{id}
+// Usage: DELETE /users/{id}/locations/{id}
 function delete_locations_id(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'DELETE /users/{id}/locations/{id}',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id =       args['user_id'];
+	let location_id =   args['key'];
+
+	knex('location')
+	.where('id', location_id).andWhere('user_table_id', user_id)
+	.del()
+	.then((result) => {
+		responder.response(res, handle_delete_result(result));
+	})
 }
 
+// Route: POST /users/{id}/locations/{id}/name
+// Usage: POST /api/v1/users/{id}/locations/{id}/name?
+// 		  	   name={...}
 function put_locations_id_name(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'PUT /users/{id}/locations/{id}/name',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let name =   query['name'];
+	let user_id =    args['user_id'];
+	let location_id = args['key'];
+	
+	if (name === undefined) {
+		responder.raiseQueryError(res, 'name')
+	} else {
+		knex('location')
+		.where('id', location_id).andWhere('user_table_id', user_id)
+		.update({name: name})
+		.returning('*')
+		.then((result) => {
+			responder.response(res, result);
+		})
+	}
 }
 
 function no_op_query() {
@@ -435,41 +483,80 @@ function delete_alert(args, query, res) {
 		.where('user_table_id', user_id).andWhere('location_id', location_id)
 		.del()
 		.then((result) => {
-			responder.response(res, {"Rows Deleted": result});
+			responder.response(res, handle_delete_result(result));
 		})
 	}
 }
 
+function emergency_contact_query(user_id, contact_id) {
+	return knex('emergency_contact')
+	.where('user_table_id', user_id).andWhere('id', contact_id)
+}
+
+// Route: POST /users/{id}/contacts/{id}
+// Usage: POST /api/v1/users/{id}/contacts/{id}
 function get_contacts_id(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'GET /users/{id}/contacts/{id}',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id =    args['user_id'];
+	let contact_id = args['key'];
+
+	emergency_contact_query(user_id, contact_id)
+	.select('*')
+	.then((contact) => {
+		responder.response(res, contact);
+	})
 }
 
+// Route: DELETE /users/{id}/contacts/{id}
+// Usage: DELETE /api/v1/users/{id}/contacts/{id}
 function delete_contacts_id(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'DELETE /users/{id}/contacts/{id}',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let user_id =    args['user_id'];
+	let contact_id = args['key'];
+
+	emergency_contact_query(user_id, contact_id)
+	.del()
+	.then((result) => {
+		responder.response(res, handle_delete_result(result));
+	})
 }
 
+// Route: PUT /users/{id}/contacts/{id}/phone
+// Usage: PUT /api/v1/users/{id}/contacts/{id}/phone?
+// 		  	   phone_number={...}
 function put_contacts_id_phone(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'PUT /users/{id}/contacts/{id}/phone',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let phone_number =   query['phone_number'];
+	let user_id =    args['user_id'];
+	let contact_id = args['key'];
+	
+	if (phone_number === undefined) {
+		responder.raiseQueryError(res, 'phone_number')
+	} else {
+		emergency_contact_query(user_id, contact_id)
+		.update({phone: phone_number})
+		.returning('*')
+		.then((result) => {
+			responder.response(res, result);
+		})
+	}
 }
 
+// Route: PUT /users/{id}/contacts/{id}/email
+// Usage: PUT /api/v1/users/{id}/contacts/{id}/email?
+// 		  	   email={...}
 function put_contacts_id_email(args, query, res) {
-	responder.response(res, {
-		'Endpoint': 'PUT /users/{id}/contacts/{id}/email',
-		'Args': args,
-		'Query Parameters': query
-	});
+	let email_addr =   query['email'];
+	let user_id =    args['user_id'];
+	let contact_id = args['key'];
+	
+	if (email_addr === undefined) {
+		responder.raiseQueryError(res, 'email')
+	} else {
+		emergency_contact_query(user_id, contact_id)
+		.update({email: email_addr})
+		.returning('*')
+		.then((result) => {
+			responder.response(res, result);
+		})
+	}
 }
 
 function get_users() {

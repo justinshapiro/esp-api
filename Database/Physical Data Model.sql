@@ -10,6 +10,8 @@ user_table_id uuid NOT NULL DEFAULT uuid_generate_v1(),
 
 name text,
 
+email text,
+
 authentication_type int4 NOT NULL,
 
 authentication_token text,
@@ -109,6 +111,8 @@ id uuid NOT NULL DEFAULT uuid_generate_v1(),
 name text NOT NULL,
 
 email text,
+
+phone text,
 
 user_table_id uuid NOT NULL,
 
