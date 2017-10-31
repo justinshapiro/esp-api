@@ -36,6 +36,11 @@ Nested arguments are routing using the following enumeration of names:
 
 For `/users`, the `root_argument` is always `user_id`.
 
+## API Documentation / Test Suite
+Documentation of the API endpoints is located at https://documenter.getpostman.com/view/553180/esp-api/77eARDe
+
+To run test suite click this button: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/184c09968390baf8b27e#?env%5BAPI%20Test%20Run%5D=W3sidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlLCJrZXkiOiJ1c2VyX2lkIiwidmFsdWUiOiIifV0=)
+
 ## Deployment
 
 The API and database are hosted on Google Cloud Platform's App Engine. Deployment is simple and follows the following steps:
