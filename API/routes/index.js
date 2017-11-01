@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 
 // Get API methods
-const oauthEndpoint =        require('./oauth');
 const locationsEndpoint =    require('./locations');
 const notificationEndpoint = require('./notification');
 const usersEndpoint =        require('./users');
@@ -17,12 +16,6 @@ router.get('/', function(req, res) {
 // Route: /auth... (Local Authentication specific)
 router.post('/api/v1/authentication/login', authEndpoint.userLogin);
 router.get('/api/v1/authentication/logout', authEndpoint.userLogout);
-
-// Route: /oauth... (OAuth specific)
-router.get('/api/v1/oauth/authorize', oauthEndpoint.authorize);
-
-// Route: /token... (OAuth specific)
-router.post('/api/v1/oauth/token', oauthEndpoint.token);
 
 // Route: /locations...
 router.get('/api/v1/locations',              locationsEndpoint.locations);
