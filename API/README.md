@@ -48,4 +48,5 @@ The API and database are hosted on Google Cloud Platform's App Engine. Deploymen
 1. Stop any running instances of the API in the Google Cloud Platform Console
 1. `cd` to API directory
 2. Execute `gcloud app deploy`
+3. Update the database with the command `psql "sslmode=disable host=/cloudsql/esp-mobile-182605:us-central1:esp-db user=postgres" esp_db < current_state.sql`
 

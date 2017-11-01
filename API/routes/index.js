@@ -8,18 +8,21 @@ const tokenEndpoint =        require('./token');
 const locationsEndpoint =    require('./locations');
 const notificationEndpoint = require('./notification');
 const usersEndpoint =        require('./users');
+const authEndpoint =        require('./auth');
 
 // API Homepage
 router.get('/', function(req, res) {
 	res.render('index', { title: 'ESP Mobile API' });
 });
 
-// Route: /authorize...
-// Deprecation warning: May not need this
+// Route: /auth... (Local Authentication specific)
+router.post('/api/v1/auth/login', authEndpoint.userLogin);
+router.get('/api/v1/auth/logout', authEndpoint.userLogout);
+
+// Route: /authorize... (OAuth specific)
 router.get('/api/v1/authorize', authorizeEndpoint.authorize);
 
-// Route: /token...
-// Deprecation warning: May not need this
+// Route: /token... (OAuth specific)
 router.post('/api/v1/token', tokenEndpoint.token);
 
 // Route: /locations...

@@ -568,12 +568,19 @@ function get_users() {
 	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id');
 }
 
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_all_users_query(completion) {
+	get_users().then((users) => {
+		completion(users);
+	})
+}
+
 // Route: GET /users
 // Usage: GET /api/v1/users
 exports.users_get = function(req, res) {
 	// No need to route further, continue logic here
 
-	get_users().then((users) => {
+	get_all_users_query(function(users) {
 		responder.response(res, users);
 	})
 };
@@ -642,12 +649,16 @@ exports.users_id_delete = function(req, res) {
 exports.users_id_property_get = function(req, res) {
 	const args = req.params;
 
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
+
 	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
 	route_property(req, res, args, 'get');
 };
 
 exports.users_id_property_put = function(req, res) {
 	const args = req.params;
+
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
 
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
 	route_property(req, res, args, 'put');
@@ -656,12 +667,16 @@ exports.users_id_property_put = function(req, res) {
 exports.users_id_property_post = function(req, res) {
 	const args = req.params;
 
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
+
 	// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
 	route_property(req, res, args, 'post');
 };
 
 exports.users_id_property_delete = function(req, res) {
 	const args = req.params;
+
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
 
 	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
 	route_property(req, res, args, 'delete');
@@ -670,12 +685,16 @@ exports.users_id_property_delete = function(req, res) {
 exports.users_id_property_key_get = function(req, res) {
 	const args = req.params;
 
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
+
 	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
 	route_property_key(req, res, args, 'get');
 };
 
 exports.users_id_property_key_delete = function(req, res) {
 	const args = req.params;
+
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
 
 	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
 	route_property_key(req, res, args, 'delete');
@@ -684,6 +703,8 @@ exports.users_id_property_key_delete = function(req, res) {
 exports.users_id_property_key_detail_put = function(req, res) {
 	const args = req.params;
 
+	// TODO: if (req.user) { proceed with call } else { unauthorized }
+
 	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
 	route_property_key_detail(req, res, args, 'put');
 };
@@ -691,5 +712,6 @@ exports.users_id_property_key_detail_put = function(req, res) {
 // Here we export functions that other parts of the API will need
 exports.extern_get_contacts = get_contacts_db_query;
 exports.extern_get_user = get_user_db_query;
+exports.extern_get_all_users = get_all_users_query;
 exports.extern_get_user_locations = get_user_locations_db_query;
 exports.extern_get_user_location_id = get_user_location_id_db_query;

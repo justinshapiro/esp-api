@@ -1,0 +1,10 @@
+runtime: nodejs
+env: flexible
+threadsafe: true
+env_variables:
+  INSTANCE_CONNECTION_NAME: 'esp-mobile-182605:us-central1:esp-db'
+  SQL_DATABASE: esp_db
+  SQL_PASSWORD: seniordesign
+  SQL_USER: postgres
+beta_settings:
+  cloud_sql_instances: 'esp-mobile-182605:us-central1:esp-db'
