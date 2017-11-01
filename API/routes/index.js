@@ -3,12 +3,11 @@ const express = require('express');
 const router = express.Router();
 
 // Get API methods
-const authorizeEndpoint =    require('./authorize');
-const tokenEndpoint =        require('./token');
+const oauthEndpoint =        require('./oauth');
 const locationsEndpoint =    require('./locations');
 const notificationEndpoint = require('./notification');
 const usersEndpoint =        require('./users');
-const authEndpoint =        require('./auth');
+const authEndpoint =         require('./authentication');
 
 // API Homepage
 router.get('/', function(req, res) {
@@ -16,14 +15,14 @@ router.get('/', function(req, res) {
 });
 
 // Route: /auth... (Local Authentication specific)
-router.post('/api/v1/auth/login', authEndpoint.userLogin);
-router.get('/api/v1/auth/logout', authEndpoint.userLogout);
+router.post('/api/v1/authentication/login', authEndpoint.userLogin);
+router.get('/api/v1/authentication/logout', authEndpoint.userLogout);
 
-// Route: /authorize... (OAuth specific)
-router.get('/api/v1/authorize', authorizeEndpoint.authorize);
+// Route: /oauth... (OAuth specific)
+router.get('/api/v1/oauth/authorize', oauthEndpoint.authorize);
 
 // Route: /token... (OAuth specific)
-router.post('/api/v1/token', tokenEndpoint.token);
+router.post('/api/v1/oauth/token', oauthEndpoint.token);
 
 // Route: /locations...
 router.get('/api/v1/locations',              locationsEndpoint.locations);
