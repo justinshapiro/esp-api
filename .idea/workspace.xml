@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="004fcd49-8768-4f2a-8d42-c8e879f4e579" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/API/routes/auth.js" afterPath="$PROJECT_DIR$/API/routes/authentication.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/API/routes/oauth.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/app.yaml" afterPath="$PROJECT_DIR$/API/app.yaml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/index.js" afterPath="$PROJECT_DIR$/API/routes/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -260,7 +258,7 @@
       <workItem from="1509507985057" duration="9502000" />
       <workItem from="1509518254312" duration="215000" />
       <workItem from="1509518566860" duration="2042000" />
-      <workItem from="1509574717660" duration="1146000" />
+      <workItem from="1509574717660" duration="1223000" />
     </task>
     <task id="LOCAL-00001" summary="Changed category names to match Google Maps'">
       <created>1507692793523</created>
@@ -353,11 +351,18 @@
       <option name="project" value="LOCAL" />
       <updated>1509520347385</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Refactor authentication endpoint, added OAuth endpoint stubs.">
+      <created>1509578699659</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1509578699659</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="65431000" />
+    <option name="totallyTimeSpent" value="65508000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -405,7 +410,8 @@
     <MESSAGE value="/authorize and /token face possible deprecation in favor of Passport's /auth" />
     <MESSAGE value="/notifications endpoint implemented &amp; one call combines Google Maps locations (all three categories) and DB custom locations at /locations" />
     <MESSAGE value="Authentication implemented at /auth/login and /auth/logout" />
-    <option name="LAST_COMMIT_MESSAGE" value="Authentication implemented at /auth/login and /auth/logout" />
+    <MESSAGE value="Refactor authentication endpoint, added OAuth endpoint stubs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor authentication endpoint, added OAuth endpoint stubs." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -689,6 +695,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="61" lean-forward="true" selection-start-line="9" selection-start-column="61" selection-end-line="9" selection-end-column="61" />
+          <folding />
         </state>
       </provider>
     </entry>
