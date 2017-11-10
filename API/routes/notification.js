@@ -33,11 +33,6 @@ exports.notification = function(req, res) {
 			user_name: function (completion) {
 				setTimeout(function () {
 					usersEndpoint.extern_get_user(user_id, function (user) {
-						// this needs to be addressed
-						if (user.length > 1) {
-							user = user[0];
-						}
-
 						completion(null, user['name']);
 					});
 				}, 200);
