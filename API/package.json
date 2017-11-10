@@ -23,6 +23,7 @@
     "twilio": "3.8.1",
     "passport": "^0.4.0",
     "passport-oauth": "^1.0.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "circular-json": "^0.4.0"
   }
 }
