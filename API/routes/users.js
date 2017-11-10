@@ -161,8 +161,8 @@ function put_name(args, query, res) {
 	}
 }
 
-// Route: POST /users/{id}/email
-// Usage: POST /api/v1/users/{id}/email?
+// Route: PUT /users/{id}/email
+// Usage: PUT /api/v1/users/{id}/email?
 // 		  	   email={...}
 function put_email(args, query, res) {
 	let user_id =  args['user_id'];
@@ -561,16 +561,18 @@ function put_contacts_id_email(args, query, res) {
 
 function get_users() {
 	return knex('user_table')
-	.select('user_table.user_table_id', 'user_table.authentication_token',
+	.distinct('user_table.user_table_id', 'user_table.authentication_token',
 			'user_table.name', 'authentication_type.name as auth_type',
 			'internal_authentication.username', 'internal_authentication.password')
 	.join('authentication_type', 'user_table.authentication_type', 'authentication_type.id')
-	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id');
+	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id')
+	.select();
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_all_users_query(completion) {
 	get_users().then((users) => {
+		console.log(users);
 		completion(users);
 	})
 }
