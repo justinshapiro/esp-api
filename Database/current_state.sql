@@ -361,7 +361,8 @@ CREATE TABLE user_table (
     user_table_id uuid DEFAULT uuid_generate_v1() NOT NULL,
     authentication_type integer NOT NULL,
     authentication_token text,
-    name text
+    name text,
+    email text
 );
 
 
@@ -397,6 +398,7 @@ CREATE TABLE output_users (
     user_table_id uuid,
     authentication_token text,
     name text,
+    email text,
     auth_type text,
     username text,
     password text,
@@ -590,10 +592,8 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 -- Data for Name: user_table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY user_table (user_table_id, authentication_type, authentication_token, name) FROM stdin;
-00000000-0000-0000-0000-000000000000	1	default	default
-c8552394-ac4e-11e7-a6e5-638439a8b77b	1	\N	\N
-bafffff6-ac4f-11e7-bdce-ffae76dc2a2c	1	testauthtoken	\N
+COPY user_table (user_table_id, authentication_type, authentication_token, name, email) FROM stdin;
+00000000-0000-0000-0000-000000000000	1	default	default	\N
 \.
 
 
@@ -741,6 +741,7 @@ CREATE RULE "_RETURN" AS
     ON SELECT TO output_users DO INSTEAD  SELECT user_table.user_table_id,
     user_table.authentication_token,
     user_table.name,
+    user_table.email,
     authentication_type.name AS auth_type,
     internal_authentication.username,
     internal_authentication.password,

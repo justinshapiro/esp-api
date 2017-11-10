@@ -560,19 +560,28 @@ function put_contacts_id_email(args, query, res) {
 }
 
 function get_users() {
-	return knex('user_table')
-	.distinct('user_table.user_table_id', 'user_table.authentication_token',
-			'user_table.name', 'authentication_type.name as auth_type',
-			'internal_authentication.username', 'internal_authentication.password')
-	.join('authentication_type', 'user_table.authentication_type', 'authentication_type.id')
-	.leftJoin('internal_authentication', 'user_table.user_table_id', 'internal_authentication.user_table_id')
-	.select();
+	return knex('user_table').distinct(
+		'user_table.user_table_id',
+		'user_table.authentication_token',
+		'user_table.name',
+		'user_table.email',
+		'authentication_type.name as auth_type',
+		'internal_authentication.username',
+		'internal_authentication.password'
+	).join(
+		'authentication_type',
+		'user_table.authentication_type',
+		'authentication_type.id'
+	).leftJoin(
+		'internal_authentication',
+		'user_table.user_table_id',
+		'internal_authentication.user_table_id'
+	).select();
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_all_users_query(completion) {
 	get_users().then((users) => {
-		console.log(users);
 		completion(users);
 	})
 }
@@ -587,30 +596,38 @@ exports.users_get = function(req, res) {
 	})
 };
 
-function add_user(auth_type, token, name) {
+function add_user(name, email, auth_type, token) {
 	return knex('user_table').insert({
+		name: name,
+		email: email,
 		authentication_type: auth_type,
-		authentication_token: token,
-		name: name
+		authentication_token: token
 	}).returning('*');
 }
 
 // Route: POST /users
 // Usage: POST /api/v1/users?
+//			   name={...}&
+//			   email={...}&
 //             authentication_type={...}&
 //			   [authentication_token={...}&]
-//             [name={...}]
+//
 exports.users_post = function(req, res, next) {
 	// No need to route further, continue logic here
   
 	const name =      req.query['name'];
+	const email =     req.query['email'];
 	const auth_type = req.query['authentication_type'];
 	const token =     req.query['authentication_token'];
 
 	if (auth_type === undefined) {
 		responder.raiseQueryError(res, 'authentication_type');
+	} else if (name === undefined) {
+		responder.raiseQueryError(res, 'name');
+	} else if (email === undefined) {
+		responder.raiseQueryError(res, 'email');
 	} else {
-		add_user(auth_type, token, name).then((user) => {
+		add_user(name, email, auth_type, token).then((user) => {
 			responder.response(res, user)
 		});
 	}
