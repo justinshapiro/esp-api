@@ -692,10 +692,15 @@ exports.users_id_delete = function(req, res) {
 			if (user.length === 0) {
 				responder.raiseInternalError(res, "Delete failed because user does not exist")
 			} else {
-				knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
-					knex('user_table').where('user_table_id', user_id).del().then(() => {
-						responder.response(res, 'Success');
-					})
+				// perform cascading delete
+				knex('location_setting').where('user_table_id', user_id).del().then(() => {
+					knex('emergency_contact').where('user_table_id', user_id).del().then(() => {
+						knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
+							knex('user_table').where('user_table_id', user_id).del().then(() => {
+								responder.response(res, 'Success');
+							})
+						});
+					});
 				});
 			}
 		});

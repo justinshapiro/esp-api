@@ -33,12 +33,10 @@ passport.use(new LocalStrategy(
 );
 
 passport.serializeUser(function(user, done) {
-	console.log("Serializing: " + user);
 	done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
-	console.log("Deserializing: " + user);
 	done(null, user);
 });
 
@@ -53,14 +51,13 @@ exports.userLogin = function(req, res, next) {
 		if (err) {
 			return next(err);
 		}
-
 		if (!user) {
 			responder.raiseAuthenticationError(res, req.query['username']);
 		}
 
 		req.login(user, error => {
 			if (error) {
-				return next(error);
+				responder.raiseAuthenticationError(res, req.query['username'], error)
 			}
 
 			responder.response(res, "Authentication succeeded");

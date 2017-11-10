@@ -38,6 +38,10 @@ exports.raiseAuthorizationError = function(res, endpoint) {
 	res.json({"ESP-Error": `You are not authorized to access the endpoint: ${endpoint}`});
 };
 
-exports.raiseAuthenticationError = function(res, user) {
-	res.json({"ESP-Error": `Failed to authenticate the user with login ID: ${user}`});
+exports.raiseAuthenticationError = function(res, user, error) {
+	if (error === null || error === undefined) {
+		res.json({"ESP-Error": `Failed to authenticate the user with login ID: ${user}`});
+	} else {
+		res.json({"ESP-Error": `The following error was encountered why trying to authenticate ${user}: ${error}`});
+	}
 };
