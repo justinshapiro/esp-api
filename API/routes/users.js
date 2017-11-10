@@ -429,13 +429,23 @@ function post_locations(args, query, res) {
 	}
 }
 
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_alerts_query(user_id, completion) {
+	knex('output_user_alerts')
+		.select('*')
+		.where('user_table_id', user_id)
+		.then((alerts) => {
+			completion(alerts);
+		})
+}
+
+// Route: GET /users/{id}/alert
+// Usage: GET /api/v1/users/{id}/alert
 function get_alert(args, query, res) {
 	let user_id = args['user_id'];
-	knex('output_user_alerts')
-	.select('*')
-	.where('user_table_id', user_id)
-	.then((alerts) => {
-		responder.response(res, alerts);
+
+	get_alerts_query(user_id, function (alerts) {
+		responder.response(res, alerts)
 	})
 }
 
@@ -444,17 +454,15 @@ function get_alert(args, query, res) {
 // 		  	   location_id={...}&
 // 			   alertable={...}&
 function post_alert(args, query, res) {
-	let user_id =       args['user_id'];
+	let user_id =        args['user_id'];
 	let location_id =   query['location_id'];
 	let alertable =     query['alertable'];
 
 	if (location_id === undefined) {
 		responder.raiseQueryError(res, 'location_id')
-	}
-	else if (alertable === undefined) {
+	} else if (alertable === undefined) {
 		responder.raiseQueryError(res, 'alertable')
-	}
-	else {
+	} else {
 		knex('location_setting')
 		.insert({
 			"user_table_id": user_id,
@@ -468,17 +476,16 @@ function post_alert(args, query, res) {
 	}
 }
 
-// Route: POST /users/{id}/alert
-// Usage: POST /api/v1/users/{id}/alert?
-// 		  	   location_id={...}
+// Route: DELETE /users/{id}/alert
+// Usage: DELETE /api/v1/users/{id}/alert?
+// 		  	     location_id={...}
 function delete_alert(args, query, res) {
-	let user_id =       args['user_id'];
+	let user_id =        args['user_id'];
 	let location_id =   query['location_id'];
 
 	if (location_id === undefined) {
 		responder.raiseQueryError(res, 'location_id')
-	}
-	else {
+	} else {
 		knex('location_setting')
 		.where('user_table_id', user_id).andWhere('location_id', location_id)
 		.del()
@@ -489,8 +496,7 @@ function delete_alert(args, query, res) {
 }
 
 function emergency_contact_query(user_id, contact_id) {
-	return knex('emergency_contact')
-	.where('user_table_id', user_id).andWhere('id', contact_id)
+	return knex('emergency_contact').where('user_table_id', user_id).andWhere('id', contact_id)
 }
 
 // Route: POST /users/{id}/contacts/{id}
@@ -524,8 +530,8 @@ function delete_contacts_id(args, query, res) {
 // 		  	   phone_number={...}
 function put_contacts_id_phone(args, query, res) {
 	let phone_number =   query['phone_number'];
-	let user_id =    args['user_id'];
-	let contact_id = args['key'];
+	let user_id =         args['user_id'];
+	let contact_id =      args['key'];
 	
 	if (phone_number === undefined) {
 		responder.raiseQueryError(res, 'phone_number')
@@ -544,8 +550,8 @@ function put_contacts_id_phone(args, query, res) {
 // 		  	   email={...}
 function put_contacts_id_email(args, query, res) {
 	let email_addr =   query['email'];
-	let user_id =    args['user_id'];
-	let contact_id = args['key'];
+	let user_id =       args['user_id'];
+	let contact_id =    args['key'];
 	
 	if (email_addr === undefined) {
 		responder.raiseQueryError(res, 'email')
@@ -757,3 +763,4 @@ exports.extern_get_user = get_user_db_query;
 exports.extern_get_all_users = get_all_users_query;
 exports.extern_get_user_locations = get_user_locations_db_query;
 exports.extern_get_user_location_id = get_user_location_id_db_query;
+exports.extern_get_alerts_query = get_alerts_query;
