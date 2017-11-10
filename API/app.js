@@ -7,7 +7,6 @@ const bodyParser =   require('body-parser');
 const routes =       require('./routes/index');
 const session =      require('express-session');
 const passport =     require('passport');
-const Strategy =     require('passport-local').Strategy;
 
 const app = express();
 
@@ -21,6 +20,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+// Initialize Passport and restore authentication state, if any, from the
+// session.
+app.use(session({
+	secret: "cats",
+	resave: true,
+	saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', routes);
 
@@ -54,15 +64,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-// Initialize Passport and restore authentication state, if any, from the
-// session.
-app.use(session({
-	secret: "cats",
-	resave: true,
-	saveUninitialized: true
-}));
-app.use(passport.initialize());
-app.use(passport.session());
 
 module.exports = app;

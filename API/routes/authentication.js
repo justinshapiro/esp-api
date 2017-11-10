@@ -32,6 +32,16 @@ passport.use(new LocalStrategy(
 	})
 );
 
+passport.serializeUser(function(user, done) {
+	console.log("Serializing: " + user);
+	done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+	console.log("Deserializing: " + user);
+	done(null, user);
+});
+
 // Route: POST /auth/login
 // Usage: POST /api/v1/auth/login?
 //             username={...}&
@@ -39,7 +49,23 @@ passport.use(new LocalStrategy(
 exports.userLogin = function(req, res, next) {
 	// passport gets the query parameters from LocalStrategy
 	// passport will handle responding with 200 or 401
-	passport.authenticate('local')(req, res, next);
+	passport.authenticate('local', function (err, user, info) {
+		if (err) {
+			return next(err);
+		}
+
+		if (!user) {
+			responder.raiseAuthenticationError(res, req.query['username']);
+		}
+
+		req.login(user, error => {
+			if (error) {
+				return next(error);
+			}
+
+			responder.response(res, "Authentication succeeded");
+		});
+	})(req, res, next);
 };
 
 // Route: GET /auth/logout

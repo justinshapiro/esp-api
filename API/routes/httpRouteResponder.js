@@ -33,3 +33,11 @@ exports.raiseInternalError = function(res, err) {
 		res.json({"ESP-Error": `A database query or API call did not complete successfully. The error message given is \'${err}\'`});
 	}
 };
+
+exports.raiseAuthorizationError = function(res, endpoint) {
+	res.json({"ESP-Error": `You are not authorized to access the endpoint: ${endpoint}`});
+};
+
+exports.raiseAuthenticationError = function(res, user) {
+	res.json({"ESP-Error": `Failed to authenticate the user with login ID: ${user}`});
+};

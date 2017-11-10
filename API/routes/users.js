@@ -631,8 +631,6 @@ function add_user(name, email, username, password, auth_type, token, completion)
 //             authentication_type={...}&
 //			   [authentication_token={...}&]
 exports.users_post = function(req, res, next) {
-	// No need to route further, continue logic here
-  
 	const name =      req.query['name'];
 	const username =  req.query['username'];
 	const email =     req.query['email'];
@@ -671,13 +669,17 @@ function get_user_db_query(user_id, completion) {
 exports.users_id_get = function(req, res) {
 	const user_id = req.params['user_id'];
 
-	get_user_db_query(user_id, function(user) {
-		if (user.length === 0) {
-			responder.raiseInternalError(res, "User does not exist")
-		} else {
-			responder.response(res, user);
-		}
-	});
+	if (req.user === user_id) {
+		get_user_db_query(user_id, function(user) {
+			if (user.length === 0) {
+				responder.raiseInternalError(res, "User does not exist")
+			} else {
+				responder.response(res, user);
+			}
+		});
+	} else {
+		responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}`)
+	}
 };
 
 // Route: DELETE  /users/{id}
@@ -685,80 +687,105 @@ exports.users_id_get = function(req, res) {
 exports.users_id_delete = function(req, res) {
 	const user_id = req.params['user_id'];
 
-	get_user_db_query(user_id, function(user) {
-		if (user.length === 0) {
-			responder.raiseInternalError(res, "Delete failed because user does not exist")
-		} else {
-			knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
-				knex('user_table').where('user_table_id', user_id).del().then(() => {
+	if (req.user === user_id) {
+		get_user_db_query(user_id, function (user) {
+			if (user.length === 0) {
+				responder.raiseInternalError(res, "Delete failed because user does not exist")
+			} else {
+				knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
+					knex('user_table').where('user_table_id', user_id).del().then(() => {
 						responder.response(res, 'Success');
-				})
-			});
-		}
-	});
+					})
+				});
+			}
+		});
+	} else {
+		responder.raiseAuthorizationError(res, `DELETE /api/v1/users/${user_id}`)
+	}
 };
 
 exports.users_id_property_get = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
-	route_property(req, res, args, 'get');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
+		route_property(req, res, args, 'get');
+	} else {
+		responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}/...`)
+	}
 };
 
 exports.users_id_property_put = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
-	route_property(req, res, args, 'put');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
+		route_property(req, res, args, 'put');
+	} else {
+		responder.raiseAuthorizationError(res, `PUT /api/v1/users/${user_id}/...`)
+	}
 };
 
 exports.users_id_property_post = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
-	route_property(req, res, args, 'post');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
+		route_property(req, res, args, 'post');
+	} else {
+		responder.raiseAuthorizationError(res, `POST /api/v1/users/${user_id}/...`)
+	}
 };
 
 exports.users_id_property_delete = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
-	route_property(req, res, args, 'delete');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
+		route_property(req, res, args, 'delete');
+	} else {
+		responder.raiseAuthorizationError(res, `DELETE /api/v1/users/${user_id}/...`)
+	}
 };
 
 exports.users_id_property_key_get = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
-	route_property_key(req, res, args, 'get');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
+		route_property_key(req, res, args, 'get');
+	} else {
+		responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}/...`)
+	}
 };
 
 exports.users_id_property_key_delete = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
-	route_property_key(req, res, args, 'delete');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
+		route_property_key(req, res, args, 'delete');
+	} else {
+		responder.raiseAuthorizationError(res, `DELETE /api/v1/users/${user_id}/...`)
+	}
 };
 
 exports.users_id_property_key_detail_put = function(req, res) {
+	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	// TODO: if (req.user) { proceed with call } else { unauthorized }
-
-	// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
-	route_property_key_detail(req, res, args, 'put');
+	if (req.user === user_id) {
+		// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
+		route_property_key_detail(req, res, args, 'put');
+	} else {
+		responder.raiseAuthorizationError(res, `PUT /api/v1/users/${user_id}/...`)
+	}
 };
 
 // Here we export functions that other parts of the API will need
