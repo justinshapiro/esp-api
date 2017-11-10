@@ -471,7 +471,6 @@ COPY emergency_contact (id, name, phone, user_table_id) FROM stdin;
 --
 
 COPY internal_authentication (user_table_id, username, password) FROM stdin;
-ebdd0614-c5c2-11e7-84ad-67d80f804c0f	jshapiro	seniordesign
 \.
 
 
@@ -606,7 +605,6 @@ COPY location_contact (location_id, contact_id, user_table_id) FROM stdin;
 --
 
 COPY location_setting (user_table_id, location_id, alertable) FROM stdin;
-ebdd0614-c5c2-11e7-84ad-67d80f804c0f	ChIJGT5prih_bIcRD_m-Szo4vOA	t
 \.
 
 
@@ -624,7 +622,6 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 
 COPY user_table (user_table_id, authentication_type, authentication_token, name, email) FROM stdin;
 00000000-0000-0000-0000-000000000000	1	default	default	\N
-ebdd0614-c5c2-11e7-84ad-67d80f804c0f	1	\N	Justin Shapiro	justin.shapiro@ucdenver.edu
 \.
 
 
