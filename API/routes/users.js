@@ -203,25 +203,29 @@ function get_contacts(args, query, res) {
 // Route: POST /users/{id}/contacts
 // Usage: POST /api/v1/users/{id}/contacts?
 // 		  	   name={...}&
-// 			   [email={...}&]
+// 			   phone={...}
 function post_contacts(args, query, res) {
 	let user_id =  args['user_id'];
 	let name =    query['name'];
-	let email =   query['email'];
+	let phone =   query['phone'];
 
 	if (name === undefined) {
 		responder.raiseQueryError(res, 'name')
+	} else if (phone === undefined) {
+		responder.raiseQueryError(res, 'phone')
 	} else {
-		knex('emergency_contact')
-		.insert({
-			name: name,
-			email: email,
-			user_table_id: user_id
-		})
-		.returning('*')
-		.then((contact) => {
-			responder.response(res, contact);
-		})
+
+		if (phone.length !== 10) {
+			responder.raiseInternalError(res, "Phone number must be 10 digits");
+		} else {
+			knex('emergency_contact').insert({
+				name: name,
+				phone: phone,
+				user_table_id: user_id
+			}).returning('*').then((contact) => {
+				responder.response(res, contact);
+			});
+		}
 	}
 }
 

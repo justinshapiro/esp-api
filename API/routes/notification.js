@@ -5,6 +5,7 @@ const twilioAuthToken = '761085ed0c1ab328bfcfbe019d80ef60';
 
 const responder = require('./httpRouteResponder');
 const client = require('twilio')(twilioSID, twilioAuthToken);
+const CircularJSON = require('circular-json');
 const async = require('async');
 
 const usersEndpoint = require('./users');
@@ -42,7 +43,7 @@ exports.notification = function(req, res) {
 					user_name: function (completion) {
 						setTimeout(function () {
 							usersEndpoint.extern_get_user(user_id, function (user) {
-								completion(null, user['name']);
+								completion(null, user[0]['name']);
 							});
 						}, 200);
 					},
@@ -50,10 +51,10 @@ exports.notification = function(req, res) {
 						setTimeout(function () {
 							if (location_type === "google") {
 								locationsEndpoint.get_location(location_id, function (geoJson) {
-
 									completion(null, {
 										'location_name': geoJson['properties']['name'],
-										'location_phone_number': geoJson['properties']['phone_number']
+										'location_phone_number': geoJson['properties']['phone_number'],
+										'location_type': geoJson['properties']['category']
 									});
 								});
 							} else if (location_type === "custom") {
@@ -71,7 +72,7 @@ exports.notification = function(req, res) {
 							usersEndpoint.extern_get_contacts(user_id, function (contacts) {
 								let all_contacts = [];
 								for (let i = 0; i < contacts.length; i++) {
-									all_contacts.push(contacts[i]['phone_number']);
+									all_contacts.push(contacts[i]['phone']);
 								}
 
 								completion(null, all_contacts);
@@ -84,6 +85,7 @@ exports.notification = function(req, res) {
 						const user_name = results['user_name'];
 						const location_name = results['location_info']['location_name'];
 						const location_phone_number = results['location_info']['location_phone_number'];
+						const actual_location_type = results['location_info']['location_type'];
 
 						let emergency_contact_numbers = results['emergency_contacts'];
 						if (emergency_contact_numbers.length === 1) {
@@ -91,23 +93,21 @@ exports.notification = function(req, res) {
 						}
 
 						// SMS message contents
-						let notify_msg = `ESP ALERT: ${user_name} 
-						  		  has entered a ${location_type} 
-						          with the name ${location_name}. 
-						          Contact the location at ${location_phone_number} 
-						          for more information.`;
+						let notify_msg = `ESP ALERT: ${user_name} ` +
+						  		         `has entered a ${actual_location_type} ` +
+										 `with the name ${location_name}. ` +
+						          		 `Contact the location at ${location_phone_number} ` +
+										 `for more information.`;
 
 						for (let i = 0; i < emergency_contact_numbers.length; i++) {
 							// Send SMS message via Twilio
 							client.messages.create({
-								to: emergency_contact_numbers[i],
+								to: "+1" + emergency_contact_numbers[i],
 								from: "+17204596231", // Twilio specific phone number, do not change
 								body: notify_msg,
 							}, function (err, message) {
 								if (err === null) {
-									responder.response(res, {
-										'SID': message
-									});
+									responder.response(res, CircularJSON.stringify(message));
 								} else {
 									responder.raiseSMSError(res, err);
 								}

@@ -5,6 +5,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/notification.js" afterPath="$PROJECT_DIR$/API/routes/notification.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/users.js" afterPath="$PROJECT_DIR$/API/routes/users.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Database/current_state.sql" afterPath="$PROJECT_DIR$/Database/current_state.sql" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -38,11 +39,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="notification.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="notification.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/API/routes/notification.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-17">
-              <caret line="41" column="37" lean-forward="true" selection-start-line="41" selection-start-column="37" selection-end-line="41" selection-end-column="37" />
+            <state relative-caret-position="1637">
+              <caret line="104" column="41" lean-forward="true" selection-start-line="104" selection-start-column="41" selection-end-line="104" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -58,11 +59,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="users.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="users.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/routes/users.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="268">
-              <caret line="214" column="23" lean-forward="false" selection-start-line="214" selection-start-column="23" selection-end-line="214" selection-end-column="23" />
+            <state relative-caret-position="302">
+              <caret line="222" column="29" lean-forward="true" selection-start-line="222" selection-start-column="29" selection-end-line="222" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -71,8 +72,8 @@
       <file leaf-file-name="httpRouteResponder.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/routes/httpRouteResponder.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="32" column="129" lean-forward="false" selection-start-line="32" selection-start-column="129" selection-end-line="32" selection-end-column="129" />
+            <state relative-caret-position="85">
+              <caret line="5" column="8" lean-forward="false" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -136,8 +137,8 @@
         <option value="$PROJECT_DIR$/Database/current_state.sql" />
         <option value="$PROJECT_DIR$/API/routes/httpRouteResponder.js" />
         <option value="$PROJECT_DIR$/API/routes/authentication.js" />
-        <option value="$PROJECT_DIR$/API/routes/notification.js" />
         <option value="$PROJECT_DIR$/API/routes/users.js" />
+        <option value="$PROJECT_DIR$/API/routes/notification.js" />
       </list>
     </option>
   </component>
@@ -273,7 +274,7 @@
       <workItem from="1509518566860" duration="2042000" />
       <workItem from="1509574717660" duration="1995000" />
       <workItem from="1510271887289" duration="1633000" />
-      <workItem from="1510276281067" duration="6915000" />
+      <workItem from="1510276281067" duration="9619000" />
     </task>
     <task id="LOCAL-00001" summary="Changed category names to match Google Maps'">
       <created>1507692793523</created>
@@ -401,11 +402,18 @@
       <option name="project" value="LOCAL" />
       <updated>1510280489398</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Updated POST /notification to check if any alertable location has been marked non-alertable">
+      <created>1510284493565</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1510284493565</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="74828000" />
+    <option name="totallyTimeSpent" value="77532000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
@@ -457,7 +465,8 @@
     <MESSAGE value="Deleted unused routes" />
     <MESSAGE value="Fixed bug in GET /users where users were being returned twice" />
     <MESSAGE value="Login with username or email now supported by including email in user_table and using internal_authentication for username. /POST users now needs username and email" />
-    <option name="LAST_COMMIT_MESSAGE" value="Login with username or email now supported by including email in user_table and using internal_authentication for username. /POST users now needs username and email" />
+    <MESSAGE value="Updated POST /notification to check if any alertable location has been marked non-alertable" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated POST /notification to check if any alertable location has been marked non-alertable" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -722,14 +731,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/routes/httpRouteResponder.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="32" column="129" lean-forward="false" selection-start-line="32" selection-start-column="129" selection-end-line="32" selection-end-column="129" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/authentication.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
@@ -738,18 +739,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/routes/notification.js">
+    <entry file="file://$PROJECT_DIR$/API/routes/users.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-17">
-          <caret line="41" column="37" lean-forward="true" selection-start-line="41" selection-start-column="37" selection-end-line="41" selection-end-column="37" />
+        <state relative-caret-position="302">
+          <caret line="222" column="29" lean-forward="true" selection-start-line="222" selection-start-column="29" selection-end-line="222" selection-end-column="29" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/routes/users.js">
+    <entry file="file://$PROJECT_DIR$/API/routes/httpRouteResponder.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="214" column="23" lean-forward="false" selection-start-line="214" selection-start-column="23" selection-end-line="214" selection-end-column="23" />
+        <state relative-caret-position="85">
+          <caret line="5" column="8" lean-forward="false" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/API/routes/notification.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1637">
+          <caret line="104" column="41" lean-forward="true" selection-start-line="104" selection-start-column="41" selection-end-line="104" selection-end-column="41" />
           <folding />
         </state>
       </provider>

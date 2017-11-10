@@ -240,7 +240,7 @@ ALTER TABLE category_setting OWNER TO postgres;
 CREATE TABLE emergency_contact (
     id uuid DEFAULT uuid_generate_v1() NOT NULL,
     name text NOT NULL,
-    email text,
+    phone text,
     user_table_id uuid NOT NULL
 );
 
@@ -458,7 +458,7 @@ COPY category_setting (user_table_id, category_id, alertable) FROM stdin;
 -- Data for Name: emergency_contact; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY emergency_contact (id, name, email, user_table_id) FROM stdin;
+COPY emergency_contact (id, name, phone, user_table_id) FROM stdin;
 646d6946-aeb9-11e7-8a9b-5788aea6d1de	Test Contact	\N	00000000-0000-0000-0000-000000000000
 70109b56-aeb9-11e7-aba0-dbfe0e958463	Test Contact	\N	00000000-0000-0000-0000-000000000000
 646d6946-aeb9-11e7-8a9b-5788aea6d1de	Test Contact	\N	00000000-0000-0000-0000-000000000000
@@ -471,6 +471,7 @@ COPY emergency_contact (id, name, email, user_table_id) FROM stdin;
 --
 
 COPY internal_authentication (user_table_id, username, password) FROM stdin;
+ebdd0614-c5c2-11e7-84ad-67d80f804c0f	jshapiro	seniordesign
 \.
 
 
@@ -605,6 +606,7 @@ COPY location_contact (location_id, contact_id, user_table_id) FROM stdin;
 --
 
 COPY location_setting (user_table_id, location_id, alertable) FROM stdin;
+ebdd0614-c5c2-11e7-84ad-67d80f804c0f	ChIJGT5prih_bIcRD_m-Szo4vOA	t
 \.
 
 
@@ -622,6 +624,7 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 
 COPY user_table (user_table_id, authentication_type, authentication_token, name, email) FROM stdin;
 00000000-0000-0000-0000-000000000000	1	default	default	\N
+ebdd0614-c5c2-11e7-84ad-67d80f804c0f	1	\N	Justin Shapiro	justin.shapiro@ucdenver.edu
 \.
 
 
