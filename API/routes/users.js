@@ -596,27 +596,37 @@ exports.users_get = function(req, res) {
 	})
 };
 
-function add_user(name, email, auth_type, token) {
+function add_user(name, email, username, password, auth_type, token, completion) {
 	return knex('user_table').insert({
 		name: name,
 		email: email,
 		authentication_type: auth_type,
 		authentication_token: token
-	}).returning('*');
+	}).returning('*').then((response) => {
+		knex('internal_authentication').insert({
+			user_table_id: response[0]['user_table_id'],
+			username: username,
+			password: password
+		}).returning('*').then((auth_response) => {
+			completion(response.concat(auth_response));
+		});
+	});
 }
 
 // Route: POST /users
 // Usage: POST /api/v1/users?
 //			   name={...}&
+//             username={...}&
 //			   email={...}&
 //             authentication_type={...}&
 //			   [authentication_token={...}&]
-//
 exports.users_post = function(req, res, next) {
 	// No need to route further, continue logic here
   
 	const name =      req.query['name'];
+	const username =  req.query['username'];
 	const email =     req.query['email'];
+	const password =  req.query['password'];
 	const auth_type = req.query['authentication_type'];
 	const token =     req.query['authentication_token'];
 
@@ -624,10 +634,14 @@ exports.users_post = function(req, res, next) {
 		responder.raiseQueryError(res, 'authentication_type');
 	} else if (name === undefined) {
 		responder.raiseQueryError(res, 'name');
+	} else if (name === undefined) {
+		responder.raiseQueryError(res, 'username');
 	} else if (email === undefined) {
 		responder.raiseQueryError(res, 'email');
+	} else if (password === undefined) {
+		responder.raiseQueryError(res, 'password');
 	} else {
-		add_user(name, email, auth_type, token).then((user) => {
+		add_user(name, email, username, password, auth_type, token, function(user) {
 			responder.response(res, user)
 		});
 	}
@@ -648,7 +662,11 @@ exports.users_id_get = function(req, res) {
 	const user_id = req.params['user_id'];
 
 	get_user_db_query(user_id, function(user) {
-		responder.response(res, user);
+		if (user.length === 0) {
+			responder.raiseInternalError(res, "User does not exist")
+		} else {
+			responder.response(res, user);
+		}
 	});
 };
 
@@ -657,12 +675,17 @@ exports.users_id_get = function(req, res) {
 exports.users_id_delete = function(req, res) {
 	const user_id = req.params['user_id'];
 
-	knex('user_table')
-	.where('user_table_id', user_id)
-	.del()
-	.then((result) => {
-		responder.response(res, result);
-	})
+	get_user_db_query(user_id, function(user) {
+		if (user.length === 0) {
+			responder.raiseInternalError(res, "Delete failed because user does not exist")
+		} else {
+			knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
+				knex('user_table').where('user_table_id', user_id).del().then(() => {
+						responder.response(res, 'Success');
+				})
+			});
+		}
+	});
 };
 
 exports.users_id_property_get = function(req, res) {

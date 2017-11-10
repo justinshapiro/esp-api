@@ -7,12 +7,12 @@ const usersEndpoint = require('./users');
 
 // Define a local authentication Passport strategy here
 passport.use(new LocalStrategy(
-	function(email, password, auth_response) {
+	function(login_id, password, auth_response) {
 		usersEndpoint.extern_get_all_users(function(users) {
 			let user_id = null;
 			let db_password = null;
 			for (let i = 0; i < users.length; i++) {
-				if (email === users[i]['username']) {
+				if (login_id === users[i]['username'] || login_id === users[i]['email']) {
 					user_id = users[i]['user_table_id'];
 					db_password = users[i]['password'];
 					break;
