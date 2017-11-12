@@ -668,7 +668,7 @@ function get_user_db_query(user_id, completion) {
 // Usage: GET /api/v1/users/{id}
 exports.users_id_get = function(req, res) {
 	const user_id = req.params['user_id'];
-
+	
 	if (req.user === user_id) {
 		get_user_db_query(user_id, function(user) {
 			if (user.length === 0) {

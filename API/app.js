@@ -24,10 +24,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
+const expireDate = new Date(Date.now() + 60 * 60 * 10000);
 app.use(session({
+	name: "session",
+	keys: ["key1", "key2"],
 	secret: "cats",
 	resave: true,
-	saveUninitialized: false
+	saveUninitialized: false,
+	cookie: {
+		secure: false,
+		httpOnly: false,
+		domain: "espmobile.org",
+		expires: expireDate
+	}
 }));
 app.use(passport.initialize());
 app.use(passport.session());

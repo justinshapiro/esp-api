@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="004fcd49-8768-4f2a-8d42-c8e879f4e579" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/database/db-connection.js" afterPath="$PROJECT_DIR$/API/database/db-connection.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/authentication.js" afterPath="$PROJECT_DIR$/API/routes/authentication.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/locations.js" afterPath="$PROJECT_DIR$/API/routes/locations.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/app.js" afterPath="$PROJECT_DIR$/API/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/users.js" afterPath="$PROJECT_DIR$/API/routes/users.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -23,18 +21,18 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1122">
-              <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+            <state relative-caret-position="286">
+              <caret line="33" column="13" lean-forward="true" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="authentication.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="authentication.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/routes/authentication.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="139">
-              <caret line="45" column="29" lean-forward="true" selection-start-line="45" selection-start-column="29" selection-end-line="45" selection-end-column="29" />
+            <state relative-caret-position="360">
+              <caret line="58" column="24" lean-forward="false" selection-start-line="58" selection-start-column="24" selection-end-line="58" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -43,7 +41,7 @@
       <file leaf-file-name="locations.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/routes/locations.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2091">
+            <state relative-caret-position="490">
               <caret line="123" column="9" lean-forward="false" selection-start-line="123" selection-start-column="9" selection-end-line="123" selection-end-column="9" />
               <folding />
             </state>
@@ -53,8 +51,8 @@
       <file leaf-file-name="db-connection.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+            <state relative-caret-position="51">
+              <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -80,11 +78,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="users.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="users.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/API/routes/users.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="366" column="36" lean-forward="true" selection-start-line="366" selection-start-column="36" selection-end-line="366" selection-end-column="36" />
+            <state relative-caret-position="286">
+              <caret line="670" column="4" lean-forward="false" selection-start-line="670" selection-start-column="4" selection-end-line="670" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -152,14 +150,14 @@
         <option value="$PROJECT_DIR$/API/routes/index.js" />
         <option value="$PROJECT_DIR$/Database/current_state.sql" />
         <option value="$PROJECT_DIR$/API/routes/notification.js" />
-        <option value="$PROJECT_DIR$/API/app.js" />
         <option value="$PROJECT_DIR$/API/routes/httpRouteResponder.js" />
         <option value="$PROJECT_DIR$/API/package.json" />
         <option value="$PROJECT_DIR$/API/app.yaml" />
-        <option value="$PROJECT_DIR$/API/routes/users.js" />
         <option value="$PROJECT_DIR$/API/routes/locations.js" />
-        <option value="$PROJECT_DIR$/API/database/db-connection.js" />
         <option value="$PROJECT_DIR$/API/routes/authentication.js" />
+        <option value="$PROJECT_DIR$/API/app.js" />
+        <option value="$PROJECT_DIR$/API/database/db-connection.js" />
+        <option value="$PROJECT_DIR$/API/routes/users.js" />
       </list>
     </option>
   </component>
@@ -301,7 +299,7 @@
       <workItem from="1510301179445" duration="3397000" />
       <workItem from="1510389351251" duration="1214000" />
       <workItem from="1510456537317" duration="2859000" />
-      <workItem from="1510476515565" duration="744000" />
+      <workItem from="1510476515565" duration="3146000" />
     </task>
     <task id="LOCAL-00001" summary="Changed category names to match Google Maps'">
       <created>1507692793523</created>
@@ -471,11 +469,18 @@
       <option name="project" value="LOCAL" />
       <updated>1510303869022</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="user_id added to login response">
+      <created>1510484455754</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1510484455754</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94618000" />
+    <option name="totallyTimeSpent" value="97020000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -533,7 +538,8 @@
     <MESSAGE value="Completed cascading delete in DELETE /user/{id}" />
     <MESSAGE value="Cleaned up current_state.sql for Cloud deployment" />
     <MESSAGE value="Changed GCP deployment parameters" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed GCP deployment parameters" />
+    <MESSAGE value="user_id added to login response" />
+    <option name="LAST_COMMIT_MESSAGE" value="user_id added to login response" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -781,14 +787,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1122">
-          <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/notification.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
@@ -797,34 +795,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/API/routes/authentication.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="58" column="24" lean-forward="false" selection-start-line="58" selection-start-column="24" selection-end-line="58" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/locations.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2091">
+        <state relative-caret-position="490">
           <caret line="123" column="9" lean-forward="false" selection-start-line="123" selection-start-column="9" selection-end-line="123" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/API/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="33" column="13" lean-forward="true" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+        <state relative-caret-position="51">
+          <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/users.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="366" column="36" lean-forward="true" selection-start-line="366" selection-start-column="36" selection-end-line="366" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/API/routes/authentication.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="45" column="29" lean-forward="true" selection-start-line="45" selection-start-column="29" selection-end-line="45" selection-end-column="29" />
+        <state relative-caret-position="286">
+          <caret line="670" column="4" lean-forward="false" selection-start-line="670" selection-start-column="4" selection-end-line="670" selection-end-column="4" />
           <folding />
         </state>
       </provider>
