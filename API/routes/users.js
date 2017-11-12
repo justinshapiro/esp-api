@@ -330,8 +330,8 @@ function delete_locations_id(args, query, res) {
 	})
 }
 
-// Route: POST /users/{id}/locations/{id}/name
-// Usage: POST /api/v1/users/{id}/locations/{id}/name?
+// Route: PUT  /users/{id}/locations/{id}/name
+// Usage: PUT  /api/v1/users/{id}/locations/{id}/name?
 // 		  	   name={...}
 function put_locations_id_name(args, query, res) {
 	let name =   query['name'];
@@ -665,7 +665,7 @@ function get_user_db_query(user_id, completion) {
 }
 
 // Route: GET /users/{id}
-// Usage: GET  /api/v1/users/{id}
+// Usage: GET /api/v1/users/{id}
 exports.users_id_get = function(req, res) {
 	const user_id = req.params['user_id'];
 

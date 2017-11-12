@@ -41,7 +41,7 @@ passport.deserializeUser(function(user, done) {
 });
 
 // Route: POST /auth/login
-// Usage: POST /api/v1/auth/login?
+// Usage: POST /api/v1/authentication/login?
 //             username={...}&
 //			   password={...}
 exports.userLogin = function(req, res, next) {
@@ -60,13 +60,15 @@ exports.userLogin = function(req, res, next) {
 				responder.raiseAuthenticationError(res, req.query['username'], error)
 			}
 
-			responder.response(res, "Authentication succeeded");
+			responder.response(res, {
+				"user_id": user
+			});
 		});
 	})(req, res, next);
 };
 
-// Route: GET /auth/logout
-// Usage: GET /api/v1/logout
+// Route: GET /authentication/logout
+// Usage: GET /api/v1/authentication/logout
 exports.userLogout = function(req, res) {
 	req.logout();
 	responder.response(res, "Logout successful"); // may not need this

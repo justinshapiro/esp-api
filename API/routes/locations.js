@@ -10,7 +10,7 @@ const usersEndpoint = require('./users');
 // Usage: GET /api/v1/locations?
 //            latitude={...}&
 //            longitude={...}&
-//            radius{...}&
+//            radius={...}&
 //            [user_id={...}]
 exports.locations = function(req, res) {
 	const latitude =  req.query['latitude'];
