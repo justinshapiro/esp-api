@@ -97,11 +97,10 @@ function route_property_key_detail(req, res, args, method) {
 
 // Helper method
 function geoJsonify(dbResponse) {
-	console.log(dbResponse);
 	let features = [];
 
 	for (let i = 0; i < dbResponse.length; i++) {
-		let rawGeoJson = JSON.parse(dbResponse[i]['geojson']); // this needs to stay 'geojson'
+		let rawGeoJson = JSON.parse(dbResponse[i]['geometry']); // this needs to stay 'geometry'
 		let lat = rawGeoJson['coordinates'][0];
 		let lng = rawGeoJson['coordinates'][1];
 
@@ -410,10 +409,27 @@ function post_locations(args, query, res) {
 		responder.raiseQueryError(res, 'category_type')
 	}
 	else {
+		knex('location_category').with('location_insert', knex.raw(
+			'INSERT INTO location(description, phone_number, address, lat, long, user_table_id)' +
+			'VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
+			[description, phone_number, address, lat, lng, user_id])
+		).with('location_alert', insert_alertable(user_id, alertable)).insert({
+			'location_id': function() { this.select('loc_id').from('location_insert') },
+			'category_id': function() { this.select('category.id').from('category').where('name', category_type).limit(1) }
+		}).returning('*').then((location_cat) => {
+			knex('output_locations').select('*').where('id', location_cat[0].location_id).then((location) => {
+				responder.response(res, geoJsonify(location));
+			})
+		})
+
+		/*
 		knex('location_category')
 		.with('location_insert', knex.raw('INSERT INTO location(description, phone_number, address, lat, long, user_table_id)\
 											 VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-											[description, phone_number, address, lat, lng, user_id]))
+											[description, phone_number, address, lat, lng, user_id])).then(() => {
+			console.log("success")
+		})
+
 		.with('location_alert', insert_alertable(user_id, alertable))
 		.insert({location_id: function() {
 			this.select('loc_id').from('location_insert')
@@ -429,7 +445,7 @@ function post_locations(args, query, res) {
 			.then((location) => {
 				responder.response(res, geoJsonify(location));
 			})
-		})
+		})*/
 	}
 }
 
@@ -737,12 +753,12 @@ exports.users_id_property_post = function(req, res) {
 	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	if (req.user === user_id) {
+	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
 		route_property(req, res, args, 'post');
-	} else {
-		responder.raiseAuthorizationError(res, `POST /api/v1/users/${user_id}/...`)
-	}
+	//} else {
+	//	responder.raiseAuthorizationError(res, `POST /api/v1/users/${user_id}/...`)
+	//}
 };
 
 exports.users_id_property_delete = function(req, res) {
