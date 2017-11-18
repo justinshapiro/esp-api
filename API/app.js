@@ -26,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Initialize Passport and restore authentication state, if any, from the
 // session.
 const expireDate = new Date(Date.now() + 60 * 60 * 10000);
+app.set('trust proxy', 1);
 app.use(session({
 	name: "session",
 	keys: ["key1", "key2"],
@@ -33,7 +34,7 @@ app.use(session({
 	resave: true,
 	saveUninitialized: false,
 	cookie: {
-		secure: false,
+		secure: true,
 		httpOnly: false,
 		domain: "espmobile.org",
 		expires: expireDate

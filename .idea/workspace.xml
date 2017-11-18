@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="004fcd49-8768-4f2a-8d42-c8e879f4e579" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/API/encryption/espmobile.crt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/API/encryption/espmobile.csr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/API/encryption/private.key" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/API/encryption/public.key" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/bin/www" afterPath="$PROJECT_DIR$/API/bin/www" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/app.js" afterPath="$PROJECT_DIR$/API/app.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -21,21 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/app.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="541">
-              <caret line="76" column="0" lean-forward="true" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="www" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/API/bin/www">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-581">
-              <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <caret line="40" column="5" lean-forward="true" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -51,7 +37,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="db-connection.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="db-connection.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="238">
@@ -134,8 +120,8 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/API/app.yaml" />
         <option value="$PROJECT_DIR$/API/bin/www" />
-        <option value="$PROJECT_DIR$/API/database/db-connection.js" />
         <option value="$PROJECT_DIR$/API/app.js" />
+        <option value="$PROJECT_DIR$/API/database/db-connection.js" />
       </list>
     </option>
   </component>
@@ -315,7 +301,7 @@
       <workItem from="1510722394613" duration="268000" />
       <workItem from="1510729465951" duration="2906000" />
       <workItem from="1510732387222" duration="29000" />
-      <workItem from="1510958816381" duration="9023000" />
+      <workItem from="1510958816381" duration="10503000" />
     </task>
     <task id="LOCAL-00001" summary="Changed category names to match Google Maps'">
       <created>1507692793523</created>
@@ -520,16 +506,24 @@
       <option name="project" value="LOCAL" />
       <updated>1510966250954</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Rolling back, configured validated HTTPS on Google's end">
+      <created>1510968213892</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1510968213892</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109246000" />
+    <option name="totallyTimeSpent" value="110726000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="DB Browser" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="DB Execution Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -560,7 +554,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Warnings removed, parameters accessed as dictionaries, comments documentable" />
     <MESSAGE value="Converted database /users/{id}/location response to GeoJson" />
     <MESSAGE value="GET /locations/{id} implemented, completing locations endpoint" />
     <MESSAGE value="Code cleanup" />
@@ -585,7 +578,8 @@
     <MESSAGE value="Fixed POST /users/{id}/locations. Changed GeoJson key to geometry" />
     <MESSAGE value="/api/v1/users/{id}/password added for GET and PUT" />
     <MESSAGE value="HTTPS implemented with self-signed certificate" />
-    <option name="LAST_COMMIT_MESSAGE" value="HTTPS implemented with self-signed certificate" />
+    <MESSAGE value="Rolling back, configured validated HTTPS on Google's end" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rolling back, configured validated HTTPS on Google's end" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -849,14 +843,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="19" lean-forward="false" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/API/app.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -865,10 +851,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
+    <entry file="file://$PROJECT_DIR$/API/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="16" column="25" lean-forward="false" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
+        <state relative-caret-position="493">
+          <caret line="29" column="19" lean-forward="false" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="19" />
           <folding />
         </state>
       </provider>
@@ -884,7 +870,15 @@
     <entry file="file://$PROJECT_DIR$/API/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="541">
-          <caret line="76" column="0" lean-forward="true" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+          <caret line="40" column="5" lean-forward="true" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="16" column="25" lean-forward="false" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
           <folding />
         </state>
       </provider>
