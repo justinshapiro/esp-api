@@ -701,7 +701,7 @@ exports.users_id_property_get = function(req, res) {
 exports.users_id_property_put = function(req, res) {
 	const user_id = req.params['user_id'];
 	const args = req.params;
-	
+
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
 		route_property(req, res, args, 'put');
