@@ -6,26 +6,28 @@
 
 var app = require('../app');
 var debug = require('debug')('esp-api:server');
+var http = require('http');
 
-const fs = require('fs');
-const https = require('https');
-const http = require('http');
+/**
+ * Get port from environment and store in Express.
+ */
 
-// setup HTTPS
-https.createServer({
-	key: fs.readFileSync('encryption/private.key'),
-	cert: fs.readFileSync('encryption/espmobile.crt')
-}, app).listen(443);
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
 
-http.createServer(app).listen(80);
+/**
+ * Create HTTP server.
+ */
 
-app.use(function(req, res, next) {
-	if (req.secure) {
-		next();
-	} else {
-		res.redirect('https://' + req.headers.host + req.url);
-	}
-});
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
