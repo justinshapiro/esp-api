@@ -108,7 +108,7 @@ function getFeature(json) {
 	const location_id =  json['place_id'];
 	const phone_number = json['formatted_phone_number'];
 	let   category =     json['types'][0];
-
+	
 	return {
 		"type": "Feature",
 		"geometry": {

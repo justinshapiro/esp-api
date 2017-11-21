@@ -108,7 +108,7 @@ function route_property_key_detail(req, res, args, method) {
 // Helper method
 function geoJsonify(dbResponse) {
 	let features = [];
-	console.log(dbResponse);
+
 	for (let i = 0; i < dbResponse.length; i++) {
 		let rawGeoJson = JSON.parse(dbResponse[i]['geometry']); // this needs to stay 'geometry'
 		let lat = rawGeoJson['coordinates'][0];
