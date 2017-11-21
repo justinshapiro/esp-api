@@ -324,6 +324,7 @@ ALTER TABLE location_setting OWNER TO postgres;
 
 CREATE TABLE output_locations (
     id text,
+    name text,
     description text,
     phone_number text,
     address text,
@@ -691,6 +692,7 @@ CREATE INDEX idx_location_geom ON location USING gist (geom);
 
 CREATE RULE "_RETURN" AS
     ON SELECT TO output_locations DO INSTEAD  SELECT location.id,
+    location.name,
     location.description,
     location.phone_number,
     location.address,

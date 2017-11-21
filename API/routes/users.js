@@ -109,11 +109,15 @@ function route_property_key_detail(req, res, args, method) {
 function geoJsonify(dbResponse) {
 	let features = [];
 
+	console.log(dbResponse);
+
 	for (let i = 0; i < dbResponse.length; i++) {
+		let location_id = dbResponse[i]['id'];
 		let rawGeoJson = JSON.parse(dbResponse[i]['geometry']); // this needs to stay 'geometry'
 		let lat = rawGeoJson['coordinates'][0];
 		let lng = rawGeoJson['coordinates'][1];
 
+		let name = dbResponse[i]['name'];
 		let description = dbResponse[i]['description'];
 		let phone_number = dbResponse[i]['phone_number'];
 		let address = dbResponse[i]['address'];
@@ -126,6 +130,8 @@ function geoJsonify(dbResponse) {
 				"coordinates": [lat, lng]
 			},
 			"properties": {
+				"location_id": location_id,
+				"name": name,
 				"address": address,
 				"description": description,
 				"phone_number": phone_number,
@@ -354,6 +360,7 @@ function insert_alertable(user_id, alertable) {
 
 // Route: POST /users/{id}/locations
 // Usage: POST /api/v1/users/{id}/locations?
+//			   name={...}&
 // 		  	   latitude={...}&
 // 			   longitude={...}&
 //             address={...}&
@@ -362,6 +369,7 @@ function insert_alertable(user_id, alertable) {
 //             [phone_number={...}&]
 function post_locations(args, query, res) {
 	let user_id =        args['user_id'];
+	let name =          query['name'];
 	let lat =           query['latitude'];
 	let lng =           query['longitude'];
 	let address =       query['address'];
@@ -389,11 +397,13 @@ function post_locations(args, query, res) {
 		responder.raiseQueryError(res, 'longitude')
 	} else if (category_type === undefined) {
 		responder.raiseQueryError(res, 'category_type')
+	} else if (name === undefined) {
+		responder.raiseQueryError(res, 'name');
 	} else {
 		knex('location_category').with('location_insert', knex.raw(
-			'INSERT INTO location(description, phone_number, address, lat, long, user_table_id)' +
-			'VALUES(?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
-			[description, phone_number, address, lat, lng, user_id])
+			'INSERT INTO location(description, phone_number, address, lat, long, user_table_id, name)' +
+			'VALUES(?, ?, ?, ?, ?, ?, ?) RETURNING location.id as loc_id',
+			[description, phone_number, address, lat, lng, user_id, name])
 		).with('location_alert', insert_alertable(user_id, alertable)).insert({
 			'location_id': function() { this.select('loc_id').from('location_insert') },
 			'category_id': function() { this.select('category.id').from('category').where('name', category_type).limit(1) }
@@ -473,17 +483,21 @@ function get_password(args, query, res) {
 }
 
 // Route: PUT /users/{id}/password
-// Usage: GET /api/v1/users/{id}/password?
+// Usage: PUT /api/v1/users/{id}/password?
 //            new_password={...}
 function put_password(args, query, res) {
 	let user_id = args['user_id'];
 	let new_password = query['new_password'];
 
-	knex('internal_authentication').where('user_table_id', user_id).update({
-		password: new_password
-	}).then((response) => {
-		responder.response(res, response);
-	});
+	if (new_password === undefined) {
+		responder.raiseQueryError(res, 'new_password');
+	} else {
+		knex('internal_authentication').where('user_table_id', user_id).update({
+			password: new_password
+		}).then((response) => {
+			responder.response(res, response);
+		});
+	}
 }
 
 function emergency_contact_query(user_id, contact_id) {
