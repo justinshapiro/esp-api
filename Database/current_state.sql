@@ -431,6 +431,7 @@ COPY category (id, name, description, user_table_id) FROM stdin;
 819aaea0-ab8c-11e7-8254-974a4e9a50d4	hospital	Where people go to get healed	00000000-0000-0000-0000-000000000000
 819b242a-ab8c-11e7-8255-5fc07584b915	police	Where people go when there’s trouble	00000000-0000-0000-0000-000000000000
 819b242b-ab8c-11e7-8256-9751457bf773	fire_station	Where all the fire trucks are	00000000-0000-0000-0000-000000000000
+c9c27478-ce6a-11e7-a3a0-8bf715cec419	custom	Where users go when they are in trouble	00000000-0000-0000-0000-000000000000
 \.
 
 
@@ -469,6 +470,7 @@ COPY emergency_contact (id, name, phone, user_table_id) FROM stdin;
 --
 
 COPY internal_authentication (user_table_id, username, password) FROM stdin;
+8fef486c-ce69-11e7-9ed1-43b6f3bb2df2	testuser	testpassword
 \.
 
 
@@ -620,6 +622,7 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 
 COPY user_table (user_table_id, authentication_type, authentication_token, name, email) FROM stdin;
 00000000-0000-0000-0000-000000000000	1	default	default	\N
+8fef486c-ce69-11e7-9ed1-43b6f3bb2df2	1	\N	Test User	test.user@testserver.com
 \.
 
 
