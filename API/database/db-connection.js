@@ -7,8 +7,8 @@ module.exports = require('knex')({
 	connection: {
 		// How to set host:
 		//  - 127.0.0.1 for local testing
-		//  - 104.197.189.152 to locally use hosted db on Cloud SQL (may not work if you have the Cloud SQL proxy running)
-		//  - /cloudsql/esp-mobile-182605:us-central1:esp to deploy to App Engine (production)
+		//  - 35.202.119.248 to locally use hosted db on Cloud SQL (may not work if you have the Cloud SQL proxy running)
+		//  - /cloudsql/esp-mobile-182605:us-central1:esp-db to deploy to App Engine (production)
 		//  - change 'database' to 'postgres' when deploying
 		host : '127.0.0.1',
 		// user, password, and database remain unchanged regardless of local, develop or production scenarios

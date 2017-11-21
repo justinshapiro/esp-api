@@ -108,20 +108,23 @@ function route_property_key_detail(req, res, args, method) {
 // Helper method
 function geoJsonify(dbResponse) {
 	let features = [];
-
 	console.log(dbResponse);
-
 	for (let i = 0; i < dbResponse.length; i++) {
-		let location_id = dbResponse[i]['id'];
 		let rawGeoJson = JSON.parse(dbResponse[i]['geometry']); // this needs to stay 'geometry'
 		let lat = rawGeoJson['coordinates'][0];
 		let lng = rawGeoJson['coordinates'][1];
 
-		let name = dbResponse[i]['name'];
-		let description = dbResponse[i]['description'];
+		let location_id =  dbResponse[i]['id'];
+		let name =         dbResponse[i]['name'];
+		let description =  dbResponse[i]['description'];
 		let phone_number = dbResponse[i]['phone_number'];
-		let address = dbResponse[i]['address'];
-		let alertable = dbResponse[i]['alertable'];
+		let address =      dbResponse[i]['address'];
+		let alertable =    dbResponse[i]['alertable'];
+		let category =     dbResponse[i]['category'];
+
+		if (category === undefined) {
+			category = dbResponse[i]['categories'][0]['name'];
+		}
 
 		const feature = {
 			"type": "Feature",
@@ -135,7 +138,8 @@ function geoJsonify(dbResponse) {
 				"address": address,
 				"description": description,
 				"phone_number": phone_number,
-				"alertable": alertable
+				"alertable": alertable,
+				"category": category
 			}
 		};
 
@@ -364,7 +368,6 @@ function insert_alertable(user_id, alertable) {
 // 		  	   latitude={...}&
 // 			   longitude={...}&
 //             address={...}&
-//             category_name={...}&
 //             [description={...}&]
 //             [phone_number={...}&]
 function post_locations(args, query, res) {
@@ -373,7 +376,6 @@ function post_locations(args, query, res) {
 	let lat =           query['latitude'];
 	let lng =           query['longitude'];
 	let address =       query['address'];
-	let category_type = query['category_type'];
 	let description =   query['description'];
 	let phone_number =  query['phone_number'];
 	let alertable =     query['alertable'];
@@ -395,8 +397,6 @@ function post_locations(args, query, res) {
 		responder.raiseQueryError(res, 'latitude')
 	} else if (lng === undefined) {
 		responder.raiseQueryError(res, 'longitude')
-	} else if (category_type === undefined) {
-		responder.raiseQueryError(res, 'category_type')
 	} else if (name === undefined) {
 		responder.raiseQueryError(res, 'name');
 	} else {
@@ -406,7 +406,7 @@ function post_locations(args, query, res) {
 			[description, phone_number, address, lat, lng, user_id, name])
 		).with('location_alert', insert_alertable(user_id, alertable)).insert({
 			'location_id': function() { this.select('loc_id').from('location_insert') },
-			'category_id': function() { this.select('category.id').from('category').where('name', category_type).limit(1) }
+			'category_id': function() { this.select('category.id').from('category').where('name', 'custom').limit(1) }
 		}).returning('*').then((location_cat) => {
 			knex('output_locations').select('*').where('id', location_cat[0].location_id).then((location) => {
 				responder.response(res, geoJsonify(location));
