@@ -423,40 +423,51 @@ function get_alerts_query(user_id, completion) {
 	knex('output_user_alerts').select('*').where('user_table_id', user_id).then((alerts) => {
 		let locations = alerts[0]['locations'];
 
-		let location_info = [];
-		for (let i = 0; i < locations.length; i++) {
-			let location_id = locations[i]['location_id'];
+		if (locations[0] !== null) {
+			console.log("Alerts: " + JSON.stringify(alerts));
+			let location_info = [];
+			for (let i = 0; i < locations.length; i++) {
+				let location_id = locations[i]['location_id'];
 
-			if (location_id.indexOf("-") !== -1) {
-				location_info.push(function(completion) {
-					setTimeout(function() {
-						get_user_location_id_db_query(user_id, location_id, function(location) {
-							completion(null, location);
-						});
-					}, 200);
-				});
-			} else {
-				location_info.push(function(completion) {
-					setTimeout(function() {
-						locationsEndpoint.get_location(location_id, function(location) {
-							completion(null, location);
-						});
-					}, 200);
-				});
+				if (location_id.indexOf("-") !== -1) {
+					location_info.push(function (completion) {
+						setTimeout(function () {
+							get_user_location_id_db_query(user_id, location_id, function (location) {
+								completion(null, location);
+							});
+						}, 200);
+					});
+				} else {
+					location_info.push(function (completion) {
+						setTimeout(function () {
+							locationsEndpoint.get_location(location_id, function (location) {
+								completion(null, location);
+							});
+						}, 200);
+					});
+				}
 			}
+
+			async.parallel(location_info, function (err, result) {
+				for (let i = 0; i < result.length; i++) {
+					if (JSON.stringify(result[i]).indexOf("GeoJson") === -1) {
+						locations[i]['name'] = result[i]['properties']['name'];
+						locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
+						locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
+					} else {
+						locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
+						locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
+						locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1];
+					}
+				}
+
+				let effective_alerts = alerts;
+				effective_alerts[0]['locations'] = locations;
+				completion(effective_alerts);
+			});
+		} else {
+			completion([]);
 		}
-
-		async.parallel(location_info, function(err, result) {
-			for (let i = 0; i < result.length; i++) {
-				locations[i]['name'] = result[i]['properties']['name'];
-				locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
-				locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
-			}
-
-			let effective_alerts = alerts;
-			effective_alerts[0]['locations'] = locations;
-			completion(effective_alerts);
-		});
 	});
 }
 
