@@ -19,8 +19,21 @@ exports.places = function(lat, lon, rad, category, completion) {
 		completion(response);
 	})
 	.catch((err) => {
+    	console.log(err);
 		completion(err);
 	});
+};
+
+exports.getPhoto = function(photo_ref, completion) {
+	googleMapsClient.placesPhoto({
+		photoreference: photo_ref,
+		maxwidth: 256,
+		maxheight: 256
+	}).asPromise().then((response) => {
+		completion(response);
+	}).catch((err) => {
+		completion(err);
+	})
 };
 
 exports.getPlace = function(id, completion) {

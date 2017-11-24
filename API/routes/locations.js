@@ -47,7 +47,7 @@ exports.locations = function(req, res) {
 					usersEndpoint.extern_get_user_locations(user_id, null, function(locations) {
 						completion(null, locations['GeoJson']['features']);
 					});
-				});
+				}, 200);
 			});
 		}
 
@@ -69,15 +69,40 @@ function get_google_location(location_id, completion) {
 	});
 }
 
+exports.locations_property_get = function(req, res) {
+	const property = req.params['property'];
+
+	if (property === 'photo') {
+		locations_photo(req, res);
+	} else {
+		locations_id(req, res);
+	}
+};
+
 // Route: GET /locations/{id}
 // Usage: GET /api/v1/locations/{id}
-exports.locations_id = function(req, res) {
-	const location_id = req.params['location_id'];
+function locations_id(req, res) {
+	const location_id = req.params['property'];
 
 	get_google_location(location_id, function (geoJson) {
 		responder.response(res, geoJson);
 	});
-};
+}
+
+// Route: GET /locations/photo
+// Usage: GET /api/v1/locations/photo?
+//            photo_ref={...}
+function locations_photo(req, res) {
+	const photo_ref = req.query['photo_ref'];
+
+	if (photo_ref === undefined) {
+		responder.raiseQueryError(res, 'photo_ref');
+	} else {
+		mapsAPI.getPhoto(photo_ref, function(photo) {
+			photo.pipe(res);
+		});
+	}
+}
 
 // Helper functions
 function geoJsonify(mapsResponse) {
@@ -108,7 +133,12 @@ function getFeature(json) {
 	const location_id =  json['place_id'];
 	const phone_number = json['formatted_phone_number'];
 	let   category =     json['types'][0];
-	
+
+	let photo_ref;
+	if (json['photos'] !== undefined) {
+		photo_ref = json['photos'][0]['photo_reference'];
+	}
+
 	return {
 		"type": "Feature",
 		"geometry": {
@@ -120,7 +150,8 @@ function getFeature(json) {
 			"address": address,
 			"phone_number": phone_number,
 			"category": category,
-			"location_id": location_id
+			"location_id": location_id,
+			"photo_ref": photo_ref
 		}
 	};
 }
