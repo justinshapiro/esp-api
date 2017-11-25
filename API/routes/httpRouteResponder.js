@@ -30,7 +30,7 @@ exports.raiseInternalError = function(res, err) {
 	if (err === null) {
 		res.json({"ESP-Error": `A database query or API call did not complete successfully`});
 	} else {
-		res.json({"ESP-Error": `A database query or API call did not complete successfully. The error message given is \'${err}\'`});
+		res.json({"ESP-Error": `'${err}`});
 	}
 };
 

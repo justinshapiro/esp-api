@@ -429,7 +429,7 @@ function get_alerts_query(user_id, completion) {
 			for (let i = 0; i < locations.length; i++) {
 				let location_id = locations[i]['location_id'];
 
-				if (location_id.indexOf("-") !== -1) {
+				if (location_id.split("-").length > 2) {
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							get_user_location_id_db_query(user_id, location_id, function (location) {
@@ -451,13 +451,18 @@ function get_alerts_query(user_id, completion) {
 			async.parallel(location_info, function (err, result) {
 				for (let i = 0; i < result.length; i++) {
 					if (JSON.stringify(result[i]).indexOf("GeoJson") === -1) {
-						locations[i]['name'] = result[i]['properties']['name'];
-						locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
-						locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
+						if (result[i] !== null) {
+							locations[i]['name'] = result[i]['properties']['name'];
+							locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
+							locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
+						}
 					} else {
-						locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
-						locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
-						locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1];
+						if (result[i]['GeoJson']['features'][0] !== null) {
+							console.log("With-GeoJSON: " + JSON.stringify(result[i]));
+							locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
+							locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
+							locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1];
+						}
 					}
 				}
 
@@ -486,9 +491,9 @@ function get_alert(args, query, res) {
 // 		  	   location_id={...}&
 // 			   alertable={...}&
 function post_alert(args, query, res) {
-	let user_id =        args['user_id'];
-	let location_id =   query['location_id'];
-	let alertable =     query['alertable'];
+	let user_id =       args['user_id'];
+	let location_id =  query['location_id'];
+	let alertable =    query['alertable'];
 
 	if (location_id === undefined) {
 		responder.raiseQueryError(res, 'location_id')
@@ -733,12 +738,14 @@ exports.users_id_delete = function(req, res) {
 				responder.raiseInternalError(res, "Delete failed because user does not exist")
 			} else {
 				// perform cascading delete
-				knex('location_setting').where('user_table_id', user_id).del().then(() => {
-					knex('emergency_contact').where('user_table_id', user_id).del().then(() => {
-						knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
-							knex('user_table').where('user_table_id', user_id).del().then(() => {
-								responder.response(res, 'Success');
-							})
+				knex('location').where('user_table_id', user_id).del().then(() => {
+					knex('location_setting').where('user_table_id', user_id).del().then(() => {
+						knex('emergency_contact').where('user_table_id', user_id).del().then(() => {
+							knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
+								knex('user_table').where('user_table_id', user_id).del().then(() => {
+									responder.response(res, 'Success');
+								});
+							});
 						});
 					});
 				});
