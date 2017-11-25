@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="004fcd49-8768-4f2a-8d42-c8e879f4e579" name="Default" comment="">
+    <list default="true" id="004fcd49-8768-4f2a-8d42-c8e879f4e579" name="Default" comment="Updated POST /notification to account for recent changes">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/database/db-connection.js" afterPath="$PROJECT_DIR$/API/database/db-connection.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/notification.js" afterPath="$PROJECT_DIR$/API/routes/notification.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/users.js" afterPath="$PROJECT_DIR$/API/routes/users.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -52,8 +50,8 @@
       <file leaf-file-name="db-connection.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="3" lean-forward="true" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
+            <state relative-caret-position="187">
+              <caret line="11" column="12" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="12" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -334,7 +332,7 @@
       <workItem from="1511326720885" duration="9500000" />
       <workItem from="1511472428155" duration="14272000" />
       <workItem from="1511585268583" duration="7037000" />
-      <workItem from="1511602508503" duration="1845000" />
+      <workItem from="1511602508503" duration="2458000" />
     </task>
     <task id="LOCAL-00001" summary="Changed category names to match Google Maps'">
       <created>1507692793523</created>
@@ -581,11 +579,18 @@
       <option name="project" value="LOCAL" />
       <updated>1511595700429</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Updated POST /notification to account for recent changes">
+      <created>1511604627751</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1511604627752</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="151283000" />
+    <option name="totallyTimeSpent" value="151896000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -622,7 +627,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="No use case for having a /users/{id}/phone endpoint" />
     <MESSAGE value="/authorize and /token face possible deprecation in favor of Passport's /auth" />
     <MESSAGE value="/notifications endpoint implemented &amp; one call combines Google Maps locations (all three categories) and DB custom locations at /locations" />
     <MESSAGE value="Authentication implemented at /auth/login and /auth/logout" />
@@ -647,7 +651,8 @@
     <MESSAGE value="GET /users/{id}/alert now returns more information about the location" />
     <MESSAGE value="Fixed issue with GET /users/{id}/alert not returning custom location info" />
     <MESSAGE value="Fixed edge cases for GET /users/{id}/alert" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed edge cases for GET /users/{id}/alert" />
+    <MESSAGE value="Updated POST /notification to account for recent changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated POST /notification to account for recent changes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -838,6 +843,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -926,8 +932,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="3" lean-forward="true" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
+        <state relative-caret-position="187">
+          <caret line="11" column="12" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="12" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
