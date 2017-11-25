@@ -458,7 +458,6 @@ function get_alerts_query(user_id, completion) {
 						}
 					} else {
 						if (result[i]['GeoJson']['features'][0] !== null) {
-							console.log("With-GeoJSON: " + JSON.stringify(result[i]));
 							locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
 							locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
 							locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1];

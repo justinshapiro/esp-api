@@ -17,6 +17,7 @@ const locationsEndpoint = require('./locations');
 //			  location_id={...},
 //            location_type={google, custom}
 exports.notification = function(req, res) {
+	console.log("/notifications called");
 	const user_id = req.query['user_id'];
 	const location_id = req.query['location_id'];
 	const location_type = req.query['location_type'];
@@ -28,6 +29,7 @@ exports.notification = function(req, res) {
 	} else if (location_type === undefined) {
 		responder.raiseQueryError(res, 'location_type');
 	} else {
+		console.log("/notification: Parameters correct");
 		usersEndpoint.extern_get_alerts_query(user_id, function(alerts) {
 			let alertable = false;
 			for (let i = 0; i < alerts[0]['locations']; i++) {
@@ -38,11 +40,13 @@ exports.notification = function(req, res) {
 			}
 
 			if (!alertable) {
+				console.log("Location is alertable, proceed");
 				// chain the callbacks in parallel
 				async.parallel({
 					user_name: function (completion) {
 						setTimeout(function () {
 							usersEndpoint.extern_get_user(user_id, function (user) {
+								console.log("Fetched user name: " + user[0]['name']);
 								completion(null, user[0]['name']);
 							});
 						}, 200);
@@ -51,17 +55,22 @@ exports.notification = function(req, res) {
 						setTimeout(function () {
 							if (location_type === "google") {
 								locationsEndpoint.get_location(location_id, function (geoJson) {
+									console.log(JSON.stringify(geoJson));
+									console.log('Fetched Google location: ' + geoJson['property']['name']);
 									completion(null, {
-										'location_name': geoJson['properties']['name'],
-										'location_phone_number': geoJson['properties']['phone_number'],
-										'location_type': geoJson['properties']['category']
+										'location_name': geoJson['GeoJson']['features'][0]['properties']['name'],
+										'location_phone_number': geoJson['GeoJson']['features'][0]['properties']['phone_number'],
+										'location_type': geoJson['GeoJson']['features'][0]['properties']['category']
 									});
 								});
 							} else if (location_type === "custom") {
 								usersEndpoint.extern_get_user_location_id(user_id, location_id, function(geoJson) {
+									console.log(JSON.stringify(geoJson));
+									console.log('Fetched custom location: ' + geoJson['GeoJson']['features'][0]['properties']['name']);
 									completion(null, {
-										'location_name': geoJson['properties']['name'],
-										'location_phone_number': geoJson['properties']['phone_number']
+										'location_name': geoJson['GeoJson']['features'][0]['properties']['name'],
+										'location_phone_number': geoJson['GeoJson']['features'][0]['properties']['phone_number'],
+										'location_type': 'custom emergency location'
 									});
 								});
 							}
@@ -75,6 +84,7 @@ exports.notification = function(req, res) {
 									all_contacts.push(contacts[i]['phone']);
 								}
 
+								console.log('Fetched contacts: ' + JSON.stringify(contacts));
 								completion(null, all_contacts);
 							});
 						}, 200);
@@ -82,6 +92,7 @@ exports.notification = function(req, res) {
 				}, function(err, results) {
 					// handle the result here
 					if (err === null) {
+						console.log('No errors in call sequence, proceed');
 						const user_name = results['user_name'];
 						const location_name = results['location_info']['location_name'];
 						const location_phone_number = results['location_info']['location_phone_number'];
@@ -92,6 +103,8 @@ exports.notification = function(req, res) {
 							emergency_contact_numbers = [emergency_contact_numbers];
 						}
 
+						console.log('Parsed all required contents, proceed');
+
 						// SMS message contents
 						let notify_msg = `ESP ALERT: ${user_name} ` +
 						  		         `has entered a ${actual_location_type} ` +
@@ -100,6 +113,7 @@ exports.notification = function(req, res) {
 										 `for more information.`;
 
 						for (let i = 0; i < emergency_contact_numbers.length; i++) {
+							console.log(`Sending notification to contact ${i}`);
 							// Send SMS message via Twilio
 							client.messages.create({
 								to: "+1" + emergency_contact_numbers[i],
@@ -114,6 +128,7 @@ exports.notification = function(req, res) {
 							});
 						}
 					} else {
+						console.log('Error in call sequence');
 						responder.raiseInternalError(res, err);
 					}
 				});
