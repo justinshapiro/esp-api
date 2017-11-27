@@ -32,10 +32,12 @@ exports.notification = function(req, res) {
 		console.log("/notification: Parameters correct");
 		usersEndpoint.extern_get_alerts_query(user_id, function(alerts) {
 			let alertable = false;
-			for (let i = 0; i < alerts[0]['locations']; i++) {
-				if (alerts[0]['locations'][i]['location_id'] === location_id) {
-					alertable = true;
-					break
+			if (alerts.length > 0) {
+				for (let i = 0; i < alerts[0]['locations']; i++) {
+					if (alerts[0]['locations'][i]['location_id'] === location_id) {
+						alertable = true;
+						break
+					}
 				}
 			}
 
