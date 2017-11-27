@@ -423,24 +423,29 @@ function get_alerts_query(user_id, completion) {
 	knex('output_user_alerts').select('*').where('user_table_id', user_id).then((alerts) => {
 		let locations = alerts[0]['locations'];
 
+		console.log("User ID: " + user_id);
+		console.log("Alerts: " + JSON.stringify(alerts));
 		if (locations[0] !== null) {
-			console.log("Alerts: " + JSON.stringify(alerts));
 			let location_info = [];
 			for (let i = 0; i < locations.length; i++) {
 				let location_id = locations[i]['location_id'];
 
 				if (location_id.split("-").length > 2) {
+					console.log("Getting custom location");
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							get_user_location_id_db_query(user_id, location_id, function (location) {
+								console.log("Custom location call completing with:" + JSON.stringify(location));
 								completion(null, location);
 							});
 						}, 200);
 					});
 				} else {
+					console.log("Getting Google location");
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							locationsEndpoint.get_location(location_id, function (location) {
+								console.log("Google location call completing with:" + JSON.stringify(location));
 								completion(null, location);
 							});
 						}, 200);
@@ -449,15 +454,18 @@ function get_alerts_query(user_id, completion) {
 			}
 
 			async.parallel(location_info, function (err, result) {
+				console.log('Top level result is: ' + JSON.stringify(result));
 				for (let i = 0; i < result.length; i++) {
+					console.log(`Content of result ${i} is ` + JSON.stringify(result[i]));
+
 					if (JSON.stringify(result[i]).indexOf("GeoJson") === -1) {
-						if (result[i] !== null) {
-							locations[i]['name'] = result[i]['properties']['name'];
-							locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
-							locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
-						}
+						console.log(`Value of result${i} is: ` + result[i].length);
+						locations[i]['name'] = result[i]['properties']['name'];
+						locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
+						locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
 					} else {
-						if (result[i]['GeoJson']['features'][0] !== null) {
+						console.log(`Value of result${i}[\'GeoJson\'][\'features\'].length is: ` + result[i]['GeoJson']['features'].length );
+						if (result[i]['GeoJson']['features'].length > 0) {
 							locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
 							locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
 							locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1];
@@ -467,6 +475,8 @@ function get_alerts_query(user_id, completion) {
 
 				let effective_alerts = alerts;
 				effective_alerts[0]['locations'] = locations;
+
+				console.log('Alerts query completing with: ' + JSON.stringify(effective_alerts));
 				completion(effective_alerts);
 			});
 		} else {

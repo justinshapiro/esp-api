@@ -132,6 +132,8 @@ exports.notification = function(req, res) {
 						responder.raiseInternalError(res, err);
 					}
 				});
+			} else {
+				console.log("Location is not alertable");
 			}
 		});
 	}
