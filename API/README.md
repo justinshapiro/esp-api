@@ -37,7 +37,7 @@ Nested arguments are routing using the following enumeration of names:
 For `/users`, the `root_argument` is always `user_id`.
 
 ## API Documentation / Test Suite
-Documentation of the API endpoints is located at https://documenter.getpostman.com/view/553180/esp-api/77eARDe
+Documentation of the API endpoints is located athttps://documenter.getpostman.com/view/2839067/esp-api/7EK4qho
 
 To run test suite click this button: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/184c09968390baf8b27e#?env%5BAPI%20Test%20Run%5D=W3sidHlwZSI6InRleHQiLCJlbmFibGVkIjp0cnVlLCJrZXkiOiJ1c2VyX2lkIiwidmFsdWUiOiIifV0=)
 

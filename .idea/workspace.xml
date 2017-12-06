@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="004fcd49-8768-4f2a-8d42-c8e879f4e579" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/locations.js" afterPath="$PROJECT_DIR$/API/routes/locations.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/routes/users.js" afterPath="$PROJECT_DIR$/API/routes/users.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/API/README.md" afterPath="$PROJECT_DIR$/API/README.md" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -21,8 +20,8 @@
       <file leaf-file-name="users.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/routes/users.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="278" column="5" lean-forward="true" selection-start-line="278" selection-start-column="5" selection-end-line="278" selection-end-column="5" />
+            <state relative-caret-position="0">
+              <caret line="278" column="5" lean-forward="false" selection-start-line="278" selection-start-column="5" selection-end-line="278" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -31,19 +30,32 @@
       <file leaf-file-name="locations.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/routes/locations.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="49" column="24" lean-forward="true" selection-start-line="49" selection-start-column="24" selection-end-line="49" selection-end-column="24" />
+            <state relative-caret-position="833">
+              <caret line="49" column="24" lean-forward="false" selection-start-line="49" selection-start-column="24" selection-end-line="49" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="db-connection.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="db-connection.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="272">
-              <caret line="18" column="3" lean-forward="true" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
+              <caret line="18" column="3" lean-forward="false" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/API/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="102">
+                <caret line="39" column="110" lean-forward="false" selection-start-line="39" selection-start-column="110" selection-end-line="39" selection-end-column="110" />
+                <folding />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -97,7 +109,6 @@
         <option value="$PROJECT_DIR$/API/routes/logout.js" />
         <option value="$PROJECT_DIR$/API/auth/passport.js" />
         <option value="$PROJECT_DIR$/API/routes/login.js" />
-        <option value="$PROJECT_DIR$/API/README.md" />
         <option value="$PROJECT_DIR$/API/routes/auth.js" />
         <option value="$PROJECT_DIR$/API/routes/oauth.js" />
         <option value="$PROJECT_DIR$/API/encryption/private.key" />
@@ -117,6 +128,7 @@
         <option value="$PROJECT_DIR$/API/routes/locations.js" />
         <option value="$PROJECT_DIR$/API/routes/users.js" />
         <option value="$PROJECT_DIR$/API/database/db-connection.js" />
+        <option value="$PROJECT_DIR$/API/README.md" />
       </list>
     </option>
   </component>
@@ -153,6 +165,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -210,8 +224,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -310,7 +322,8 @@
       <workItem from="1511771584411" duration="1776000" />
       <workItem from="1511844755828" duration="2095000" />
       <workItem from="1511940178680" duration="862000" />
-      <workItem from="1512496316509" duration="2670000" />
+      <workItem from="1512496316509" duration="2788000" />
+      <workItem from="1512529281189" duration="21000" />
     </task>
     <task id="LOCAL-00001" summary="Changed category names to match Google Maps'">
       <created>1507692793523</created>
@@ -585,11 +598,18 @@
       <option name="project" value="LOCAL" />
       <updated>1511760091833</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Fixed GET /users/{id}/locations to actually utilize spacial querying when utilized as part of another endpoint.">
+      <created>1512519802399</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1512519802399</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="170477000" />
+    <option name="totallyTimeSpent" value="170616000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
@@ -600,8 +620,8 @@
       <window_info id="DB Browser" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="DB Execution Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18468468" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18468468" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -626,7 +646,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Authentication implemented at /auth/login and /auth/logout" />
     <MESSAGE value="Refactor authentication endpoint, added OAuth endpoint stubs." />
     <MESSAGE value="Deleted unused routes" />
     <MESSAGE value="Fixed bug in GET /users where users were being returned twice" />
@@ -651,7 +670,8 @@
     <MESSAGE value="Updated POST /notification to account for recent changes" />
     <MESSAGE value="Bug fixed in GET /users/{id}/alert" />
     <MESSAGE value="Bug fixed in POST /notifications" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fixed in POST /notifications" />
+    <MESSAGE value="Fixed GET /users/{id}/locations to actually utilize spacial querying when utilized as part of another endpoint." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed GET /users/{id}/locations to actually utilize spacial querying when utilized as part of another endpoint." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -660,13 +680,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="12" column="9" lean-forward="true" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/users.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -786,21 +799,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="2" lean-forward="false" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="762">
-            <caret line="50" column="157" lean-forward="false" selection-start-line="50" selection-start-column="157" selection-end-line="50" selection-end-column="157" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/authorize.js" />
     <entry file="file://$PROJECT_DIR$/API/routes/oauth.js" />
     <entry file="file://$PROJECT_DIR$/Database/Physical Data Model.sql">
@@ -866,19 +864,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/API/SMS Test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="3" lean-forward="false" selection-start-line="10" selection-start-column="3" selection-end-line="10" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/API/SMS Test.js" />
     <entry file="file://$PROJECT_DIR$/API/routes/authentication.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="30" column="11" lean-forward="false" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -886,7 +876,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="8" column="41" lean-forward="false" selection-start-line="8" selection-start-column="41" selection-end-line="8" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -894,7 +883,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
           <caret line="20" column="42" lean-forward="false" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -902,7 +890,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="23" column="31" lean-forward="false" selection-start-line="23" selection-start-column="31" selection-end-line="23" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -910,7 +897,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4828">
           <caret line="447" column="2" lean-forward="false" selection-start-line="447" selection-start-column="2" selection-end-line="447" selection-end-column="2" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -918,22 +904,29 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1666">
           <caret line="110" column="55" lean-forward="true" selection-start-line="110" selection-start-column="55" selection-end-line="110" selection-end-column="55" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/locations.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="49" column="24" lean-forward="true" selection-start-line="49" selection-start-column="24" selection-end-line="49" selection-end-column="24" />
+        <state relative-caret-position="833">
+          <caret line="49" column="24" lean-forward="false" selection-start-line="49" selection-start-column="24" selection-end-line="49" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/API/routes/users.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="278" column="5" lean-forward="true" selection-start-line="278" selection-start-column="5" selection-end-line="278" selection-end-column="5" />
+        <state relative-caret-position="0">
+          <caret line="278" column="5" lean-forward="false" selection-start-line="278" selection-start-column="5" selection-end-line="278" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/API/ESP API.postman_collection.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -941,8 +934,24 @@
     <entry file="file://$PROJECT_DIR$/API/database/db-connection.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
-          <caret line="18" column="3" lean-forward="true" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
+          <caret line="18" column="3" lean-forward="false" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/API/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="102">
+            <caret line="39" column="110" lean-forward="false" selection-start-line="39" selection-start-column="110" selection-end-line="39" selection-end-column="110" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="2" lean-forward="false" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
         </state>
       </provider>
     </entry>
