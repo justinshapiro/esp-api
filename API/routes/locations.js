@@ -3,7 +3,6 @@
 const responder = require('./httpRouteResponder');
 const mapsAPI = require('../maps-api/maps');
 const async = require('async');
-
 const usersEndpoint = require('./users');
 
 // Route: GET /locations
@@ -44,7 +43,8 @@ exports.locations = function(req, res) {
 		if (user_id !== null) {
 			responses.push(function(completion) {
 				setTimeout(function() {
-					usersEndpoint.extern_get_user_locations(user_id, null, function(locations) {
+					usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, function(locations) {
+						console.log("extern_get_user_locations_with_location: " + JSON.stringify(locations));
 						completion(null, locations['GeoJson']['features']);
 					});
 				}, 200);

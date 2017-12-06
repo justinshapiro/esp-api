@@ -259,6 +259,34 @@ function get_user_locations_db_query(user_id, category, completion) {
 	}
 }
 
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_user_locations_with_location(user_id, lat, lng, rad, category, completion) {
+	let db_query;
+
+	if (lat !== undefined && lng !== undefined && rad !== undefined) {
+		db_query = knex('output_locations').select('*').where('user_table_id', user_id).andWhere(
+			knex.raw(
+				'ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?)',
+				[lat, lng, rad]
+			)
+		)
+	} else {
+		get_user_locations_db_query(user_id, category, function(locations) {
+			completion(locations);
+		});
+
+		return;
+	}
+
+	if (category !== undefined) {
+		db_query = db_query.andWhere(knex.raw("(categories -> 0) ->> 'name' = ?", [category]))
+	}
+
+	db_query.then((locations) => {
+		completion(geoJsonify(locations));
+	});
+}
+
 // Route: GET /users/{id}/locations
 // Usage: GET /api/v1/users/{id}/locations?
 // 		  	   [latitude={...}&]
@@ -272,30 +300,9 @@ function get_locations(args, query, res) {
 	let rad =     query['radius'];
 	let cat =     query['category'];
 
-	let db_query;
-
-	if (lat !== undefined && lng !== undefined && rad !== undefined) {
-		db_query = knex('output_locations').select('*').where('user_table_id', user_id).andWhere(
-			knex.raw(
-				'ST_DWithin(indexed_location, ST_MakePoint(?, ?)::geography, ?)',
-				[lat, lng, rad]
-			)
-		)
-	} else {
-		get_user_locations_db_query(user_id, cat, function(locations) {
-			responder.response(res, locations)
-		});
-
-		return;
-	}
-
-	if (cat !== undefined) {
-		db_query = db_query.andWhere(knex.raw("(categories -> 0) ->> 'name' = ?", [cat]))
-	}
-
-	db_query.then((locations) => {
-		responder.response(res, geoJsonify(locations));
-	})
+	get_user_locations_with_location(user_id, lat, lng, rad, cat, function(locations) {
+		responder.response(res, locations);
+	});
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
@@ -854,5 +861,6 @@ exports.extern_get_contacts = get_contacts_db_query;
 exports.extern_get_user = get_user_db_query;
 exports.extern_get_all_users = get_all_users_query;
 exports.extern_get_user_locations = get_user_locations_db_query;
+exports.extern_get_user_locations_with_location = get_user_locations_with_location;
 exports.extern_get_user_location_id = get_user_location_id_db_query;
 exports.extern_get_alerts_query = get_alerts_query;
