@@ -1,0 +1,2503 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ESP API",
+		"_postman_id": "cbd1c8c9-02e9-c28d-ef76-857998677d49",
+		"description": "This is documentation for the Emergency Safety Proximity (ESP) API.\n\n# Overview\nAll API endpoints are included in this documentation, along with their associated query parameters and usage examples. \n\n# Query Parameters\nSome of the API Endpoints listed below receive query parameters that tell the API exactly what data to return back or to update in the internal database. Query parameters are needed because the API endpoint alone does not give enough information regarding the granularity of the data to be returned, posted, deleted, or updated. A query parameter can be required or optional for a call to an endpoint to succeed (all optional parameters will have [Required] or [Optional] in their description).\n\nAn example of a real API call to the ESP Service to obtain emergency safety zone locations is as follows:\n\nhttp://localhost:3000/api/v1/locations?latitude=39.7454757&longitude=-105.0035587&radius=100000\n\nThis API call consults the locations/ endpoint located at localhost:3000/api/v1 and supplies it with the following query parameters:\nLatitude: 39.7454757\nLongitude: -105.0035587\nRadius: 100000 (given in meters)\n\nSince query parameters were given, the ESP Service can now return a customize JSON with emergency safety zone locations within a radius of 100000 meters centered at (39.7454757, -105,0035587).\n\n\n# Authentication\nUsers who log into the app will authenticate themselves via OAuth, a token-based authentication. With such an authentication mechanism in place, user data such as phone numbers, emails and emergency contact information will be inaccessible to those who do not possess a valid authentication token to view that user’s data.\n\n# Error Codes\nTODO: What kinds of error codes are we returning? Do we need to do any extra work here?\n\n# Endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/locations",
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/locations?latitude={{lat}}&longitude={{long}}&radius={{radius}}&user_id={{user_id}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"locations"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "{{lat}}",
+							"equals": true,
+							"description": "[Required] Latitude of a position to search around."
+						},
+						{
+							"key": "longitude",
+							"value": "{{long}}",
+							"equals": true,
+							"description": "[Required] Longitude of a position to search around."
+						},
+						{
+							"key": "radius",
+							"value": "{{radius}}",
+							"equals": true,
+							"description": "[Required] Radius to use for location search, in meters."
+						},
+						{
+							"key": "user_id",
+							"value": "{{user_id}}",
+							"equals": true,
+							"description": "[Optional] Used to include user's custom locations."
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns list of locations within the specified radius. This includes custom locations combined with Google's locations."
+			},
+			"response": [
+				{
+					"id": "370f03c3-d6f0-4bf8-bb40-43efd797ca24",
+					"name": "Returning locations around a position.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/locations?latitude={{lat}}&longitude={{long}}&radius={{radius}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "{{lat}}",
+									"equals": true,
+									"description": "[Required] Latitude of a position to search around."
+								},
+								{
+									"key": "longitude",
+									"value": "{{long}}",
+									"equals": true,
+									"description": "[Required] Longitude of a position to search around."
+								},
+								{
+									"key": "radius",
+									"value": "{{radius}}",
+									"equals": true,
+									"description": "[Required] Radius to use for location search, in meters."
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "1340",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 23:05:17 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"53c-UOAOsdWKd++/wKDLLMysGQ\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 479,
+					"body": "{\"ESP-Response\":{\"GeoJson\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7271607,-104.9910547]},\"properties\":{\"name\":\"Denver Health\",\"address\":\"777 Bannock Street, Denver\",\"category\":\"hospital\",\"location_id\":\"ChIJi9fyDiZ_bIcRC5Hrl4rHmm0\"}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7273022,-104.9903021]},\"properties\":{\"name\":\"Pediatric Emergency Department and Urgent Care at Denver Health\",\"address\":\"777 Bannock Street, Denver\",\"category\":\"hospital\",\"location_id\":\"ChIJGT5prih_bIcRD_m-Szo4vOA\"}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7282879,-104.9923503]},\"properties\":{\"name\":\"Labor and Delivery Unit at Denver Health\",\"address\":\"790 Delaware St, Floor 3, Denver\",\"category\":\"hospital\",\"location_id\":\"ChIJfR3KRS9_bIcRsZrrZKBsb9Y\"}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7282879,-104.9923503]},\"properties\":{\"name\":\"Denver Health Mom and Baby Unit\",\"address\":\"790 Delaware Street # 4, Denver\",\"category\":\"hospital\",\"location_id\":\"ChIJfR3KRS9_bIcRnn2dUi_1Wrk\"}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7282879,-104.9923503]},\"properties\":{\"name\":\"Denver Health OB Screening\",\"address\":\"790 Delaware Street, Denver\",\"category\":\"hospital\",\"location_id\":\"ChIJfR3KRS9_bIcRL9942kSXKJs\"}}]}}}"
+				}
+			]
+		},
+		{
+			"name": "/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"user_id\", jsonData['ESP-Response'][0].user_table_id);",
+							"",
+							"",
+							"tests[\"Successfully created new user\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users?authentication_type=1&authentication_token={{users_auth_token}}&name={{users_name}}&email={{users_email}}&password=testpass",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					],
+					"query": [
+						{
+							"key": "authentication_type",
+							"value": "1",
+							"equals": true,
+							"description": "[Required] User's authentication type. These are specified in authentication_types table."
+						},
+						{
+							"key": "authentication_token",
+							"value": "{{users_auth_token}}",
+							"equals": true,
+							"description": "[Optional] Current authentication token for user."
+						},
+						{
+							"key": "name",
+							"value": "{{users_name}}",
+							"equals": true,
+							"description": "[Optional] User's name."
+						},
+						{
+							"key": "email",
+							"value": "{{users_email}}",
+							"equals": true,
+							"description": "[Optional] User's email address."
+						},
+						{
+							"key": "password",
+							"value": "testpass",
+							"equals": true,
+							"description": "[Required] User's password."
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "Create a new user. Returns that user in the response."
+			},
+			"response": [
+				{
+					"id": "74562721-d461-446f-99c6-db3b39f88e48",
+					"name": "Add a new test user",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users?authentication_type=1&authentication_token=test_auth_token&name=Test User&email=testEmail@google.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "authentication_type",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "authentication_token",
+									"value": "test_auth_token",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "Test User",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "email",
+									"value": "testEmail@google.com",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "172",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Tue, 31 Oct 2017 21:21:43 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"ac-jdmN3Wm2yKbGo1WcAjlsBw\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 70,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"7e56eb84-be81-11e7-8368-c7a19a710267\",\"authentication_type\":1,\"authentication_token\":\"test_auth_token\",\"name\":\"Test User\",\"email\":null}]}"
+				}
+			]
+		},
+		{
+			"name": "/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test user\"] = responseBody.has(environment.user_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns list of all registered users."
+			},
+			"response": [
+				{
+					"id": "62f886ee-0d76-417d-ae60-6ab50e925d54",
+					"name": "Get all users",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "504",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Tue, 31 Oct 2017 20:47:49 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"1f8-CX4Oiy6d1gVffoNaZkoVPg\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 29,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"c8552394-ac4e-11e7-a6e5-638439a8b77b\",\"authentication_token\":null,\"name\":null,\"auth_type\":\"Internal\",\"username\":null,\"password\":null},{\"user_table_id\":\"bafffff6-ac4f-11e7-bdce-ffae76dc2a2c\",\"authentication_token\":\"testauthtoken\",\"name\":null,\"auth_type\":\"Internal\",\"username\":null,\"password\":null},{\"user_table_id\":\"00000000-0000-0000-0000-000000000000\",\"authentication_token\":\"default\",\"name\":\"test name update\",\"auth_type\":\"Internal\",\"username\":null,\"password\":null}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test user\"] = responseBody.has(environment.user_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns the information for a user with the specified ID.\n\nThis ID is used in the endpoint for the majority of endpoints."
+			},
+			"response": [
+				{
+					"id": "c14dc476-68c3-46ca-9c4e-4215c96ed360",
+					"name": "Getting a specific user",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/7e56eb84-be81-11e7-8368-c7a19a710267/",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "190",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Tue, 31 Oct 2017 22:15:04 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"be-X1kow9nhUMMFln1Tn982sA\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 84,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"7e56eb84-be81-11e7-8368-c7a19a710267\",\"authentication_token\":\"test_auth_token\",\"name\":\"Test User\",\"auth_type\":\"Internal\",\"username\":null,\"password\":null}]}"
+				},
+				{
+					"id": "bca92039-0b87-45de-aff7-610932a799ec",
+					"name": "Querying a user that doesn't exist.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f8/",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "19",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 22:39:23 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"13-sC7WTPvaP4zwyqike1liiw\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 83,
+					"body": "{\"ESP-Response\":[]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Returned name matches\"] = jsonData['ESP-Response'][0].name === environment.new_name;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/name?name={{new_name}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"name"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{new_name}}",
+							"equals": true,
+							"description": "[Required] Updates the user's name."
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": [
+				{
+					"id": "1c297cf2-813d-4bc3-9774-834d5b8b8606",
+					"name": "Updating user's name",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/name?name=my name is new",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"name"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "my name is new",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "177",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Tue, 31 Oct 2017 23:42:17 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"b1-0+01osMeim6ViNNDk4ZM4w\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 122,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"authentication_type\":1,\"authentication_token\":\"test_auth_token\",\"name\":\"my name is new\",\"email\":null}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Returned email matches\"] = jsonData['ESP-Response'][0].email === environment.new_email;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/email?email={{new_email}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"email"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "{{new_email}}",
+							"equals": true,
+							"description": "[Required] Updates the user's email."
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"description": "Updates a user's email."
+			},
+			"response": [
+				{
+					"id": "74caf09a-4fcf-43ff-96ac-66b99a8e6a2f",
+					"name": "Updating user's email.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/email?email=test-new-email@google.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"email"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "test-new-email@google.com",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "200",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:13:48 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"c8-9aawRMjbQ8WJZWg8qmbm8A\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 107,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"authentication_type\":1,\"authentication_token\":\"test_auth_token\",\"name\":\"my name is new\",\"email\":\"test-new-email@google.com\"}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/contacts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"contact_id\", jsonData['ESP-Response'][0].id);",
+							"",
+							"",
+							"tests[\"Successfully created new contact\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/contacts?name={{contact_name}}&email={{contact_email}}&phone=1234567890",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"contacts"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{contact_name}}",
+							"equals": true,
+							"description": "[Required] Emergency contact's name."
+						},
+						{
+							"key": "email",
+							"value": "{{contact_email}}",
+							"equals": true,
+							"description": "[Optional] Emergency contact's email."
+						},
+						{
+							"key": "phone",
+							"value": "1234567890",
+							"equals": true,
+							"description": "[Required] Emergency contact's phone number. Must be a 10 digit number, with no other characters."
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "Creates an emergency contact for a user with supplied information."
+			},
+			"response": [
+				{
+					"id": "4bf82413-1db9-4e65-87a6-70743ecf7d6a",
+					"name": "Adding an emergency contact for a user, with supplied name and email.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/\"d93038f4-be80-11e7-8f22-77bcd4a492f9/contacts?name=Test Contact&email=test-email@google.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"\"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"contacts"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Test Contact",
+									"equals": true,
+									"description": "[Required] Emergency contact's name."
+								},
+								{
+									"key": "email",
+									"value": "test-email@google.com",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "186",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:25:42 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"ba-waZ4boVcPvE4N0ZziQ58Hg\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 131,
+					"body": "{\"ESP-Response\":[{\"id\":\"ffe1c292-c00b-11e7-925f-935736f8b421\",\"name\":\"Test Contact\",\"email\":\"test-email@google.com\",\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"phone\":null}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/contacts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test contact\"] = responseBody.has(environment.contact_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/contacts",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns a user's emergency contacts."
+			},
+			"response": [
+				{
+					"id": "07a73461-bcdd-4ca2-b0a9-63a72c50d948",
+					"name": "List of user's emergency contacts.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/contacts",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "186",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:28:27 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"ba-waZ4boVcPvE4N0ZziQ58Hg\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 29,
+					"body": "{\"ESP-Response\":[{\"id\":\"ffe1c292-c00b-11e7-925f-935736f8b421\",\"name\":\"Test Contact\",\"email\":\"test-email@google.com\",\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"phone\":null}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/contacts/{contact_id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test contact\"] = responseBody.has(environment.contact_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/contacts/{{contact_id}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Get a user's emergency contact with the given ID."
+			},
+			"response": [
+				{
+					"id": "1bb7f8e1-9e81-41e8-b93e-41caf1639824",
+					"name": "Getting a specific emergency contact associated with specific user.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/contacts/ffe1c292-c00b-11e7-925f-935736f8b421",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "186",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:31:57 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"ba-waZ4boVcPvE4N0ZziQ58Hg\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 100,
+					"body": "{\"ESP-Response\":[{\"id\":\"ffe1c292-c00b-11e7-925f-935736f8b421\",\"name\":\"Test Contact\",\"email\":\"test-email@google.com\",\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"phone\":null}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/contacts/{contact_id}/phone",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Returned phone number matches\"] = jsonData['ESP-Response'][0].phone === environment.new_contact_phone;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/contacts/{{contact_id}}/phone?phone_number={{new_contact_phone}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"contacts",
+						"{{contact_id}}",
+						"phone"
+					],
+					"query": [
+						{
+							"key": "phone_number",
+							"value": "{{new_contact_phone}}",
+							"equals": true,
+							"description": "[Required] Update contact's phone number."
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"description": "Updates the phone number of the user’s emergency contact."
+			},
+			"response": [
+				{
+					"id": "d9b6ee61-45fb-42f1-a265-84ca3aacbba8",
+					"name": "Updating contact's phone",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/contacts/ffe1c292-c00b-11e7-925f-935736f8b421/phone?phone_number=(123) 456-78",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"contacts",
+								"ffe1c292-c00b-11e7-925f-935736f8b421",
+								"phone"
+							],
+							"query": [
+								{
+									"key": "phone_number",
+									"value": "(123) 456-78",
+									"equals": true,
+									"description": "[Required] Update contact's phone number."
+								}
+							],
+							"variable": []
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "197",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:36:12 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"c5-VH28S3mwHwNpFl8upPTkQA\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 139,
+					"body": "{\"ESP-Response\":[{\"id\":\"ffe1c292-c00b-11e7-925f-935736f8b421\",\"name\":\"Test Contact\",\"email\":\"test-email@google.com\",\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"phone\":\"(123) 456-789\"}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/contacts/{contact_id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var contacts_deleted = jsonData['ESP-Response']['Rows Deleted']",
+							"tests[\"Contacts deleted equals 1\"] = contacts_deleted === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/contacts/{{contact_id}}",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "Deletes a user’s emergency contact with the given ID."
+			},
+			"response": [
+				{
+					"id": "87dcfa73-a2b2-466a-b629-0edc0ffd9695",
+					"name": "Deleting a contact.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/contacts/ffe1c292-c00b-11e7-925f-935736f8b421",
+						"method": "DELETE",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "35",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:47:40 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"23-DWoZhD/XpKagmPKXWh8g/w\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 112,
+					"body": "{\"ESP-Response\":{\"Rows Deleted\":1}}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/locations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"loc_id\", jsonData['ESP-Response'].GeoJson.features[0].properties.location_id);",
+							"",
+							"",
+							"tests[\"Successfully created new location\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/locations?latitude={{lat}}&longitude={{long}}&address={{address}}&alertable={{alertable}}&description={{description}}&phone_number={{phone_number}}&name={{loc_name}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"locations"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "{{lat}}",
+							"equals": true,
+							"description": "[Required] Latitude of the location."
+						},
+						{
+							"key": "longitude",
+							"value": "{{long}}",
+							"equals": true,
+							"description": "[Required] Longitude of the location."
+						},
+						{
+							"key": "address",
+							"value": "{{address}}",
+							"equals": true,
+							"description": "[Required] Address of the location."
+						},
+						{
+							"key": "alertable",
+							"value": "{{alertable}}",
+							"equals": true,
+							"description": "[Optional] Whether this location should send alerts or not. Value should be either true or false."
+						},
+						{
+							"key": "description",
+							"value": "{{description}}",
+							"equals": true,
+							"description": "[Optional] Description of this location."
+						},
+						{
+							"key": "phone_number",
+							"value": "{{phone_number}}",
+							"equals": true,
+							"description": "[Optional] Phone number for this location."
+						},
+						{
+							"key": "name",
+							"value": "{{loc_name}}",
+							"equals": true,
+							"description": "[Required] Name for the location."
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "Creates a custom location for a user.\n\n### Return\nThe return conforms to the GeoJSON standard: [RFC 7946](https://tools.ietf.org/html/rfc7946)."
+			},
+			"response": [
+				{
+					"id": "32b3494d-4ff5-4779-bb68-6640d27a6584",
+					"name": "Adding a custom location.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/locations?category_type=police&latitude=39.7271607&longitude=-104.9910547&address=test address&alertable=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "category_type",
+									"value": "police",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "latitude",
+									"value": "39.7271607",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "longitude",
+									"value": "-104.9910547",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "address",
+									"value": "test address",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "alertable",
+									"value": "false",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "254",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 21:22:49 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"fe-9EebprDk+eYLGHb24Jc0BQ\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 172,
+					"body": "{\"ESP-Response\":{\"GeoJson\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7271607,-104.9910547]},\"properties\":{\"address\":\"test address\",\"description\":null,\"phone_number\":null,\"alertable\":false}}]}}}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/locations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test location\"] = responseBody.has(environment.loc_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/locations?latitude={{near_lat}}&longitude={{near_long}}&radius={{radius}}&category={{category}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"locations"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "{{near_lat}}",
+							"equals": true,
+							"description": "[Optional] Return locations near a position (latitude piece)."
+						},
+						{
+							"key": "longitude",
+							"value": "{{near_long}}",
+							"equals": true,
+							"description": "[Optional] Return locations near a position (longitude piece)."
+						},
+						{
+							"key": "radius",
+							"value": "{{radius}}",
+							"equals": true,
+							"description": "[Optional] Return locations within radius of a position, in meters."
+						},
+						{
+							"key": "category",
+							"value": "{{category}}",
+							"equals": true,
+							"description": "[Optional] Return only locations of specified category."
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns a list of the user's custom locations.\n\n### Usage\nOmitting any parameter from the geographic filtering set {latitude, longitude, radius} will cause geographic filtering to fail, returning all locations regardless of position.\n\n### Return\nThe return conforms to the GeoJSON standard: [RFC 7946](https://tools.ietf.org/html/rfc7946)."
+			},
+			"response": [
+				{
+					"id": "fb80aa9a-cce2-4946-9ea2-aa166d868b38",
+					"name": "Get locations within 400 meters of a position which are categorized as police",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/locations?latitude=39.729265 &longitude= -104.98777&radius=400&category=police",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "39.729265 ",
+									"equals": true,
+									"description": "[Optional] Return locations near a position (latitude piece)."
+								},
+								{
+									"key": "longitude",
+									"value": " -104.98777",
+									"equals": true,
+									"description": "[Optional] Return locations near a position (longitude piece)."
+								},
+								{
+									"key": "radius",
+									"value": "400",
+									"equals": true,
+									"description": "[Optional] Return locations within radius of a position, in meters."
+								},
+								{
+									"key": "category",
+									"value": "police",
+									"equals": true,
+									"description": "[Optional] Return only locations of specified category."
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "589",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 21:15:23 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"24d-ZfVlc69980srsCS/8DTr3g\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 123,
+					"body": "{\n    \"ESP-Response\": {\n        \"GeoJson\": {\n            \"type\": \"FeatureCollection\",\n            \"features\": [\n                {\n                    \"type\": \"Feature\",\n                    \"geometry\": {\n                        \"type\": \"Point\",\n                        \"coordinates\": [\n                            39.7271607,\n                            -104.9910547\n                        ]\n                    },\n                    \"properties\": {\n                        \"address\": \"test address\",\n                        \"description\": null,\n                        \"phone_number\": null,\n                        \"alertable\": false,\n                        \"location_id\": \"fa540332-c013-11e7-8bc9-dbcd32c9f607\"\n                    }\n                }\n            ]\n        }\n    }\n}"
+				},
+				{
+					"id": "672911b9-6d8f-419c-9223-75cb13329376",
+					"name": "Example of lowering radius, resulting in no locations returned.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/00000000-0000-0000-0000-000000000000/locations?latitude=39.729265 &longitude=-104.98777&radius=50&category=police",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"00000000-0000-0000-0000-000000000000",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "39.729265 ",
+									"equals": true,
+									"description": "[Optional] Return locations near a position (latitude piece)."
+								},
+								{
+									"key": "longitude",
+									"value": "-104.98777",
+									"equals": true,
+									"description": "[Optional] Return locations near a position (longitude piece)."
+								},
+								{
+									"key": "radius",
+									"value": "50",
+									"equals": true,
+									"description": "[Optional] Return locations within radius of a position, in meters."
+								},
+								{
+									"key": "category",
+									"value": "police",
+									"equals": true,
+									"description": "[Optional] Return only locations of specified category."
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "589",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 21:18:39 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"24d-ZfVlc69980srsCS/8DTr3g\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 80,
+					"body": "{\n    \"ESP-Response\": {\n        \"GeoJson\": {\n            \"type\": \"FeatureCollection\",\n            \"features\": []\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/locations/{loc_id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test location\"] = responseBody.has(environment.loc_id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/locations/{{loc_id}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns the information for a user’s custom location."
+			},
+			"response": [
+				{
+					"id": "2d638bdd-2b33-490f-a27c-c6b842460e6a",
+					"name": "Get a specific location.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/locations/fa540332-c013-11e7-8bc9-dbcd32c9f60",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "307",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 21:42:58 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"133-BKIGc2zuqDWvULaQHgKSQA\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 126,
+					"body": "{\"ESP-Response\":{\"GeoJson\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[39.7271607,-104.9910547]},\"properties\":{\"address\":\"test address\",\"description\":null,\"phone_number\":null,\"alertable\":false,\"location_id\":\"fa540332-c013-11e7-8bc9-dbcd32c9f607\"}}]}}}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/locations/{loc_id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var locations_deleted = jsonData['ESP-Response']['Rows Deleted']",
+							"tests[\"Locations deleted equals 0 or 1\"] = locations_deleted === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/locations/{{loc_id}}",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "Deletes a user’s custom location with the given ID."
+			},
+			"response": [
+				{
+					"id": "a6684829-ff62-4f46-99b3-40c76a4a0a09",
+					"name": "Deleting a contact.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/contacts/ffe1c292-c00b-11e7-925f-935736f8b421",
+						"method": "DELETE",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "35",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 20:47:40 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"23-DWoZhD/XpKagmPKXWh8g/w\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 112,
+					"body": "{\"ESP-Response\":{\"Rows Deleted\":1}}"
+				},
+				{
+					"id": "58118df3-2f42-408e-b759-d7e155cba437",
+					"name": "Deleting a location which exists.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/locations/fa540332-c013-11e7-8bc9-dbcd32c9f607",
+						"method": "DELETE",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "35",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 21:47:09 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"23-DWoZhD/XpKagmPKXWh8g/w\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 97,
+					"body": "{\"ESP-Response\":{\"Rows Deleted\":1}}"
+				},
+				{
+					"id": "394bb4b6-c682-47a4-9623-ed0698cf74c4",
+					"name": "Deleting a location which does not exist.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/{d93038f4-be80-11e7-8f22-77bcd4a492f9/locations/fa540332-c013-11e7-8bc9-dbcd32c9f606",
+						"method": "DELETE",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "35",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 21:47:45 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"23-zEqgWSNVHVfmhR9CMQVwjw\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 41,
+					"body": "{\"ESP-Response\":{\"Rows Deleted\":0}}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/alert",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test alert\"] = responseBody.has(environment[\"loc/place_id\"]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/alert?location_id={{loc/place_id}}&alertable={{alertable}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"alert"
+					],
+					"query": [
+						{
+							"key": "location_id",
+							"value": "{{loc/place_id}}",
+							"equals": true,
+							"description": "[Required] The ID of the location. This can be the ID for a custom location, or a PlaceID for a Google location."
+						},
+						{
+							"key": "alertable",
+							"value": "{{alertable}}",
+							"equals": true,
+							"description": "[Required] Whether the location is alertable or not. Value should be true or false."
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "Adds an alertable attribute for a location (for given user).\n\n## Usage\nThe location_id field supports using custom locations, where the ID should be a UUID that corresponds to a location (see location endpoints), or generic locations from Google. When using Google's locations, the location_id should be the PlaceID that corresponds to a location."
+			},
+			"response": [
+				{
+					"id": "7a87e9af-24f0-46fb-bc32-256b7f098153",
+					"name": "Setting a Google location to non-alertable for user.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/alert?location_id=ChIJ0y80fcV4bIcRlGBBOBQ0Kq4&alertable=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"alert"
+							],
+							"query": [
+								{
+									"key": "location_id",
+									"value": "ChIJ0y80fcV4bIcRlGBBOBQ0Kq4",
+									"equals": true,
+									"description": "[Required] The ID of the location. This can be the ID for a custom location, or a PlaceID for a Google location."
+								},
+								{
+									"key": "alertable",
+									"value": "false",
+									"equals": true,
+									"description": "[Required] Whether the location is alertable or not. Value should be true or false."
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "137",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 22:03:54 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"89-LpdCqqxF+SyXqT7H2RoKDw\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 222,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"location_id\":\"ChIJ0y80fcV4bIcRlGBBOBQ0Kq4\",\"alertable\":false}]}"
+				},
+				{
+					"id": "64643a15-6af9-448b-a800-242fcb97a486",
+					"name": "Trying to enter an alert that already exists. Must use PUT endpoint instead.",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/alert?location_id=ChIJ0y80fcV4bIcRlGBBOBQ0Kq4&alertable=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"alert"
+							],
+							"query": [
+								{
+									"key": "location_id",
+									"value": "ChIJ0y80fcV4bIcRlGBBOBQ0Kq4",
+									"equals": true,
+									"description": "[Required] The ID of the location. This can be the ID for a custom location, or a PlaceID for a Google location."
+								},
+								{
+									"key": "alertable",
+									"value": "false",
+									"equals": true,
+									"description": "[Required] Whether the location is alertable or not. Value should be true or false."
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "65",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 22:22:34 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"41-cb2EDKBhvS1Sa3ZCSIWrew\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 133,
+					"body": "{\"ESP-Response\":{\"Error\":\"Entries of this type must be unique.\"}}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/alert",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response contains postman test alert\"] = responseBody.has(environment[\"loc/place_id\"]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/alert",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Returns a list of locations that a user has specified alertable attribute on."
+			},
+			"response": [
+				{
+					"id": "c4b1e6df-b516-4e55-b7bf-e123e9a7dd23",
+					"name": "Get alert settings for user.",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/alert",
+						"method": "GET",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "356",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 22:27:40 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"164-MmOf6YgPApsWkH5zUuQ8UQ\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 40,
+					"body": "{\"ESP-Response\":[{\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\",\"locations\":[{\"alertable\":false,\"location_id\":\"fa540332-c013-11e7-8bc9-dbcd32c9f607\",\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\"},{\"alertable\":false,\"location_id\":\"ChIJ0y80fcV4bIcRlGBBOBQ0Kq4\",\"user_table_id\":\"d93038f4-be80-11e7-8f22-77bcd4a492f9\"}],\"categories\":[null]}]}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}/alert",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var alerts_deleted = jsonData['ESP-Response']['Rows Deleted']",
+							"tests[\"Alerts deleted equals 0 or 1\"] = alerts_deleted === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://espmobile.org/api/v1/users/{{user_id}}/alert?location_id={{loc/place_id}}",
+					"protocol": "http",
+					"host": [
+						"espmobile",
+						"org"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}",
+						"alert"
+					],
+					"query": [
+						{
+							"key": "location_id",
+							"value": "{{loc/place_id}}",
+							"equals": true,
+							"description": "[Required] The ID of the location to delete alert setting for."
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "Deletes user's alertable setting for given location."
+			},
+			"response": [
+				{
+					"id": "2802cf4b-a3b7-47a5-a15c-8f2aefd7cb70",
+					"name": "Deleting an alert setting (which exists).",
+					"originalRequest": {
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/d93038f4-be80-11e7-8f22-77bcd4a492f9/alert?location_id=fa540332-c013-11e7-8bc9-dbcd32c9f607",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"d93038f4-be80-11e7-8f22-77bcd4a492f9",
+								"alert"
+							],
+							"query": [
+								{
+									"key": "location_id",
+									"value": "fa540332-c013-11e7-8bc9-dbcd32c9f607",
+									"equals": true,
+									"description": "[Required] The ID of the location to delete alert setting for."
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "35",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 22:32:39 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"23-DWoZhD/XpKagmPKXWh8g/w\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 90,
+					"body": "{\"ESP-Response\":{\"Rows Deleted\":1}}"
+				}
+			]
+		},
+		{
+			"name": "/users/{user_id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"User deleted\"] = jsonData['ESP-Response'] === \"Success\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://espmobile.org/api/v1/users/{{user_id}}/",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "Removes a user and all associated information from the system."
+			},
+			"response": [
+				{
+					"id": "1b4ac5b5-a8fa-4c75-a210-731ead0c6dcd",
+					"name": "Deleting a user",
+					"originalRequest": {
+						"url": "http://localhost:3000/api/v1/users/7e56eb84-be81-11e7-8368-c7a19a710267/",
+						"method": "DELETE",
+						"header": [],
+						"body": {}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "36",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Tue, 31 Oct 2017 23:28:02 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"24-vvMKXPXk5pqR7AYpDbsrUQ\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 77,
+					"body": "{\"ESP-Response\":{\"Users Deleted\":1}}"
+				}
+			]
+		}
+	]
+}
