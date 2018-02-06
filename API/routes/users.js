@@ -52,13 +52,19 @@ function route_property(req, res, args, method) {
 // Route to find the correct endpoint whose signature is /users/property/key
 function route_property_key(req, res, args, method) {
 	const property = args['property'];
+	const key = args['key'];
 	const query = req.query;
 
 	switch (property) {
 		case 'contacts': {
 			switch (method) {
-				case 'get':    get_contacts_id(args, query, res);    break;
-				case 'delete': delete_contacts_id(args, query, res); break;
+				case 'get':    get_contacts_id(args, query, res);     break;
+				case 'delete': {
+					switch (key) {
+						case 'group': delete_contacts_group(args, query, res); break;
+						default: delete_contacts_id(args, query, res);  break;
+					}
+				} break;
 				case 'post':   post_contacts_group(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
@@ -562,6 +568,44 @@ function post_contacts(args, query, res) {
 			});
 		}
 	}
+}
+
+// Route: DELETE /users/{id}/contacts/group
+// Usage: DELETE /users/{id}/contacts/group
+function delete_contacts_group(args, query, res) {
+	let user_id = args['user_id'];
+
+	get_contacts_db_query(user_id, function(contacts) {
+		let contact_delete_tasks = [];
+		contacts.forEach(function(contact) {
+			contact_delete_tasks.push(function(completion) {
+				setTimeout(function() {
+					knex('emergency_contact').where('id', contact['id']).update({
+						group_id: null
+					}).returning('*').then((contact) => {
+						completion(null, contact);
+					});
+				}, 200);
+			});
+		});
+
+		async.parallel(contact_delete_tasks, function(err, results) {
+			let success = true;
+
+			for (let i = 0; i< results.length; i++) {
+				if (results[i][0]['group_id'] !== null) {
+					success = false;
+					break;
+				}
+			}
+
+			if (success) {
+				responder.response(res, "Contact group successfully deleted");
+			} else {
+				responder.raiseInternalError(res, "An error occurred while deleting contact group");
+			}
+		});
+	});
 }
 
 // Route: POST /users/{id}/contacts/group
