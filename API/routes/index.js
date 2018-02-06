@@ -36,6 +36,7 @@ router.post(  '/api/v1/users/:user_id/:property',              usersEndpoint.use
 router.delete('/api/v1/users/:user_id/:property',              usersEndpoint.users_id_property_delete);
 router.get(   '/api/v1/users/:user_id/:property/:key',         usersEndpoint.users_id_property_key_get);
 router.delete('/api/v1/users/:user_id/:property/:key',         usersEndpoint.users_id_property_key_delete);
+router.post(  '/api/v1/users/:user_id/:property/:key',         usersEndpoint.users_id_property_key_post);
 router.put(   '/api/v1/users/:user_id/:property/:key/:detail', usersEndpoint.users_id_property_key_detail_put);
 
 module.exports = router;

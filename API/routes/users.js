@@ -59,6 +59,7 @@ function route_property_key(req, res, args, method) {
 			switch (method) {
 				case 'get':    get_contacts_id(args, query, res);    break;
 				case 'delete': delete_contacts_id(args, query, res); break;
+				case 'post':   post_contacts_group(args, query, res); break;
 				default:       responder.raiseMethodError(res, method);
 			}
 		} break;
@@ -193,50 +194,6 @@ function put_email(args, query, res) {
 		}).returning('*').then((user) => {
 			responder.response(res, user);
 		});
-	}
-}
-
-// Isolated this logic for use elsewhere (to send it through exports)
-function get_contacts_db_query(user_id, completion) {
-	knex('emergency_contact').select('*').where('user_table_id', user_id).then((contacts) => {
-		completion(contacts);
-	});
-}
-
-// Route: GET /users/{id}/contacts
-// Usage: GET /api/v1/users/{id}/contacts
-function get_contacts(args, query, res) {
-	const user_id = args['user_id'];
-	get_contacts_db_query(user_id, function (contacts) {
-		responder.response(res, contacts);
-	});
-}
-
-// Route: POST /users/{id}/contacts
-// Usage: POST /api/v1/users/{id}/contacts?
-// 		  	   name={...}&
-// 			   phone={...}
-function post_contacts(args, query, res) {
-	let user_id =  args['user_id'];
-	let name =    query['name'];
-	let phone =   query['phone'];
-
-	if (name === undefined) {
-		responder.raiseQueryError(res, 'name')
-	} else if (phone === undefined) {
-		responder.raiseQueryError(res, 'phone')
-	} else {
-		if (phone.length !== 10) {
-			responder.raiseInternalError(res, "Phone number must be 10 digits");
-		} else {
-			knex('emergency_contact').insert({
-				name: name,
-				phone: phone,
-				user_table_id: user_id
-			}).returning('*').then((contact) => {
-				responder.response(res, contact);
-			});
-		}
 	}
 }
 
@@ -430,29 +387,23 @@ function get_alerts_query(user_id, completion) {
 	knex('output_user_alerts').select('*').where('user_table_id', user_id).then((alerts) => {
 		let locations = alerts[0]['locations'];
 
-		console.log("User ID: " + user_id);
-		console.log("Alerts: " + JSON.stringify(alerts));
 		if (locations[0] !== null) {
 			let location_info = [];
 			for (let i = 0; i < locations.length; i++) {
 				let location_id = locations[i]['location_id'];
 
 				if (location_id.split("-").length > 2) {
-					console.log("Getting custom location");
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							get_user_location_id_db_query(user_id, location_id, function (location) {
-								console.log("Custom location call completing with:" + JSON.stringify(location));
 								completion(null, location);
 							});
 						}, 200);
 					});
 				} else {
-					console.log("Getting Google location");
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							locationsEndpoint.get_location(location_id, function (location) {
-								console.log("Google location call completing with:" + JSON.stringify(location));
 								completion(null, location);
 							});
 						}, 200);
@@ -461,17 +412,12 @@ function get_alerts_query(user_id, completion) {
 			}
 
 			async.parallel(location_info, function (err, result) {
-				console.log('Top level result is: ' + JSON.stringify(result));
 				for (let i = 0; i < result.length; i++) {
-					console.log(`Content of result ${i} is ` + JSON.stringify(result[i]));
-
 					if (JSON.stringify(result[i]).indexOf("GeoJson") === -1) {
-						console.log(`Value of result${i} is: ` + result[i].length);
 						locations[i]['name'] = result[i]['properties']['name'];
 						locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
 						locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
 					} else {
-						console.log(`Value of result${i}[\'GeoJson\'][\'features\'].length is: ` + result[i]['GeoJson']['features'].length );
 						if (result[i]['GeoJson']['features'].length > 0) {
 							locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
 							locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
@@ -483,7 +429,6 @@ function get_alerts_query(user_id, completion) {
 				let effective_alerts = alerts;
 				effective_alerts[0]['locations'] = locations;
 
-				console.log('Alerts query completing with: ' + JSON.stringify(effective_alerts));
 				completion(effective_alerts);
 			});
 		} else {
@@ -570,8 +515,111 @@ function put_password(args, query, res) {
 	}
 }
 
+// Isolated this logic for use elsewhere (to send it through exports)
 function emergency_contact_query(user_id, contact_id) {
 	return knex('emergency_contact').where('user_table_id', user_id).andWhere('id', contact_id);
+}
+
+// Isolated this logic for use elsewhere (to send it through exports)
+function get_contacts_db_query(user_id, completion) {
+	knex('emergency_contact').select('*').where('user_table_id', user_id).then((contacts) => {
+		completion(contacts);
+	});
+}
+
+// Route: GET /users/{id}/contacts
+// Usage: GET /api/v1/users/{id}/contacts
+function get_contacts(args, query, res) {
+	const user_id = args['user_id'];
+	get_contacts_db_query(user_id, function (contacts) {
+		responder.response(res, contacts);
+	});
+}
+
+// Route: POST /users/{id}/contacts
+// Usage: POST /api/v1/users/{id}/contacts?
+// 		  	   name={...}&
+// 			   phone={...}
+function post_contacts(args, query, res) {
+	let user_id =  args['user_id'];
+	let name =    query['name'];
+	let phone =   query['phone'];
+
+	if (name === undefined) {
+		responder.raiseQueryError(res, 'name')
+	} else if (phone === undefined) {
+		responder.raiseQueryError(res, 'phone')
+	} else {
+		if (phone.length !== 10) {
+			responder.raiseInternalError(res, "Phone number must be 10 digits");
+		} else {
+			knex('emergency_contact').insert({
+				name: name,
+				phone: phone,
+				user_table_id: user_id
+			}).returning('*').then((contact) => {
+				responder.response(res, contact);
+			});
+		}
+	}
+}
+
+// Route: POST /users/{id}/contacts/group
+// Usage: POST /users/{id}/contacts/group?
+//			   contact_ids=["{...}", "{...}", ..., "{...}"]
+function post_contacts_group(args, query, res) {
+	let user_id = args['user_id'];
+	let contact_ids = JSON.parse(query['contact_ids']);
+
+	let contact_update_tasks = [];
+	contact_ids.forEach(function(contact_id) {
+		contact_update_tasks.push(function(completion) {
+			setTimeout(function() {
+				emergency_contact_query(user_id, contact_id).select('*').then((contact) => {
+					if (contact[0]['group_id'] === 1) {
+						completion(null, 'already_exists');
+					} else {
+						knex('emergency_contact').where('id', contact_id).update({
+							group_id: 1 // only one group allowed, so give it the ID of 1
+						}).returning('*').then((contact) => {
+							completion(null, contact);
+						});
+					}
+				});
+			}, 200);
+		});
+	});
+
+	async.parallel(contact_update_tasks, function(err, results) {
+		let success = true;
+		let already_exists = false;
+		let added_contacts = [];
+
+		for (let i = 0; i < results.length; i++) {
+			if (results[i] === "already_exists") {
+				already_exists = true;
+				success = false;
+				break;
+			} else {
+				if (results[i][0]['group_id'] !== 1) {
+					success = false;
+					break;
+				} else {
+					added_contacts.push(results[i][0]['name']);
+				}
+			}
+		}
+
+		if (success) {
+			responder.response(res, `Contacts ${added_contacts} successfully added to group 1`);
+		} else {
+			if (already_exists) {
+				responder.raiseInternalError(res, "Could not create a new contact group because one already exists");
+			} else {
+				responder.raiseInternalError(res);
+			}
+		}
+	});
 }
 
 // Route: POST /users/{id}/contacts/{id}
@@ -830,6 +878,13 @@ exports.users_id_property_key_get = function(req, res) {
 	//} else {
 	//	responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}/...`)
 	//}
+};
+
+exports.users_id_property_key_post = function(req, res) {
+	const user_id = req.params['user_id'];
+	const args = req.params;
+
+	route_property_key(req, res, args, 'post');
 };
 
 exports.users_id_property_key_delete = function(req, res) {

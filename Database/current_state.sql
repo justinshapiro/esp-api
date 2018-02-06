@@ -241,7 +241,8 @@ CREATE TABLE emergency_contact (
     id uuid DEFAULT uuid_generate_v1() NOT NULL,
     name text NOT NULL,
     phone text,
-    user_table_id uuid NOT NULL
+    user_table_id uuid NOT NULL,
+    group_id integer
 );
 
 
@@ -457,11 +458,15 @@ COPY category_setting (user_table_id, category_id, alertable) FROM stdin;
 -- Data for Name: emergency_contact; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY emergency_contact (id, name, phone, user_table_id) FROM stdin;
-646d6946-aeb9-11e7-8a9b-5788aea6d1de	Test Contact	\N	00000000-0000-0000-0000-000000000000
-70109b56-aeb9-11e7-aba0-dbfe0e958463	Test Contact	\N	00000000-0000-0000-0000-000000000000
-646d6946-aeb9-11e7-8a9b-5788aea6d1de	Test Contact	\N	00000000-0000-0000-0000-000000000000
-70109b56-aeb9-11e7-aba0-dbfe0e958463	Test Contact	\N	00000000-0000-0000-0000-000000000000
+COPY emergency_contact (id, name, phone, user_table_id, group_id) FROM stdin;
+646d6946-aeb9-11e7-8a9b-5788aea6d1de	Test Contact	\N	00000000-0000-0000-0000-000000000000	\N
+70109b56-aeb9-11e7-aba0-dbfe0e958463	Test Contact	\N	00000000-0000-0000-0000-000000000000	\N
+646d6946-aeb9-11e7-8a9b-5788aea6d1de	Test Contact	\N	00000000-0000-0000-0000-000000000000	\N
+70109b56-aeb9-11e7-aba0-dbfe0e958463	Test Contact	\N	00000000-0000-0000-0000-000000000000	\N
+6c00ba02-0b05-11e8-ae69-ef93eb1ee020	Test Contact 1	3039876543	4c5da46e-d1b0-11e7-877a-73ff015881dd	1
+6f5d58b8-0b05-11e8-98b3-971c026ca7b0	Test Contact 2	3039876543	4c5da46e-d1b0-11e7-877a-73ff015881dd	1
+713c4298-0b05-11e8-ae6a-eb7447e12829	Test Contact 3	3039876543	4c5da46e-d1b0-11e7-877a-73ff015881dd	1
+72890f8c-0b05-11e8-98b4-3b8b1e56f90c	Test Contact 4	3039876543	4c5da46e-d1b0-11e7-877a-73ff015881dd	1
 \.
 
 
@@ -470,7 +475,8 @@ COPY emergency_contact (id, name, phone, user_table_id) FROM stdin;
 --
 
 COPY internal_authentication (user_table_id, username, password) FROM stdin;
-8fef486c-ce69-11e7-9ed1-43b6f3bb2df2	testuser	testpassword
+4c5da46e-d1b0-11e7-877a-73ff015881dd	jshapiro	seniordesign
+2cfbdece-d9e9-11e7-8bd7-bbb4c9260935	\N	testpassword
 \.
 
 
@@ -492,6 +498,11 @@ ad7d8b5e-adf9-11e7-bff8-bb89dc6893cd	\N	\N	\N	\N	\N	39.7271607	-104.9910547	0101
 d138339c-aeb6-11e7-8cf8-9f3619678813	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
 51083d20-aeb6-11e7-81d0-87aa2031de3c	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
 56979e5a-aeb3-11e7-a48c-2b1e0788dfae	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+b6dea02e-aeb3-11e7-a72d-e7dcdd040dc4	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+63660f74-aeb6-11e7-99b7-ab0b342d81a6	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+74a39ad0-aeb7-11e7-8635-5f6be6901407	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+d3819ade-d23e-11e7-8eb3-4385087a5a0b	This is a test location	\N	2018 South Columbine Street	\N	4c5da46e-d1b0-11e7-877a-73ff015881dd	39.67978	-104.95625	0101000020E6100000C93CF20703D7434033333333333D5AC0	Home
+f81c7d00-d23e-11e7-a25f-8381f2cb1a70	This is a test location	\N	2018 South Columbine Street	\N	4c5da46e-d1b0-11e7-877a-73ff015881dd	39.67978	-104.95625	0101000020E6100000C93CF20703D7434033333333333D5AC0	Home
 96dfd416-adf8-11e7-8f78-27aa67ba9d05	\N	\N	\N	\N	\N	\N	\N	\N	\N
 15ebbd4e-adf7-11e7-8a57-47dbee394b88	\N	\N	\N	\N	\N	\N	\N	\N	\N
 b602e58a-ac55-11e7-82a1-e742ada5df7d	Test	\N	\N	\N	\N	\N	\N	\N	\N
@@ -510,9 +521,8 @@ f93db918-adf6-11e7-84b3-ffba12623491	\N	\N	\N	\N	\N	\N	\N	\N	\N
 8d09113c-adf8-11e7-9c98-8f4bc72eee2c	\N	\N	\N	\N	\N	\N	\N	\N	\N
 01635164-adf9-11e7-807d-4f8c27969027	\N	\N	\N	\N	\N	\N	\N	\N	\N
 685a97f6-adf9-11e7-bef1-a3f7d74bdf5c	\N	\N	\N	\N	\N	\N	\N	\N	\N
-b6dea02e-aeb3-11e7-a72d-e7dcdd040dc4	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
-63660f74-aeb6-11e7-99b7-ab0b342d81a6	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
-74a39ad0-aeb7-11e7-8635-5f6be6901407	\N	\N	test address	\N	00000000-0000-0000-0000-000000000000	39.7271607	-104.9910547	0101000020E6100000DEB7109A13DD43400443B1706D3F5AC0	\N
+c131d632-d23e-11e7-9ed9-038322cf5c4f	This is a test location	\N	2018 South Columbine Street	\N	4c5da46e-d1b0-11e7-877a-73ff015881dd	39.67978	-104.95625	0101000020E6100000C93CF20703D7434033333333333D5AC0	Home
+e2ad57be-d23e-11e7-bf0f-c3943c91a685	This is a test location	\N	2018 South Columbine Street	\N	4c5da46e-d1b0-11e7-877a-73ff015881dd	39.67978	-104.95625	0101000020E6100000C93CF20703D7434033333333333D5AC0	Home
 \.
 
 
@@ -589,6 +599,10 @@ b6dea02e-aeb3-11e7-a72d-e7dcdd040dc4	819aaea0-ab8c-11e7-8254-974a4e9a50d4
 771a5868-aeb6-11e7-8e53-f75c0530d8f9	819aaea0-ab8c-11e7-8254-974a4e9a50d4
 d138339c-aeb6-11e7-8cf8-9f3619678813	819aaea0-ab8c-11e7-8254-974a4e9a50d4
 74a39ad0-aeb7-11e7-8635-5f6be6901407	819aaea0-ab8c-11e7-8254-974a4e9a50d4
+10ef843a-ce6b-11e7-98dc-b3cb3092985f	c9c27478-ce6a-11e7-a3a0-8bf715cec419
+1168f1a0-ce6e-11e7-94fe-73bfa49b939b	c9c27478-ce6a-11e7-a3a0-8bf715cec419
+779821e2-d1c7-11e7-8fd2-a31ea32f5b5c	c9c27478-ce6a-11e7-a3a0-8bf715cec419
+f81c7d00-d23e-11e7-a25f-8381f2cb1a70	c9c27478-ce6a-11e7-a3a0-8bf715cec419
 \.
 
 
@@ -605,6 +619,7 @@ COPY location_contact (location_id, contact_id, user_table_id) FROM stdin;
 --
 
 COPY location_setting (user_table_id, location_id, alertable) FROM stdin;
+4c5da46e-d1b0-11e7-877a-73ff015881dd	ChIJvciNETB-bIcR0bz6zqfZyco	f
 \.
 
 
@@ -622,7 +637,8 @@ COPY spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 
 COPY user_table (user_table_id, authentication_type, authentication_token, name, email) FROM stdin;
 00000000-0000-0000-0000-000000000000	1	default	default	\N
-8fef486c-ce69-11e7-9ed1-43b6f3bb2df2	1	\N	Test User	test.user@testserver.com
+2cfbdece-d9e9-11e7-8bd7-bbb4c9260935	1	test_auth_token	Test User	testEmail@google.com
+4c5da46e-d1b0-11e7-877a-73ff015881dd	1	\N	Justin Shapiro	12345
 \.
 
 
