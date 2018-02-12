@@ -24,6 +24,7 @@ router.get('/api/v1/locations/:property', locationsEndpoint.locations_property_g
 
 // Route: /notification...
 router.post('/api/v1/notification', notificationEndpoint.notification);
+router.post('/api/v1/notification/:property', notificationEndpoint.notification_property_post);
 
 // Route: /users...
 router.get(   '/api/v1/users',                                 usersEndpoint.users_get);
