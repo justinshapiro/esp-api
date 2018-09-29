@@ -22,11 +22,11 @@ exports.notification = function(req, res) {
 	const location_type = req.query['location_type'];
 
 	if (user_id === undefined) {
-		responder.raiseQueryError(res, 'user_id');
-	} else if (location_id === undefined){
-		responder.raiseQueryError(res, 'location_id');
+		responder.raiseQueryError(res, 'user_id')
+	} else if (location_id === undefined) {
+		responder.raiseQueryError(res, 'location_id')
 	} else if (location_type === undefined) {
-		responder.raiseQueryError(res, 'location_type');
+		responder.raiseQueryError(res, 'location_type')
 	} else {
 		usersEndpoint.extern_get_alerts_query(user_id, function(alerts) {
 			let alertable = false;
@@ -46,8 +46,8 @@ exports.notification = function(req, res) {
 						setTimeout(function () {
 							usersEndpoint.extern_get_user(user_id, function (user) {
 								completion(null, user[0]['name']);
-							});
-						}, 200);
+							})
+						}, 200)
 					},
 					location_info: function (completion) {
 						setTimeout(function () {
@@ -57,30 +57,30 @@ exports.notification = function(req, res) {
 										'location_name': geoJson['GeoJson']['features'][0]['properties']['name'],
 										'location_phone_number': geoJson['GeoJson']['features'][0]['properties']['phone_number'],
 										'location_type': geoJson['GeoJson']['features'][0]['properties']['category']
-									});
-								});
+									})
+								})
 							} else if (location_type === "custom") {
 								usersEndpoint.extern_get_user_location_id(user_id, location_id, function(geoJson) {
 									completion(null, {
 										'location_name': geoJson['GeoJson']['features'][0]['properties']['name'],
 										'location_phone_number': geoJson['GeoJson']['features'][0]['properties']['phone_number'],
 										'location_type': 'custom emergency location'
-									});
-								});
+									})
+								})
 							}
-						}, 200);
+						}, 200)
 					},
 					emergency_contacts: function (completion) {
 						setTimeout(function () {
 							usersEndpoint.extern_get_contacts(user_id, function (contacts) {
 								let all_contacts = [];
 								for (let i = 0; i < contacts.length; i++) {
-									all_contacts.push(contacts[i]['phone']);
+									all_contacts.push(contacts[i]['phone'])
 								}
 
-								completion(null, all_contacts);
-							});
-						}, 200);
+								completion(null, all_contacts)
+							})
+						}, 200)
 					}
 				}, function(err, results) {
 					// handle the result here
@@ -112,16 +112,16 @@ exports.notification = function(req, res) {
 								if (err === null) {
 									responder.response(res, CircularJSON.stringify(message));
 								} else {
-									responder.raiseSMSError(res, err);
+									responder.raiseSMSError(res, err)
 								}
-							});
+							})
 						}
 					} else {
-						responder.raiseInternalError(res, err);
+						responder.raiseInternalError(res, err)
 					}
-				});
+				})
 			}
-		});
+		})
 	}
 };
 
@@ -138,15 +138,15 @@ exports.notification_property_post = function (req, res) {
 	const message = req.query['message'];
 
 	if (user_id === undefined) {
-		responder.raiseQueryError(res, 'user_id');
+		responder.raiseQueryError(res, 'user_id')
 	} else {
 		async.parallel({
 			user_name: function (completion) {
 				setTimeout(function () {
 					usersEndpoint.extern_get_user(user_id, function (user) {
-						completion(null, user[0]['name']);
-					});
-				}, 200);
+						completion(null, user[0]['name'])
+					})
+				}, 200)
 			},
 			contact_list: function (completion) {
 				setTimeout(function () {
@@ -154,13 +154,13 @@ exports.notification_property_post = function (req, res) {
 						let grouped_contacts = [];
 						contacts.forEach(function(contact) {
 							if (contact['group_id'] === 1) {
-								grouped_contacts.push(contact);
+								grouped_contacts.push(contact)
 							}
 						});
 
-						completion(null, grouped_contacts);
-					});
-				}, 200);
+						completion(null, grouped_contacts)
+					})
+				}, 200)
 			}
 		}, function(err, results) {
 			if (err === null) {
@@ -174,7 +174,7 @@ exports.notification_property_post = function (req, res) {
 						`${latitude}, ${longitude}. `;
 
 					if (message !== undefined) {
-						notify_msg += `They sent this alert with the message: \"${message}\"`;
+						notify_msg += `They sent this alert with the message: \"${message}\"`
 					}
 
 					for (let i = 0; i < contact_list.length; i++) {
@@ -185,18 +185,18 @@ exports.notification_property_post = function (req, res) {
 							body: notify_msg,
 						}, function (err, message) {
 							if (err === null) {
-								responder.response(res, CircularJSON.stringify(message));
+								responder.response(res, CircularJSON.stringify(message))
 							} else {
-								responder.raiseSMSError(res, err);
+								responder.raiseSMSError(res, err)
 							}
-						});
+						})
 					}
 				} else {
 					responder.raiseInternalError(res, "No alert group setup, so no message was sent")
 				}
 			} else {
-				responder.raiseInternalError(res, err);
+				responder.raiseInternalError(res, err)
 			}
-		});
+		})
 	}
 };

@@ -15,30 +15,21 @@ passport.use(new LocalStrategy(
 				if (login_id === users[i]['username'] || login_id === users[i]['email']) {
 					user_id = users[i]['user_table_id'];
 					db_password = users[i]['password'];
-					break;
+					break
 				}
 			}
 
-			if (user_id === null) {
+			if (user_id === null || !(password === db_password)) {
 				return auth_response(null, false)
 			} else {
-				if (password === db_password) {
-					return auth_response(null, user_id);
-				} else {
-					return auth_response(null, false);
-				}
+                return auth_response(null, user_id)
 			}
 		});
 	})
 );
 
-passport.serializeUser(function(user, done) {
-	done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-	done(null, user);
-});
+passport.serializeUser(function(user, done) { done(null, user) });
+passport.deserializeUser(function(user, done) { done(null, user) });
 
 // Route: POST /auth/login
 // Usage: POST /api/v1/authentication/login?
@@ -47,12 +38,13 @@ passport.deserializeUser(function(user, done) {
 exports.userLogin = function(req, res, next) {
 	// passport gets the query parameters from LocalStrategy
 	// passport will handle responding with 200 or 401
-	passport.authenticate('local', function (err, user, info) {
+	passport.authenticate('local', function (err, user) {
 		if (err) {
-			return next(err);
+			return next(err)
 		}
+
 		if (!user) {
-			responder.raiseAuthenticationError(res, req.query['username']);
+			responder.raiseAuthenticationError(res, req.query['username'])
 		}
 
 		req.login(user, error => {
@@ -60,9 +52,7 @@ exports.userLogin = function(req, res, next) {
 				responder.raiseAuthenticationError(res, req.query['username'], error)
 			}
 
-			responder.response(res, {
-				"user_id": user
-			});
+			responder.response(res, { "user_id": user });
 		});
 	})(req, res, next);
 };

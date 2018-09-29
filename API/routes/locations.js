@@ -22,11 +22,11 @@ exports.locations = function(req, res) {
 	}
 
 	if (latitude === undefined) {
-		responder.raiseQueryError(res, 'latitude');
+		responder.raiseQueryError(res, 'latitude')
 	} else if (longitude === undefined) {
-		responder.raiseQueryError(res, 'longitude');
+		responder.raiseQueryError(res, 'longitude')
 	} else if (radius === undefined) {
-		responder.raiseQueryError(res, 'radius');
+		responder.raiseQueryError(res, 'radius')
 	} else {
 		let responses = [];
 		const categories = ["hospital", "police", "fire_station"];
@@ -34,9 +34,9 @@ exports.locations = function(req, res) {
 			responses.push(function(completion) {
 				setTimeout(function() {
 					mapsAPI.places(latitude, longitude, parseInt(radius), category, function (locations) {
-						completion(null, geoJsonify(locations)['GeoJson']['features']);
-					});
-				}, 200);
+						completion(null, geoJsonify(locations)['GeoJson']['features'])
+					})
+				}, 200)
 			})
 		});
 
@@ -44,11 +44,10 @@ exports.locations = function(req, res) {
 			responses.push(function(completion) {
 				setTimeout(function() {
 					usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, function(locations) {
-						console.log("extern_get_user_locations_with_location: " + JSON.stringify(locations));
-						completion(null, locations['GeoJson']['features']);
-					});
-				}, 200);
-			});
+						completion(null, locations['GeoJson']['features'])
+					})
+				}, 200)
+			})
 		}
 
 		async.parallel(responses, function(err, results) {
@@ -57,25 +56,25 @@ exports.locations = function(req, res) {
 					"type": "FeatureCollection",
 					"features": [].concat.apply([], results)
 				}
-			});
-		});
+			})
+		})
 	}
 };
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_google_location(location_id, completion) {
 	mapsAPI.getPlace(location_id, function(placeDetails) {
-		completion(geoJsonify(placeDetails));
-	});
+		completion(geoJsonify(placeDetails))
+	})
 }
 
 exports.locations_property_get = function(req, res) {
 	const property = req.params['property'];
 
 	if (property === 'photo') {
-		locations_photo(req, res);
+		locations_photo(req, res)
 	} else {
-		locations_id(req, res);
+		locations_id(req, res)
 	}
 };
 
@@ -85,8 +84,8 @@ function locations_id(req, res) {
 	const location_id = req.params['property'];
 
 	get_google_location(location_id, function (geoJson) {
-		responder.response(res, geoJson);
-	});
+		responder.response(res, geoJson)
+	})
 }
 
 // Route: GET /locations/photo
@@ -96,11 +95,11 @@ function locations_photo(req, res) {
 	const photo_ref = req.query['photo_ref'];
 
 	if (photo_ref === undefined) {
-		responder.raiseQueryError(res, 'photo_ref');
+		responder.raiseQueryError(res, 'photo_ref')
 	} else {
 		mapsAPI.getPhoto(photo_ref, function(photo) {
-			photo.pipe(res);
-		});
+			photo.pipe(res)
+		})
 	}
 }
 
@@ -114,7 +113,7 @@ function geoJsonify(mapsResponse) {
 
     let features = [];
     for (let i = 0; i < results.length; i++) {
-        features.push(getFeature(results[i]));
+        features.push(getFeature(results[i]))
     }
 
     return {
@@ -122,7 +121,7 @@ function geoJsonify(mapsResponse) {
         	"type": "FeatureCollection",
         	"features": features
     	}
-    };
+    }
 }
 
 function getFeature(json) {
@@ -136,7 +135,7 @@ function getFeature(json) {
 
 	let photo_ref;
 	if (json['photos'] !== undefined) {
-		photo_ref = json['photos'][0]['photo_reference'];
+		photo_ref = json['photos'][0]['photo_reference']
 	}
 
 	return {
@@ -153,7 +152,7 @@ function getFeature(json) {
 			"location_id": location_id,
 			"photo_ref": photo_ref
 		}
-	};
+	}
 }
 
 // Here we export functions that other parts of the API will need

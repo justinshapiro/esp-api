@@ -10,7 +10,7 @@ const authEndpoint =         require('./authentication');
 
 // API Homepage
 router.get('/', function(req, res) {
-	res.render('index', { title: 'ESP Mobile API' });
+	res.render('index', { title: 'ESP Mobile API' })
 });
 
 // Route: /auth... (Local Authentication specific)

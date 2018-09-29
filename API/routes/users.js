@@ -17,14 +17,14 @@ function route_property(req, res, args, method) {
 			switch (method) {
 				case 'get':  get_contacts(args, query, res);  break;
 				case 'post': post_contacts(args, query, res); break;
-				default:     responder.raiseMethodError(res, method);
+				default:     responder.raiseMethodError(res, method)
 			}
 		} break;
 		case 'locations': {
 			switch (method) {
 				case 'get':  get_locations(args, query, res);  break;
 				case 'post': post_locations(args, query, res); break;
-				default:     responder.raiseMethodError(res, method);
+				default:     responder.raiseMethodError(res, method)
 			}
 		} break;
 		case 'alert': {
@@ -32,7 +32,7 @@ function route_property(req, res, args, method) {
 				case 'get':    get_alert(args, query, res);    break;
 				case 'post':   post_alert(args, query, res);   break;
 				case 'delete': delete_alert(args, query, res); break;
-				default:       responder.raiseMethodError(res, method);
+				default:       responder.raiseMethodError(res, method)
 			}
 		} break;
 		case 'password': {
@@ -42,10 +42,10 @@ function route_property(req, res, args, method) {
 					break;
 				case 'put':
 					put_password(args, query, res);
-					break;
+					break
 			}
 		} break;
-		default: responder.raisePropertyError(res, property);
+		default: responder.raisePropertyError(res, property)
 	}
 }
 
@@ -58,25 +58,25 @@ function route_property_key(req, res, args, method) {
 	switch (property) {
 		case 'contacts': {
 			switch (method) {
-				case 'get':    get_contacts_id(args, query, res);     break;
+				case 'get':    get_contacts_id(args, query, res); break;
 				case 'delete': {
 					switch (key) {
 						case 'group': delete_contacts_group(args, query, res); break;
-						default: delete_contacts_id(args, query, res);  break;
+						default: delete_contacts_id(args, query, res);  break
 					}
 				} break;
 				case 'post':   post_contacts_group(args, query, res); break;
-				default:       responder.raiseMethodError(res, method);
+				default:       responder.raiseMethodError(res, method)
 			}
 		} break;
 		case 'locations': {
 			switch (method) {
 				case 'get':    get_locations_id(args, query, res);    break;
 				case 'delete': delete_locations_id(args, query, res); break;
-				default:       responder.raiseMethodError(res, method);
+				default:       responder.raiseMethodError(res, method)
 			}
 		} break;
-		default: responder.raisePropertyError(res, property);
+		default: responder.raisePropertyError(res, property)
 	}
 }
 
@@ -93,10 +93,10 @@ function route_property_key_detail(req, res, args, method) {
 					switch (detail) {
 						case 'phone': put_contacts_id_phone(args, query, res); break;
 						case 'email': put_contacts_id_email(args, query, res); break;
-						default:      responder.raiseDetailError(res, detail);
+						default:      responder.raiseDetailError(res, detail)
 					}
 				} break;
-				default: responder.raiseMethodError(res, method);
+				default: responder.raiseMethodError(res, method)
 			}
 		} break;
 		case 'locations': {
@@ -104,13 +104,13 @@ function route_property_key_detail(req, res, args, method) {
 				case 'put': {
 					switch (detail) {
 						case 'name': put_locations_id_name(args, query, res); break;
-						default:     responder.raiseDetailError(res, detail);
+						default:     responder.raiseDetailError(res, detail)
 					}
 				} break;
-				default: responder.raiseMethodError(res, method);
+				default: responder.raiseMethodError(res, method)
 			}
 		} break;
-		default: responder.raisePropertyError(res, property);
+		default: responder.raisePropertyError(res, property)
 	}
 }
 
@@ -132,7 +132,7 @@ function geoJsonify(dbResponse) {
 		let category =     dbResponse[i]['category'];
 
 		if (category === undefined) {
-			category = dbResponse[i]['categories'][0]['name'];
+			category = dbResponse[i]['categories'][0]['name']
 		}
 
 		const feature = {
@@ -152,7 +152,7 @@ function geoJsonify(dbResponse) {
 			}
 		};
 
-		features.push(feature);
+		features.push(feature)
 	}
 
 	return {
@@ -160,11 +160,11 @@ function geoJsonify(dbResponse) {
 			"type": "FeatureCollection",
 			"features": features
 		}
-	};
+	}
 }
 
 function handle_delete_result(result) {
-	return {"Rows Deleted": result};
+	return {"Rows Deleted": result}
 }
 
 // Below is individual methods to implement endpoints that needed to be routed 
@@ -180,8 +180,8 @@ function put_name(args, query, res) {
 		responder.raiseQueryError(res, 'name')
 	} else {
 		knex('user_table').where('user_table_id', user_id).update({name: name}).returning('*').then((user) => {
-			responder.response(res, user);
-		});
+			responder.response(res, user)
+		})
 	}
 }
 
@@ -198,18 +198,17 @@ function put_email(args, query, res) {
 		knex('user_table').where('user_table_id', user_id).update({
 			email: email
 		}).returning('*').then((user) => {
-			responder.response(res, user);
-		});
+			responder.response(res, user)
+		})
 	}
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_user_locations_db_query(user_id, category, completion) {
 	if (category === null || category === undefined) {
-		console.log("Getting user locations...");
 		knex('output_locations').select('*').where('user_table_id', user_id).then((locations) => {
-			completion(geoJsonify(locations));
-		});
+			completion(geoJsonify(locations))
+		})
 	} else {
 		knex('output_locations').select('*').where('user_table_id', user_id).andWhere(
 			knex.raw(
@@ -217,8 +216,8 @@ function get_user_locations_db_query(user_id, category, completion) {
 				[category]
 			)
 		).then((locations) => {
-			completion(geoJsonify(locations));
-		});
+			completion(geoJsonify(locations))
+		})
 	}
 }
 
@@ -238,7 +237,7 @@ function get_user_locations_with_location(user_id, lat, lng, rad, category, comp
 			completion(locations);
 		});
 
-		return;
+		return
 	}
 
 	if (category !== undefined) {
@@ -246,8 +245,8 @@ function get_user_locations_with_location(user_id, lat, lng, rad, category, comp
 	}
 
 	db_query.then((locations) => {
-		completion(geoJsonify(locations));
-	});
+		completion(geoJsonify(locations))
+	})
 }
 
 // Route: GET /users/{id}/locations
@@ -264,15 +263,15 @@ function get_locations(args, query, res) {
 	let cat =     query['category'];
 
 	get_user_locations_with_location(user_id, lat, lng, rad, cat, function(locations) {
-		responder.response(res, locations);
+		responder.response(res, locations)
 	});
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_user_location_id_db_query(user_id, location_id, completion) {
 	knex('output_locations').select('*').where('user_table_id', user_id).andWhere('id', location_id).then((location) => {
-		completion(geoJsonify(location));
-	});
+		completion(geoJsonify(location))
+	})
 }
 
 // Route: GET /users/{id}/locations/{id}
@@ -282,13 +281,13 @@ function get_locations_id(args, query, res) {
 	const location_id = args['key'];
 
 	if (user_id === undefined) {
-		responder.raiseMethodError(res, 'user_id');
+		responder.raiseMethodError(res, 'user_id')
 	} else if (location_id === undefined) {
-		responder.raiseMethodError(res, 'location_id');
+		responder.raiseMethodError(res, 'location_id')
 	} else {
 		get_user_location_id_db_query(user_id, location_id, function(location) {
-			responder.response(res, location);
-		});
+			responder.response(res, location)
+		})
 	}
 }
 
@@ -299,15 +298,15 @@ function delete_locations_id(args, query, res) {
 	let location_id =   args['key'];
 
 	knex('location').where('id', location_id).andWhere('user_table_id', user_id).del().then((result) => {
-		responder.response(res, handle_delete_result(result));
-	});
+		responder.response(res, handle_delete_result(result))
+	})
 }
 
 // Route: PUT  /users/{id}/locations/{id}/name
 // Usage: PUT  /api/v1/users/{id}/locations/{id}/name?
 // 		  	   name={...}
 function put_locations_id_name(args, query, res) {
-	let name =       query['name'];
+	let name =        query['name'];
 	let user_id =     args['user_id'];
 	let location_id = args['key'];
 	
@@ -317,21 +316,21 @@ function put_locations_id_name(args, query, res) {
 		knex('location').where('id', location_id).andWhere('user_table_id', user_id).update({
 			name: name
 		}).returning('*').then((result) => {
-			responder.response(res, result);
-		});
+			responder.response(res, result)
+		})
 	}
 }
 
 function no_op_query() {
-	return knex.raw("SELECT 'NOTHING'");
+	return knex.raw("SELECT 'NOTHING'")
 }
 
 function insert_alertable(user_id, alertable) {
 	if (alertable === null) {
-		return no_op_query();
+		return no_op_query()
 	} else {
 		return knex.raw('INSERT INTO location_setting VALUES(?, (SELECT loc_id FROM location_insert), ?) ',
-		[user_id, alertable]);
+		[user_id, alertable])
 	}
 }
 
@@ -371,7 +370,7 @@ function post_locations(args, query, res) {
 	} else if (lng === undefined) {
 		responder.raiseQueryError(res, 'longitude')
 	} else if (name === undefined) {
-		responder.raiseQueryError(res, 'name');
+		responder.raiseQueryError(res, 'name')
 	} else {
 		knex('location_category').with('location_insert', knex.raw(
 			'INSERT INTO location(description, phone_number, address, lat, long, user_table_id, name)' +
@@ -382,9 +381,9 @@ function post_locations(args, query, res) {
 			'category_id': function() { this.select('category.id').from('category').where('name', 'custom').limit(1) }
 		}).returning('*').then((location_cat) => {
 			knex('output_locations').select('*').where('id', location_cat[0].location_id).then((location) => {
-				responder.response(res, geoJsonify(location));
-			});
-		});
+				responder.response(res, geoJsonify(location))
+			})
+		})
 	}
 }
 
@@ -402,18 +401,18 @@ function get_alerts_query(user_id, completion) {
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							get_user_location_id_db_query(user_id, location_id, function (location) {
-								completion(null, location);
-							});
-						}, 200);
-					});
+								completion(null, location)
+							})
+						}, 200)
+					})
 				} else {
 					location_info.push(function (completion) {
 						setTimeout(function () {
 							locationsEndpoint.get_location(location_id, function (location) {
-								completion(null, location);
-							});
-						}, 200);
-					});
+								completion(null, location)
+							})
+						}, 200)
+					})
 				}
 			}
 
@@ -422,12 +421,12 @@ function get_alerts_query(user_id, completion) {
 					if (JSON.stringify(result[i]).indexOf("GeoJson") === -1) {
 						locations[i]['name'] = result[i]['properties']['name'];
 						locations[i]['latitude'] = result[i]['geometry']['coordinates'][0];
-						locations[i]['longitude'] = result[i]['geometry']['coordinates'][1];
+						locations[i]['longitude'] = result[i]['geometry']['coordinates'][1]
 					} else {
 						if (result[i]['GeoJson']['features'].length > 0) {
 							locations[i]['name'] = result[i]['GeoJson']['features'][0]['properties']['name'];
 							locations[i]['latitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][0];
-							locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1];
+							locations[i]['longitude'] = result[i]['GeoJson']['features'][0]['geometry']['coordinates'][1]
 						}
 					}
 				}
@@ -435,12 +434,12 @@ function get_alerts_query(user_id, completion) {
 				let effective_alerts = alerts;
 				effective_alerts[0]['locations'] = locations;
 
-				completion(effective_alerts);
-			});
+				completion(effective_alerts)
+			})
 		} else {
-			completion([]);
+			completion([])
 		}
-	});
+	})
 }
 
 // Route: GET /users/{id}/alert
@@ -472,8 +471,8 @@ function post_alert(args, query, res) {
 			"location_id": location_id,
 			"alertable": alertable
 		}).returning('*').then((result) => {
-			responder.response(res, result);
-		});
+			responder.response(res, result)
+		})
 	}
 }
 
@@ -488,8 +487,8 @@ function delete_alert(args, query, res) {
 		responder.raiseQueryError(res, 'location_id')
 	} else {
 		knex('location_setting').where('user_table_id', user_id).andWhere('location_id', location_id).del().then((result) => {
-			responder.response(res, handle_delete_result(result));
-		});
+			responder.response(res, handle_delete_result(result))
+		})
 	}
 }
 
@@ -499,8 +498,8 @@ function get_password(args, query, res) {
 	let user_id = args['user_id'];
 
 	knex('internal_authentication').select('password').where('user_table_id', user_id).then((password) => {
-		responder.response(res, password);
-	});
+		responder.response(res, password)
+	})
 }
 
 // Route: PUT /users/{id}/password
@@ -511,26 +510,26 @@ function put_password(args, query, res) {
 	let new_password = query['new_password'];
 
 	if (new_password === undefined) {
-		responder.raiseQueryError(res, 'new_password');
+		responder.raiseQueryError(res, 'new_password')
 	} else {
 		knex('internal_authentication').where('user_table_id', user_id).update({
 			password: new_password
 		}).then((response) => {
-			responder.response(res, response);
-		});
+			responder.response(res, response)
+		})
 	}
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function emergency_contact_query(user_id, contact_id) {
-	return knex('emergency_contact').where('user_table_id', user_id).andWhere('id', contact_id);
+	return knex('emergency_contact').where('user_table_id', user_id).andWhere('id', contact_id)
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_contacts_db_query(user_id, completion) {
 	knex('emergency_contact').select('*').where('user_table_id', user_id).then((contacts) => {
-		completion(contacts);
-	});
+		completion(contacts)
+	})
 }
 
 // Route: GET /users/{id}/contacts
@@ -538,8 +537,8 @@ function get_contacts_db_query(user_id, completion) {
 function get_contacts(args, query, res) {
 	const user_id = args['user_id'];
 	get_contacts_db_query(user_id, function (contacts) {
-		responder.response(res, contacts);
-	});
+		responder.response(res, contacts)
+	})
 }
 
 // Route: POST /users/{id}/contacts
@@ -557,15 +556,15 @@ function post_contacts(args, query, res) {
 		responder.raiseQueryError(res, 'phone')
 	} else {
 		if (phone.length !== 10) {
-			responder.raiseInternalError(res, "Phone number must be 10 digits");
+			responder.raiseInternalError(res, "Phone number must be 10 digits")
 		} else {
 			knex('emergency_contact').insert({
 				name: name,
 				phone: phone,
 				user_table_id: user_id
 			}).returning('*').then((contact) => {
-				responder.response(res, contact);
-			});
+				responder.response(res, contact)
+			})
 		}
 	}
 }
@@ -583,10 +582,10 @@ function delete_contacts_group(args, query, res) {
 					knex('emergency_contact').where('id', contact['id']).update({
 						group_id: null
 					}).returning('*').then((contact) => {
-						completion(null, contact);
-					});
-				}, 200);
-			});
+						completion(null, contact)
+					})
+				}, 200)
+			})
 		});
 
 		async.parallel(contact_delete_tasks, function(err, results) {
@@ -595,17 +594,17 @@ function delete_contacts_group(args, query, res) {
 			for (let i = 0; i< results.length; i++) {
 				if (results[i][0]['group_id'] !== null) {
 					success = false;
-					break;
+					break
 				}
 			}
 
 			if (success) {
-				responder.response(res, "Contact group successfully deleted");
+				responder.response(res, "Contact group successfully deleted")
 			} else {
-				responder.raiseInternalError(res, "An error occurred while deleting contact group");
+				responder.raiseInternalError(res, "An error occurred while deleting contact group")
 			}
-		});
-	});
+		})
+	})
 }
 
 // Route: POST /users/{id}/contacts/group
@@ -621,17 +620,17 @@ function post_contacts_group(args, query, res) {
 			setTimeout(function() {
 				emergency_contact_query(user_id, contact_id).select('*').then((contact) => {
 					if (contact[0]['group_id'] === 1) {
-						completion(null, 'already_exists');
+						completion(null, 'already_exists')
 					} else {
 						knex('emergency_contact').where('id', contact_id).update({
 							group_id: 1 // only one group allowed, so give it the ID of 1
 						}).returning('*').then((contact) => {
-							completion(null, contact);
-						});
+							completion(null, contact)
+						})
 					}
-				});
-			}, 200);
-		});
+				})
+			}, 200)
+		})
 	});
 
 	async.parallel(contact_update_tasks, function(err, results) {
@@ -643,27 +642,27 @@ function post_contacts_group(args, query, res) {
 			if (results[i] === "already_exists") {
 				already_exists = true;
 				success = false;
-				break;
+				break
 			} else {
 				if (results[i][0]['group_id'] !== 1) {
 					success = false;
-					break;
+					break
 				} else {
-					added_contacts.push(results[i][0]['name']);
+					added_contacts.push(results[i][0]['name'])
 				}
 			}
 		}
 
 		if (success) {
-			responder.response(res, `Contacts ${added_contacts} successfully added to group 1`);
+			responder.response(res, `Contacts ${added_contacts} successfully added to group 1`)
 		} else {
 			if (already_exists) {
-				responder.raiseInternalError(res, "Could not create a new contact group because one already exists");
+				responder.raiseInternalError(res, "Could not create a new contact group because one already exists")
 			} else {
-				responder.raiseInternalError(res);
+				responder.raiseInternalError(res)
 			}
 		}
-	});
+	})
 }
 
 // Route: POST /users/{id}/contacts/{id}
@@ -673,7 +672,7 @@ function get_contacts_id(args, query, res) {
 	let contact_id = args['key'];
 
 	emergency_contact_query(user_id, contact_id).select('*').then((contact) => {
-		responder.response(res, contact);
+		responder.response(res, contact)
 	});
 }
 
@@ -684,7 +683,7 @@ function delete_contacts_id(args, query, res) {
 	let contact_id = args['key'];
 
 	emergency_contact_query(user_id, contact_id).del().then((result) => {
-		responder.response(res, handle_delete_result(result));
+		responder.response(res, handle_delete_result(result))
 	})
 }
 
@@ -697,11 +696,11 @@ function put_contacts_id_phone(args, query, res) {
 	let contact_id =      args['key'];
 	
 	if (phone_number === undefined) {
-		responder.raiseQueryError(res, 'phone_number');
+		responder.raiseQueryError(res, 'phone_number')
 	} else {
 		emergency_contact_query(user_id, contact_id).update({phone: phone_number}).returning('*').then((result) => {
-			responder.response(res, result);
-		});
+			responder.response(res, result)
+		})
 	}
 }
 
@@ -714,10 +713,10 @@ function put_contacts_id_email(args, query, res) {
 	let contact_id =    args['key'];
 	
 	if (email_addr === undefined) {
-		responder.raiseQueryError(res, 'email');
+		responder.raiseQueryError(res, 'email')
 	} else {
 		emergency_contact_query(user_id, contact_id).update({email: email_addr}).returning('*').then((result) => {
-			responder.response(res, result);
+			responder.response(res, result)
 		})
 	}
 }
@@ -739,13 +738,13 @@ function get_users() {
 		'internal_authentication',
 		'user_table.user_table_id',
 		'internal_authentication.user_table_id'
-	).select();
+	).select()
 }
 
 // Isolated this logic for use elsewhere (to send it through exports)
 function get_all_users_query(completion) {
 	get_users().then((users) => {
-		completion(users);
+		completion(users)
 	})
 }
 
@@ -755,7 +754,7 @@ exports.users_get = function(req, res) {
 	// No need to route further, continue logic here
 
 	get_all_users_query(function(users) {
-		responder.response(res, users);
+		responder.response(res, users)
 	})
 };
 
@@ -771,9 +770,9 @@ function add_user(name, email, username, password, auth_type, token, completion)
 			username: username,
 			password: password
 		}).returning('*').then((auth_response) => {
-			completion(response.concat(auth_response));
-		});
-	});
+			completion(response.concat(auth_response))
+		})
+	})
 }
 
 // Route: POST /users
@@ -792,19 +791,19 @@ exports.users_post = function(req, res, next) {
 	const token =     req.query['authentication_token'];
 
 	if (auth_type === undefined) {
-		responder.raiseQueryError(res, 'authentication_type');
+		responder.raiseQueryError(res, 'authentication_type')
 	} else if (name === undefined) {
-		responder.raiseQueryError(res, 'name');
+		responder.raiseQueryError(res, 'name')
 	} else if (name === undefined) {
-		responder.raiseQueryError(res, 'username');
+		responder.raiseQueryError(res, 'username')
 	} else if (email === undefined) {
-		responder.raiseQueryError(res, 'email');
+		responder.raiseQueryError(res, 'email')
 	} else if (password === undefined) {
-		responder.raiseQueryError(res, 'password');
+		responder.raiseQueryError(res, 'password')
 	} else {
 		add_user(name, email, username, password, auth_type, token, function(user) {
 			responder.response(res, user)
-		});
+		})
 	}
 };
 
@@ -813,7 +812,7 @@ function get_user_db_query(user_id, completion) {
 	get_users()
 		.where('user_table.user_table_id', user_id)
 		.then((user) => {
-			completion(user);
+			completion(user)
 		})
 }
 
@@ -827,9 +826,9 @@ exports.users_id_get = function(req, res) {
 			if (user.length === 0) {
 				responder.raiseInternalError(res, "User does not exist")
 			} else {
-				responder.response(res, user);
+				responder.response(res, user)
 			}
-		});
+		})
 	//} else {
 	//	responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}`)
 	//}
@@ -851,14 +850,14 @@ exports.users_id_delete = function(req, res) {
 						knex('emergency_contact').where('user_table_id', user_id).del().then(() => {
 							knex('internal_authentication').where('user_table_id', user_id).del().then(() => {
 								knex('user_table').where('user_table_id', user_id).del().then(() => {
-									responder.response(res, 'Success');
-								});
-							});
-						});
-					});
-				});
+									responder.response(res, 'Success')
+								})
+							})
+						})
+					})
+				})
 			}
-		});
+		})
 	//} else {
 	//	responder.raiseAuthorizationError(res, `DELETE /api/v1/users/${user_id}`)
 	//}
@@ -870,7 +869,7 @@ exports.users_id_property_get = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under GET /users/{id}
-		route_property(req, res, args, 'get');
+		route_property(req, res, args, 'get')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}/...`)
 	//}
@@ -882,7 +881,7 @@ exports.users_id_property_put = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}
-		route_property(req, res, args, 'put');
+		route_property(req, res, args, 'put')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `PUT /api/v1/users/${user_id}/...`)
 	//}
@@ -894,7 +893,7 @@ exports.users_id_property_post = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under POST /users/{id}
-		route_property(req, res, args, 'post');
+		route_property(req, res, args, 'post')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `POST /api/v1/users/${user_id}/...`)
 	//}
@@ -906,7 +905,7 @@ exports.users_id_property_delete = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}
-		route_property(req, res, args, 'delete');
+		route_property(req, res, args, 'delete')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `DELETE /api/v1/users/${user_id}/...`)
 	//}
@@ -918,7 +917,7 @@ exports.users_id_property_key_get = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under GET /users/{id}/key
-		route_property_key(req, res, args, 'get');
+		route_property_key(req, res, args, 'get')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `GET /api/v1/users/${user_id}/...`)
 	//}
@@ -928,7 +927,7 @@ exports.users_id_property_key_post = function(req, res) {
 	const user_id = req.params['user_id'];
 	const args = req.params;
 
-	route_property_key(req, res, args, 'post');
+	route_property_key(req, res, args, 'post')
 };
 
 exports.users_id_property_key_delete = function(req, res) {
@@ -937,7 +936,7 @@ exports.users_id_property_key_delete = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under DELETE /users/{id}/key
-		route_property_key(req, res, args, 'delete');
+		route_property_key(req, res, args, 'delete')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `DELETE /api/v1/users/${user_id}/...`)
 	//}
@@ -949,7 +948,7 @@ exports.users_id_property_key_detail_put = function(req, res) {
 
 	//if (req.user === user_id) {
 		// We need to route to get to the correct endpoint, as several fall under PUT /users/{id}/key/detail
-		route_property_key_detail(req, res, args, 'put');
+		route_property_key_detail(req, res, args, 'put')
 	//} else {
 	//	responder.raiseAuthorizationError(res, `PUT /api/v1/users/${user_id}/...`)
 	//}
