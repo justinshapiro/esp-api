@@ -14,6 +14,6 @@ module.exports = require('knex')({
 		// user, password, and database remain unchanged regardless of local, develop or production scenarios
 		user: 'postgres',
 		password: 'seniordesign',
-		database: 'esp_db'
+		database: 'postgres'
 	}
 });
