@@ -12,53 +12,70 @@ const usersEndpoint = require('./users');
 //            radius={...}&
 //            [user_id={...}]
 exports.locations = function(req, res) {
-	const latitude =  req.query['latitude'];
-	const longitude = req.query['longitude'];
-	const radius =    req.query['radius'];
-	let user_id =     req.query['user_id'];
+    const parameters = {
+        'latitude':  req.query['latitude'],
+        'longitude': req.query['longitude'],
+        'radius':    req.query['radius']
+    };
 
-	if (user_id === undefined) {
-		user_id = null;
-	}
+    if (!responder.handleMissingParameters(res, parameters)) {
+        const latitude = parameters.latitude;
+        const longitude = parameters.longitude;
+        const radius = parameters.radius;
 
-	if (latitude === undefined) {
-		responder.raiseQueryError(res, 'latitude')
-	} else if (longitude === undefined) {
-		responder.raiseQueryError(res, 'longitude')
-	} else if (radius === undefined) {
-		responder.raiseQueryError(res, 'radius')
-	} else {
-		let responses = [];
-		const categories = ["hospital", "police", "fire_station"];
-		categories.forEach(function(category) {
-			responses.push(function(completion) {
-				setTimeout(function() {
-					mapsAPI.places(latitude, longitude, parseInt(radius), category, function (locations) {
-						completion(null, geoJsonify(locations)['GeoJson']['features'])
-					})
-				}, 200)
-			})
-		});
+        let responses = [];
 
-		if (user_id !== null) {
-			responses.push(function(completion) {
-				setTimeout(function() {
-					usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, function(locations) {
-						completion(null, locations['GeoJson']['features'])
-					})
-				}, 200)
-			})
-		}
+        ["hospital", "police", "fire_station"].forEach(category =>
+            responses.push(completion =>
+                setTimeout(_ =>
+                    mapsAPI.places(latitude, longitude, parseInt(radius), category, locations =>
+                        completion(null, locations)
+                    )
+            ,200)
+            )
+        );
 
-		async.parallel(responses, function(err, results) {
-			responder.response(res, {
-				"GeoJson": {
-					"type": "FeatureCollection",
-					"features": [].concat.apply([], results)
-				}
-			})
-		})
-	}
+        let user_id = req.query['user_id'];
+        if (user_id !== undefined) {
+            responses.push(completion =>
+                setTimeout(_ =>
+                    usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, locations =>
+                        completion(null, locations['GeoJson']['features'])
+                    )
+            ,200)
+            )
+        }
+
+        async.parallel(responses, (err, locations) => {
+            if (err !== null) {
+                responder.responseFailed(res, err);
+            } else {
+                let phoneNumberRequestsLocations = [];
+
+                [].concat.apply([], locations).forEach(result =>
+                    result['json']['results'].forEach(location =>
+                        phoneNumberRequestsLocations.push(completion =>
+                            mapsAPI.getPlace(location['place_id'], place =>
+                                completion(null, {
+                                    'location_id': location['place_id'],
+                                    'phone_number': place['json']['result']['formatted_phone_number']
+                                })
+                            )
+                        )
+                    )
+                );
+
+                async.parallel(phoneNumberRequestsLocations, (err, locationInfo) => {
+                    if (err !== null) {
+                        responder.responseFailed(res, err);
+                    } else {
+                        const formedResponses = locations.map(location => locationArray(location, locationInfo));
+                        responder.responseSuccess(res, [].concat.apply([], formedResponses));
+                    }
+                });
+            }
+        });
+    }
 };
 
 // Isolated this logic for use elsewhere (to send it through exports)
@@ -104,6 +121,25 @@ function locations_photo(req, res) {
 }
 
 // Helper functions
+function locationArray(mapsResponse, locationInfo) {
+    return mapsResponse['json']['results'].map(mapsLocation => {
+        const locationId = mapsLocation['place_id'];
+        const phoneNumber = locationInfo.find(info => info['location_id'] === locationId)['phone_number'];
+
+        return {
+            "name":          mapsLocation['name'],
+            "address":       mapsLocation['vicinity'],
+            "phone_number":  phoneNumber !== undefined ? phoneNumber : null,
+            "coordinates": {
+                "latitude":  mapsLocation['geometry']['location']['lat'],
+                "longitude": mapsLocation['geometry']['location']['lng']
+            },
+            "category":      mapsLocation['types'][0],
+            "location_id":   locationId,
+            "photo_ref":     mapsLocation['photos'] !== undefined ? mapsLocation['photos'][0]['photo_reference'] : null
+        }
+    })
+}
 function geoJsonify(mapsResponse) {
 	if (mapsResponse.json['results'] === undefined) {
 		return getFeature(mapsResponse.json['result'])

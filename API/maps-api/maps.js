@@ -1,10 +1,10 @@
 'use strict';
 
-const Promise = require('q').Promise;
+const promise = require('q').Promise;
 
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyDhSibfX0DdBHsUFc1OdvARvsLiuEfQ7Jc',
-    Promise: Promise
+    key: 'AIzaSyB0yPVJ_236dn1bxx2PPrPTsh-QyGD73tU',
+    Promise: promise
 });
 
 exports.places = function(latitude, longitude, rad, category, completion) {
@@ -16,8 +16,8 @@ exports.places = function(latitude, longitude, rad, category, completion) {
 		type: category
 	})
 	.asPromise()
-	.then(response => { completion(response) })
-	.catch(err => { completion(err) });
+	.then(response => completion(response))
+	.catch(err => completion(err));
 };
 
 exports.getPhoto = function(photo_ref, completion) {

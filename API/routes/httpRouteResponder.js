@@ -1,7 +1,48 @@
 'use strict';
 
-exports.response = function(res, payload) {
-	res.json({"ESP-Response": payload})
+exports.handleMissingParameters = function(res, parameterDictionary) {
+    let missingParameterNames = Object.keys(parameterDictionary)
+        .filter(key => parameterDictionary[key] === undefined)
+        .map(parameter => `${parameter}`);
+
+    if (missingParameterNames.length > 0) {
+        const missingParametersDescription = _ => {
+            if (missingParameterNames.length > 1) {
+                const parameterNameString = missingParameterNames.reduce((parameterList, currentParameter) => {
+                    const isEndCharacter = missingParameterNames.indexOf(currentParameter) === missingParameterNames.length - 1;
+                    return parameterList + currentParameter + (isEndCharacter ? "" : ", ")
+                }, "");
+
+                return `s ${parameterNameString}`
+            } else if (missingParameterNames.length > 0) {
+                return ` ${missingParameterNames[0]}`
+            } else {
+                return ""
+            }
+        };
+
+        let description = missingParametersDescription();
+        if (description.length > 0) {
+            res.statusMessage = `Request could not be fulfilled due to missing parameter\'${description}\'`;
+            res.status(400).end();
+        } else {
+            res.statusMessage = "API misconfiguration";
+            res.status(500).end();
+        }
+
+        return true
+    } else {
+        return false
+    }
+};
+
+exports.responseSuccess = function(res, payload) {
+    res.status(200).json(payload);
+};
+
+exports.responseFailed = function(res, err) {
+    res.statusMessage = `Request could not be fulfilled due to error: ${err}`;
+    res.status(404).end();
 };
 
 exports.raiseQueryError = function(res, query) {
