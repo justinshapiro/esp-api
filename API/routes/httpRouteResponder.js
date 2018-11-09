@@ -1,34 +1,16 @@
 'use strict';
 
 exports.handleMissingParameters = function(res, parameterDictionary) {
-    let missingParameterNames = Object.keys(parameterDictionary)
+    const undefinedParameters = Object.keys(parameterDictionary)
         .filter(key => parameterDictionary[key] === undefined)
         .map(parameter => `${parameter}`);
 
-    if (missingParameterNames.length > 0) {
-        const missingParametersDescription = _ => {
-            if (missingParameterNames.length > 1) {
-                const parameterNameString = missingParameterNames.reduce((parameterList, currentParameter) => {
-                    const isEndCharacter = missingParameterNames.indexOf(currentParameter) === missingParameterNames.length - 1;
-                    return parameterList + currentParameter + (isEndCharacter ? "" : ", ")
-                }, "");
+    const description = undefinedParameters.join(", ");
 
-                return `s ${parameterNameString}`
-            } else if (missingParameterNames.length > 0) {
-                return ` ${missingParameterNames[0]}`
-            } else {
-                return ""
-            }
-        };
-
-        let description = missingParametersDescription();
-        if (description.length > 0) {
-            res.statusMessage = `Request could not be fulfilled due to missing parameter\'${description}\'`;
-            res.status(400).end();
-        } else {
-            res.statusMessage = "API misconfiguration";
-            res.status(500).end();
-        }
+    if (description.length > 0) {
+        const connector = undefinedParameters.length > 1 ? "s" : "";
+        res.statusMessage = `Request could not be fulfilled due to missing parameter${connector}: \'${description}\'`;
+        res.status(400).end();
 
         return true
     } else {

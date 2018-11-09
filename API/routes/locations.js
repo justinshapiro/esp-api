@@ -13,9 +13,9 @@ const usersEndpoint = require('./users');
 //            [user_id={...}]
 exports.locations = function(req, res) {
     const parameters = {
-        'latitude':  req.query['latitude'],
+        'latitude': req.query['latitude'],
         'longitude': req.query['longitude'],
-        'radius':    req.query['radius']
+        'radius': req.query['radius']
     };
 
     if (!responder.handleMissingParameters(res, parameters)) {
@@ -26,53 +26,52 @@ exports.locations = function(req, res) {
         let responses = [];
 
         ["hospital", "police", "fire_station"].forEach(category =>
-            responses.push(completion =>
-                setTimeout(_ =>
-                    mapsAPI.places(latitude, longitude, parseInt(radius), category, locations =>
-                        completion(null, locations)
-                    )
-            ,200)
+            responses.push(completion => setTimeout(_ =>
+                mapsAPI.places(latitude, longitude, parseInt(radius), category, locations =>
+                    completion(null, locations)
+                ), 200)
             )
         );
 
         let user_id = req.query['user_id'];
         if (user_id !== undefined) {
-            responses.push(completion =>
-                setTimeout(_ =>
-                    usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, locations =>
-                        completion(null, locations['GeoJson']['features'])
-                    )
-            ,200)
+            responses.push(completion => setTimeout(_ =>
+                usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, locations =>
+                    completion(null, locations['GeoJson']['features'])
+                ), 200)
             )
         }
 
+        // wait for 3-4 calls to complete
+        // (locations for hospitals, police stations, and fire stations and possibly user defined locations)
         async.parallel(responses, (err, locations) => {
-            if (err !== null) {
-                responder.responseFailed(res, err);
-            } else {
+            if (err === null) {
                 let phoneNumberRequestsLocations = [];
 
                 [].concat.apply([], locations).forEach(result =>
                     result['json']['results'].forEach(location =>
-                        phoneNumberRequestsLocations.push(completion =>
+                        phoneNumberRequestsLocations.push(completion => setTimeout(_ =>
                             mapsAPI.getPlace(location['place_id'], place =>
                                 completion(null, {
                                     'location_id': location['place_id'],
                                     'phone_number': place['json']['result']['formatted_phone_number']
                                 })
-                            )
+                            ), 200)
                         )
                     )
                 );
 
+                // wait for N calls to complete, where N is the number of locations to get a phone number for
                 async.parallel(phoneNumberRequestsLocations, (err, locationInfo) => {
-                    if (err !== null) {
-                        responder.responseFailed(res, err);
-                    } else {
+                    if (err === null) {
                         const formedResponses = locations.map(location => locationArray(location, locationInfo));
                         responder.responseSuccess(res, [].concat.apply([], formedResponses));
+                    } else {
+                        responder.responseFailed(res, err);
                     }
                 });
+            } else {
+                responder.responseFailed(res, err);
             }
         });
     }

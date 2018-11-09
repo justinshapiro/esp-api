@@ -22,6 +22,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// remove some default request headers
+app.set('x-powered-by', false);
+app.set('etag', false);
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
