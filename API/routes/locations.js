@@ -6,11 +6,7 @@ const async = require('async');
 const usersEndpoint = require('./users');
 
 // Route: GET /locations
-// Usage: GET /api/v1/locations?
-//            latitude={...}&
-//            longitude={...}&
-//            radius={...}&
-//            [user_id={...}]
+// Usage: GET /api/v1/locations?latitude={...}&longitude={...}&radius={...}&[user_id={...}]
 exports.locations = function(req, res) {
     const parameters = {
         'latitude': req.query['latitude'],
@@ -52,19 +48,16 @@ exports.locations = function(req, res) {
                     result['json']['results'].forEach(location =>
                         phoneNumberRequestsLocations.push(completion => setTimeout(() =>
                             mapsAPI.getPlace(location['place_id'], place =>
-                                completion(null, {
-                                    'location_id': location['place_id'],
-                                    'phone_number': place['json']['result']['formatted_phone_number']
-                                })
+                                completion(null, place['json']['result'])
                             ), 200)
                         )
                     )
                 );
 
                 // wait for N calls to complete, where N is the number of locations to get a phone number for
-                async.parallel(phoneNumberRequestsLocations, (err, locationInfo) => {
+                async.parallel(phoneNumberRequestsLocations, (err, places) => {
                     if (err === null) {
-                        const formedResponses = locations.map(location => locationArray(location, locationInfo));
+                        const formedResponses = locations.map(location => locationArray(location, places));
                         responder.responseSuccess(res, [].concat.apply([], formedResponses));
                     } else {
                         responder.responseFailed(res, err);
@@ -122,17 +115,17 @@ exports.location_with_id_photo = function(req, res) {
 };
 
 // Helper functions
-function locationArray(mapsResponse, locationInfo) {
+function locationArray(mapsResponse, places) {
     return mapsResponse['json']['results']
-        .map(mapsLocation => locationObject(mapsLocation, locationInfo))
+        .map(mapsLocation => locationObject(mapsLocation, places))
 }
 
-function locationObject(mapsLocation, locationInfo) {
+function locationObject(mapsLocation, places) {
     const locationId = mapsLocation['place_id'];
 
     const phoneNumber = () => {
-        if (locationInfo !== null) {
-            const phoneNumber = locationInfo.find(info => info['location_id'] === locationId)['phone_number'];
+        if (places !== null) {
+            const phoneNumber = places.find(place => place['place_id'] === locationId)['formatted_phone_number'];
             return phoneNumber !== undefined ? phoneNumber : null;
         } else {
             const phoneNumber = mapsLocation['formatted_phone_number'];
@@ -141,13 +134,13 @@ function locationObject(mapsLocation, locationInfo) {
     };
 
     return {
-        "location_id":   locationId,
-        "name":          mapsLocation['name'],
-        "address":       mapsLocation['vicinity'],
-        "phone_number":  phoneNumber(),
-        "category":      mapsLocation['types'][0],
+        "location_id": locationId,
+        "name": mapsLocation['name'],
+        "address": mapsLocation['vicinity'],
+        "phone_number": phoneNumber(),
+        "category": mapsLocation['types'][0],
         "coordinates": {
-            "latitude":  mapsLocation['geometry']['location']['lat'],
+            "latitude": mapsLocation['geometry']['location']['lat'],
             "longitude": mapsLocation['geometry']['location']['lng']
         }
     }
