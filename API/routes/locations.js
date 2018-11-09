@@ -26,7 +26,7 @@ exports.locations = function(req, res) {
         let responses = [];
 
         ["hospital", "police", "fire_station"].forEach(category =>
-            responses.push(completion => setTimeout(_ =>
+            responses.push(completion => setTimeout(() =>
                 mapsAPI.places(latitude, longitude, parseInt(radius), category, locations =>
                     completion(null, locations)
                 ), 200)
@@ -35,7 +35,7 @@ exports.locations = function(req, res) {
 
         let user_id = req.query['user_id'];
         if (user_id !== undefined) {
-            responses.push(completion => setTimeout(_ =>
+            responses.push(completion => setTimeout(() =>
                 usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, locations =>
                     completion(null, locations['GeoJson']['features'])
                 ), 200)
@@ -50,7 +50,7 @@ exports.locations = function(req, res) {
 
                 [].concat.apply([], locations).forEach(result =>
                     result['json']['results'].forEach(location =>
-                        phoneNumberRequestsLocations.push(completion => setTimeout(_ =>
+                        phoneNumberRequestsLocations.push(completion => setTimeout(() =>
                             mapsAPI.getPlace(location['place_id'], place =>
                                 completion(null, {
                                     'location_id': location['place_id'],
@@ -83,7 +83,7 @@ exports.location_with_id = function(req, res) {
     const locationId = req.params['location_id'];
 
     if (locationId !== undefined) {
-        setTimeout(_ =>
+        setTimeout(() =>
             mapsAPI.getPlace(locationId, place => {
                 responder.responseSuccess(res, locationObject(place['json']['result'], null));
             }), 200
@@ -100,13 +100,13 @@ exports.location_with_id_photo = function(req, res) {
 
     if (locationId !== undefined) {
         if (req.params['photo'] !== undefined) {
-            mapsAPI.getPlace(locationId, place => setTimeout(_ => {
+            mapsAPI.getPlace(locationId, place => setTimeout(() => {
                 const placePhotos = place['json']['result']['photos'];
 
                 if (placePhotos !== undefined &&
                     placePhotos.length > 0 &&
                     placePhotos[0]['photo_reference'] !== undefined) {
-                    setTimeout(_ =>
+                    setTimeout(() =>
                         mapsAPI.getPhoto(placePhotos[0]['photo_reference'], function (photo) {
                             photo.pipe(res)
                         }), 200
@@ -132,7 +132,7 @@ function locationArray(mapsResponse, locationInfo) {
 function locationObject(mapsLocation, locationInfo) {
     const locationId = mapsLocation['place_id'];
 
-    const phoneNumber = _ => {
+    const phoneNumber = () => {
         if (locationInfo !== null) {
             const phoneNumber = locationInfo.find(info => info['location_id'] === locationId)['phone_number'];
             return phoneNumber !== undefined ? phoneNumber : null;
