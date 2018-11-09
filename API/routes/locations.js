@@ -107,9 +107,7 @@ exports.location_with_id_photo = function(req, res) {
                     placePhotos.length > 0 &&
                     placePhotos[0]['photo_reference'] !== undefined) {
                     setTimeout(() =>
-                        mapsAPI.getPhoto(placePhotos[0]['photo_reference'], function (photo) {
-                            photo.pipe(res)
-                        }), 200
+                        mapsAPI.getPhoto(placePhotos[0]['photo_reference'], photo => photo.pipe(res)), 200
                     )
                 } else {
                     responder.resourceNotFound(res, 'photo')
