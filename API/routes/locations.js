@@ -33,7 +33,7 @@ exports.locations = function(req, res) {
             )
         );
 
-        let user_id = req.query['user_id'];
+        const user_id = req.query['user_id'];
         if (user_id !== undefined) {
             responses.push(completion => setTimeout(() =>
                 usersEndpoint.extern_get_user_locations_with_location(user_id, latitude, longitude, radius, undefined, locations =>
