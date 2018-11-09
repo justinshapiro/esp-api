@@ -77,118 +77,80 @@ exports.locations = function(req, res) {
     }
 };
 
-// Isolated this logic for use elsewhere (to send it through exports)
-function get_google_location(location_id, completion) {
-	mapsAPI.getPlace(location_id, function(placeDetails) {
-		completion(geoJsonify(placeDetails))
-	})
-}
-
-exports.locations_property_get = function(req, res) {
-	const property = req.params['property'];
-
-	if (property === 'photo') {
-		locations_photo(req, res)
-	} else {
-		locations_id(req, res)
-	}
-};
-
 // Route: GET /locations/{id}
 // Usage: GET /api/v1/locations/{id}
-function locations_id(req, res) {
-	const location_id = req.params['property'];
+exports.location_with_id = function(req, res) {
+    const locationId = req.params['location_id'];
 
-	get_google_location(location_id, function (geoJson) {
-		responder.response(res, geoJson)
-	})
-}
+    if (locationId !== undefined) {
+        setTimeout(_ =>
+            mapsAPI.getPlace(locationId, place => {
+                responder.responseSuccess(res, locationObject(place['json']['result'], null));
+            }), 200
+        );
+    } else {
+        responder.apiMisconfiguration(res)
+    }
+};
 
 // Route: GET /locations/photo
-// Usage: GET /api/v1/locations/photo?
-//            photo_ref={...}
-function locations_photo(req, res) {
-	const photo_ref = req.query['photo_ref'];
+// Usage: GET /api/v1/locations/{id}/photo
+exports.location_with_id_photo = function(req, res) {
+    const locationId = req.params['location_id'];
 
-	if (photo_ref === undefined) {
-		responder.raiseQueryError(res, 'photo_ref')
-	} else {
-		mapsAPI.getPhoto(photo_ref, function(photo) {
-			photo.pipe(res)
-		})
-	}
-}
+    if (locationId !== undefined) {
+        if (req.params['photo'] !== undefined) {
+            mapsAPI.getPlace(locationId, place => setTimeout(_ => {
+                const placePhotos = place['json']['result']['photos'];
+
+                if (placePhotos !== undefined &&
+                    placePhotos.length > 0 &&
+                    placePhotos[0]['photo_reference'] !== undefined) {
+                    setTimeout(_ =>
+                        mapsAPI.getPhoto(placePhotos[0]['photo_reference'], function (photo) {
+                            photo.pipe(res)
+                        }), 200
+                    )
+                } else {
+                    responder.resourceNotFound(res, 'photo')
+                }
+            }))
+        } else {
+            responder.responseFailed(res, "Endpoint requested is not valid")
+        }
+    } else {
+        responder.apiMisconfiguration(res)
+    }
+};
 
 // Helper functions
 function locationArray(mapsResponse, locationInfo) {
-    return mapsResponse['json']['results'].map(mapsLocation => {
-        const locationId = mapsLocation['place_id'];
-        const phoneNumber = locationInfo.find(info => info['location_id'] === locationId)['phone_number'];
-
-        return {
-            "name":          mapsLocation['name'],
-            "address":       mapsLocation['vicinity'],
-            "phone_number":  phoneNumber !== undefined ? phoneNumber : null,
-            "coordinates": {
-                "latitude":  mapsLocation['geometry']['location']['lat'],
-                "longitude": mapsLocation['geometry']['location']['lng']
-            },
-            "category":      mapsLocation['types'][0],
-            "location_id":   locationId,
-            "photo_ref":     mapsLocation['photos'] !== undefined ? mapsLocation['photos'][0]['photo_reference'] : null
-        }
-    })
+    return mapsResponse['json']['results']
+        .map(mapsLocation => locationObject(mapsLocation, locationInfo))
 }
-function geoJsonify(mapsResponse) {
-	if (mapsResponse.json['results'] === undefined) {
-		return getFeature(mapsResponse.json['result'])
-	}
 
-	const results = mapsResponse.json['results'];
+function locationObject(mapsLocation, locationInfo) {
+    const locationId = mapsLocation['place_id'];
 
-    let features = [];
-    for (let i = 0; i < results.length; i++) {
-        features.push(getFeature(results[i]))
-    }
+    const phoneNumber = _ => {
+        if (locationInfo !== null) {
+            const phoneNumber = locationInfo.find(info => info['location_id'] === locationId)['phone_number'];
+            return phoneNumber !== undefined ? phoneNumber : null;
+        } else {
+            const phoneNumber = mapsLocation['formatted_phone_number'];
+            return phoneNumber !== undefined ? phoneNumber : null
+        }
+    };
 
     return {
-        "GeoJson": {
-        	"type": "FeatureCollection",
-        	"features": features
-    	}
+        "location_id":   locationId,
+        "name":          mapsLocation['name'],
+        "address":       mapsLocation['vicinity'],
+        "phone_number":  phoneNumber(),
+        "category":      mapsLocation['types'][0],
+        "coordinates": {
+            "latitude":  mapsLocation['geometry']['location']['lat'],
+            "longitude": mapsLocation['geometry']['location']['lng']
+        }
     }
 }
-
-function getFeature(json) {
-	const lat =          json['geometry']['location']['lat'];
-	const lng =          json['geometry']['location']['lng'];
-	const name =         json['name'];
-	const address =      json['vicinity'];
-	const location_id =  json['place_id'];
-	const phone_number = json['formatted_phone_number'];
-	let   category =     json['types'][0];
-
-	let photo_ref;
-	if (json['photos'] !== undefined) {
-		photo_ref = json['photos'][0]['photo_reference']
-	}
-
-	return {
-		"type": "Feature",
-		"geometry": {
-			"type": "Point",
-			"coordinates": [lat, lng]
-		},
-		"properties": {
-			"name": name,
-			"address": address,
-			"phone_number": phone_number,
-			"category": category,
-			"location_id": location_id,
-			"photo_ref": photo_ref
-		}
-	}
-}
-
-// Here we export functions that other parts of the API will need
-exports.get_location = get_google_location;

@@ -18,8 +18,9 @@ router.post('/api/v1/authentication/login', authEndpoint.userLogin);
 router.get('/api/v1/authentication/logout', authEndpoint.userLogout);
 
 // Route: /locations...
-router.get('/api/v1/locations',           locationsEndpoint.locations);
-router.get('/api/v1/locations/:property', locationsEndpoint.locations_property_get);
+router.get('/api/v1/locations',                    locationsEndpoint.locations);
+router.get('/api/v1/locations/:location_id',       locationsEndpoint.location_with_id);
+router.get('/api/v1/locations/:location_id/:photo', locationsEndpoint.location_with_id_photo);
 
 
 // Route: /notification...

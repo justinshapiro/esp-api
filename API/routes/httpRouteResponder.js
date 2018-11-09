@@ -27,6 +27,16 @@ exports.responseFailed = function(res, err) {
     res.status(404).end();
 };
 
+exports.resourceNotFound = function(res, resourceType) {
+    res.statusMessage = `Could not find a ${resourceType} resource`;
+    res.status(406).end()
+};
+
+exports.apiMisconfiguration = function(res) {
+    res.statusMessage = "API misconfiguration";
+    res.status(500);
+}
+
 exports.raiseQueryError = function(res, query) {
 	res.json({"ESP-Error": `Argument Error: No argument named ${query} supplied`})
 };
